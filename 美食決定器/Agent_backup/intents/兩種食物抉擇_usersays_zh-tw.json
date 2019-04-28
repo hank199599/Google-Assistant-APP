@@ -1,0 +1,475 @@
+[
+  {
+    "id": "79fe1109-3103-42be-87ee-c58e1069eaab",
+    "data": [
+      {
+        "text": "旋轉壽司",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "跟",
+        "alias": "and",
+        "meta": "@and",
+        "userDefined": false
+      },
+      {
+        "text": "夜市",
+        "alias": "food1",
+        "meta": "@sys.any",
+        "userDefined": false
+      },
+      {
+        "text": "選",
+        "userDefined": false
+      },
+      {
+        "text": "一個",
+        "alias": "number",
+        "meta": "@sys.number",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "1ec230ec-96fa-41ec-98b2-92fc9eae6bc4",
+    "data": [
+      {
+        "text": "牛排",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "跟",
+        "alias": "and",
+        "meta": "@and",
+        "userDefined": true
+      },
+      {
+        "text": "拼盤",
+        "alias": "food1",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "哪個",
+        "userDefined": false
+      },
+      {
+        "text": "好",
+        "alias": "yes",
+        "meta": "@yes",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "488b1e65-4248-4036-b4dc-61bee52c26d0",
+    "data": [
+      {
+        "text": "摩斯漢堡",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "及",
+        "alias": "and",
+        "meta": "@and",
+        "userDefined": true
+      },
+      {
+        "text": "樂檸漢堡",
+        "alias": "food1",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "挑",
+        "userDefined": false
+      },
+      {
+        "text": "一個",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "9b87aca0-c264-41ec-8a21-d7ad8f7a3f32",
+    "data": [
+      {
+        "text": "夜市",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "跟",
+        "alias": "and",
+        "meta": "@and",
+        "userDefined": true
+      },
+      {
+        "text": "麥當勞",
+        "alias": "food1",
+        "meta": "@sys.any",
+        "userDefined": false
+      },
+      {
+        "text": "哪個",
+        "userDefined": false
+      },
+      {
+        "text": "好",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "07c5890a-4c08-4e14-8145-1e94d9f8c9e1",
+    "data": [
+      {
+        "text": "便當",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "跟",
+        "alias": "and",
+        "meta": "@and",
+        "userDefined": true
+      },
+      {
+        "text": "千層糕",
+        "alias": "food1",
+        "meta": "@sys.any",
+        "userDefined": false
+      },
+      {
+        "text": "選",
+        "userDefined": false
+      },
+      {
+        "text": "一個",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "3dbfd7ce-6c23-41bc-886e-9f8edca53576",
+    "data": [
+      {
+        "text": "火雞肉飯",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "或",
+        "alias": "and",
+        "meta": "@and",
+        "userDefined": true
+      },
+      {
+        "text": "迴轉壽司",
+        "alias": "food1",
+        "meta": "@sys.any",
+        "userDefined": false
+      },
+      {
+        "text": "挑個",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "80862ba9-4e3a-4496-ba1a-f20801ad6b75",
+    "data": [
+      {
+        "text": "牛肉麵",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "與",
+        "alias": "and",
+        "meta": "@and",
+        "userDefined": true
+      },
+      {
+        "text": "湯餃",
+        "alias": "food1",
+        "meta": "@sys.any",
+        "userDefined": false
+      },
+      {
+        "text": "哪個",
+        "userDefined": false
+      },
+      {
+        "text": "好",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 1
+  },
+  {
+    "id": "2cc4a7af-1cc6-4b25-8d40-9576aa8a9522",
+    "data": [
+      {
+        "text": "炒麵",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "或",
+        "alias": "and",
+        "meta": "@and",
+        "userDefined": true
+      },
+      {
+        "text": "燒肉飯",
+        "alias": "food1",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "哪個",
+        "userDefined": false
+      },
+      {
+        "text": "好",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "0e39c7b4-724f-4adc-af32-bece2621fed4",
+    "data": [
+      {
+        "text": "紅豆餅",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "與",
+        "alias": "and",
+        "meta": "@and",
+        "userDefined": true
+      },
+      {
+        "text": "鳳梨酥",
+        "alias": "food1",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "選",
+        "userDefined": false
+      },
+      {
+        "text": "一個",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "a8cd294c-eb5b-4760-a36d-2b2c1d45641f",
+    "data": [
+      {
+        "text": "芋頭酥",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "與",
+        "alias": "and",
+        "meta": "@and",
+        "userDefined": true
+      },
+      {
+        "text": "鳳梨酥",
+        "alias": "food1",
+        "meta": "@sys.any",
+        "userDefined": false
+      },
+      {
+        "text": "哪個",
+        "userDefined": false
+      },
+      {
+        "text": "好",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "dcb61edb-677d-4b72-87fa-07c5d186fb31",
+    "data": [
+      {
+        "text": "奶油酥餅",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "與",
+        "alias": "and",
+        "meta": "@and",
+        "userDefined": true
+      },
+      {
+        "text": "叉燒酥",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "哪個",
+        "userDefined": false
+      },
+      {
+        "text": "好",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "65f95394-a4df-4d0e-bbb9-7c9430786ae6",
+    "data": [
+      {
+        "text": "夜市",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "或",
+        "alias": "and",
+        "meta": "@and",
+        "userDefined": true
+      },
+      {
+        "text": "牛排",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "挑",
+        "userDefined": false
+      },
+      {
+        "text": "一個",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "59defbb6-0ff6-470b-af9e-2ea6053fd038",
+    "data": [
+      {
+        "text": "燒賣",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "跟",
+        "alias": "and",
+        "meta": "@and",
+        "userDefined": true
+      },
+      {
+        "text": "雞腿飯",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "哪個",
+        "userDefined": false
+      },
+      {
+        "text": "好",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "80dadfe8-9382-48a8-a3f9-b62e389b9343",
+    "data": [
+      {
+        "text": "麥當勞",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "或",
+        "alias": "and",
+        "meta": "@and",
+        "userDefined": true
+      },
+      {
+        "text": "摩斯漢堡",
+        "alias": "food",
+        "meta": "@sys.any",
+        "userDefined": true
+      },
+      {
+        "text": "選",
+        "userDefined": false
+      },
+      {
+        "text": "一個",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 1
+  }
+]

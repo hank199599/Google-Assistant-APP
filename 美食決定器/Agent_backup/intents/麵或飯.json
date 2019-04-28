@@ -1,0 +1,52 @@
+{
+  "id": "8bd9de53-2ad2-4abd-b11d-5e694ef405cb",
+  "name": "麵或飯",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [
+        {
+          "name": "choice_rice_noodle",
+          "parameters": {},
+          "lifespan": 5
+        }
+      ],
+      "parameters": [
+        {
+          "id": "289e2008-0534-46f7-a819-70a0e9611c1e",
+          "required": false,
+          "dataType": "@yes",
+          "name": "yes",
+          "value": "$yes",
+          "isList": false
+        },
+        {
+          "id": "3ec7d44c-b6fe-41ac-9499-91b6a8aba772",
+          "required": false,
+          "dataType": "@and",
+          "name": "and",
+          "value": "$and",
+          "isList": false
+        },
+        {
+          "id": "c708e47e-3f8d-4f47-a843-828e4ab95d24",
+          "required": false,
+          "dataType": "@sys.number",
+          "name": "number",
+          "value": "$number",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "fallbackIntent": false,
+  "events": []
+}

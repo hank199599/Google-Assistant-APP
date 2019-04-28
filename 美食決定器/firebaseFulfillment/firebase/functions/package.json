@@ -1,0 +1,124 @@
+{
+  "name": "dialogflowFirebaseFulfillment",
+  "description": "This is the default fulfillment for a Dialogflow agents using Cloud Functions for Firebase",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache Version 2.0",
+  "author": "Google Inc.",
+  "engines": {
+    "node": "8"
+  },
+  "scripts": {
+    "start": "firebase serve --only functions:dialogflowFirebaseFulfillment",
+    "deploy": "firebase deploy --only functions:dialogflowFirebaseFulfillment"
+  },
+  "dependencies": {
+     "@google-cloud/firestore": "^0.16.1",
+    "actions-on-google": "^2.2.0",
+    "firebase-admin": "^6.0.0",
+    "firebase-functions": "^2.0.2",
+    "dialogflow": "^0.6.0",
+    "dialogflow-fulfillment": "^0.5.0"
+  }
+  ,
+  "user": {},
+  "device": {},
+  "surface": {
+    "capabilities": [
+      {
+        "name": "actions.capability.SCREEN_OUTPUT"
+      },
+      {
+        "name": "actions.capability.AUDIO_OUTPUT"
+      },
+      {
+        "name": "actions.capability.MEDIA_RESPONSE_AUDIO"
+      },
+      {
+        "name": "actions.capability.WEB_BROWSER"
+      }
+    ]
+  }, 
+  "actions": [{
+        "description": "Configure Update Intent",
+        "name": "Configure update",
+        "fulfillment": {
+          "conversationName": "configureUpdate"
+        },
+        "intent": {
+          "name": "actions.intent.CONFIGURE_UPDATES"
+        }
+      }
+    ],
+  "conversations": {
+        "configureUpdate": {
+        "name": "configure_routines",
+        "url": "YOUR_ENDPOINT_URL",
+        "fulfillmentApiVersion": 2
+      }
+    },
+  "inputs": [
+    {
+      "rawInputs": [],
+      "intent": "new_surface_intent",
+      "arguments": [
+        {
+          "name": "NEW_SURFACE",
+          "extension": {
+            "@type": "type.googleapis.com/google.actions.v2.NewSurfaceValue",
+            "status": "OK"
+          }
+        }
+      ]
+    }
+  ],
+  "availableSurfaces": [
+    {
+      "capabilities": [
+        {
+          "name": "actions.capability.SCREEN_OUTPUT"
+        },
+        {
+          "name": "actions.capability.AUDIO_OUTPUT"
+        },
+        {
+          "name": "actions.capability.MEDIA_RESPONSE_AUDIO"
+        },
+        {
+          "name": "actions.capability.WEB_BROWSER"
+        }
+      ]
+    }
+  ],
+  "expectUserResponse": true,
+  "expectedInputs": [
+    {
+      "inputPrompt": {
+        "richInitialPrompt": {
+          "items": [
+            {
+              "simpleResponse": {
+                "textToSpeech": "PLACEHOLDER"
+              }
+            }
+          ]
+        }
+	 }
+   }
+ ],
+      "possibleIntents": [
+        {
+          "intent": "在新裝置上進行對話",
+          "inputValueData": {
+            "@type": "type.googleapis.com/google.actions.v2.NewSurfaceValueSpec",
+            "capabilities": [
+              "actions.capability.SCREEN_OUTPUT"
+            ],
+            "context": "Sure, I have some sample images for you.",
+            "notificationTitle": "Sample Images"
+          }
+        }
+  ],
+  "conversationToken": "{\"data\":{}}",
+  "userStorage": "{\"data\":{}}"
+}

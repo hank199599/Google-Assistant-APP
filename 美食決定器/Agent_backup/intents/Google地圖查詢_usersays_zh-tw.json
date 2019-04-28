@@ -1,0 +1,356 @@
+[
+  {
+    "id": "04bf3efc-e2b2-41b4-8f2e-c2c165dbc131",
+    "data": [
+      {
+        "text": "覺得",
+        "userDefined": false
+      },
+      {
+        "text": "不",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      },
+      {
+        "text": "錯",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "227f5566-a53a-4b96-b2f3-979be3b77de3",
+    "data": [
+      {
+        "text": " OK",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "1549f766-2582-4cb0-b01b-5b3a30dc8fe4",
+    "data": [
+      {
+        "text": "感覺",
+        "userDefined": false
+      },
+      {
+        "text": "不",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      },
+      {
+        "text": "錯",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 1
+  },
+  {
+    "id": "2d6573f9-134f-4375-9672-4d10a178a4b4",
+    "data": [
+      {
+        "text": "好",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      },
+      {
+        "text": "啊",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "f4d57530-c288-4af8-a125-2baa09511c1d",
+    "data": [
+      {
+        "text": "可以",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 1
+  },
+  {
+    "id": "fa1b8a9a-4458-42d5-95b5-eb1bf258b287",
+    "data": [
+      {
+        "text": "感覺還行",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 1
+  },
+  {
+    "id": "fe11caaa-339e-416f-805c-7dd541668dd8",
+    "data": [
+      {
+        "text": "我覺得",
+        "userDefined": false
+      },
+      {
+        "text": "可以",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "051ffab8-03d7-4db2-a498-eb8a334f8ae2",
+    "data": [
+      {
+        "text": "好",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      },
+      {
+        "text": "吧",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "47693f7f-ce9c-4130-a3c7-16d0c3912155",
+    "data": [
+      {
+        "text": "搜尋",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "1763af30-081e-4932-8ff4-0ea7758b1ed2",
+    "data": [
+      {
+        "text": "在地圖上搜尋",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "dbc3a740-a495-47b9-9719-c15a2a8f97cd",
+    "data": [
+      {
+        "text": "在地圖上查詢",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "f075cc12-bd4a-4bc0-a702-75913e2c1631",
+    "data": [
+      {
+        "text": "我覺得「",
+        "userDefined": false
+      },
+      {
+        "text": "洋芋片",
+        "alias": "food",
+        "meta": "@food",
+        "userDefined": true
+      },
+      {
+        "text": "」",
+        "userDefined": false
+      },
+      {
+        "text": "可以",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "ff180f91-c87a-4e7f-84bc-e3a916cd243c",
+    "data": [
+      {
+        "text": "ok",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 1
+  },
+  {
+    "id": "0e2fe1a0-87bf-434c-873b-7c8a9ed5ee35",
+    "data": [
+      {
+        "text": "行",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 1
+  },
+  {
+    "id": "5d4528a3-8142-41e7-8cb3-af2dde372c24",
+    "data": [
+      {
+        "text": "我覺得「",
+        "userDefined": false
+      },
+      {
+        "text": "炒飯",
+        "alias": "food",
+        "meta": "@food",
+        "userDefined": false
+      },
+      {
+        "text": "」",
+        "userDefined": false
+      },
+      {
+        "text": "可以",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "740219df-e8cd-43ba-bd0b-d7a09cc7886a",
+    "data": [
+      {
+        "text": "在地圖上搜尋",
+        "userDefined": false
+      },
+      {
+        "text": "水餃",
+        "alias": "food",
+        "meta": "@food",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "cd477edd-8be9-43c8-99ac-2f78a5e647df",
+    "data": [
+      {
+        "text": "晚餐",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      },
+      {
+        "text": "可以",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      },
+      {
+        "text": "吃",
+        "userDefined": false
+      },
+      {
+        "text": "火雞肉飯",
+        "alias": "food",
+        "meta": "@food",
+        "userDefined": false
+      },
+      {
+        "text": "嗎",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "8130c19a-a791-47df-8fde-aef1cb9d5217",
+    "data": [
+      {
+        "text": "我想吃",
+        "userDefined": false
+      },
+      {
+        "text": "水餃",
+        "alias": "food",
+        "meta": "@food",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "af945782-7d92-4dfc-9d2e-7fb5811665b2",
+    "data": [
+      {
+        "text": "煎餃",
+        "alias": "food",
+        "meta": "@food",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "8b5ddb2f-60d4-4dc6-8487-a4d370fa91a0",
+    "data": [
+      {
+        "text": "燴飯",
+        "alias": "food",
+        "meta": "@food",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "77308ce5-0f72-4ab6-a84b-c322bf1fe8ad",
+    "data": [
+      {
+        "text": "煎餃",
+        "alias": "food",
+        "meta": "@food",
+        "userDefined": false
+      },
+      {
+        "text": "感覺不錯",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "269bbd1e-bd77-4be1-81c4-b1d5e4955586",
+    "data": [
+      {
+        "text": "炒飯",
+        "alias": "food",
+        "meta": "@food",
+        "userDefined": false
+      },
+      {
+        "text": "好了",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  }
+]

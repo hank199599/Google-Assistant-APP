@@ -1,0 +1,25 @@
+[
+  {
+    "id": "103ddde2-3d47-43d6-9352-c83ca4e4cc45",
+    "data": [
+      {
+        "text": "休息",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 1
+  },
+  {
+    "id": "e8a58221-f987-49bc-a2b3-6f495a9bb5ca",
+    "data": [
+      {
+        "text": "休息，是為了走更長遠的路",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  }
+]

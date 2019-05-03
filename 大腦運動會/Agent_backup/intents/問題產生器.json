@@ -1,0 +1,33 @@
+{
+  "id": "11bfa625-02bb-4561-b816-e52bef876472",
+  "name": "問題產生器",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": true,
+      "action": "",
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "f30f2ec9-b473-443a-b536-bc920d94d647",
+          "required": true,
+          "dataType": "@input",
+          "name": "input",
+          "value": "$input",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {
+        "google": false
+      },
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "fallbackIntent": false,
+  "events": []
+}

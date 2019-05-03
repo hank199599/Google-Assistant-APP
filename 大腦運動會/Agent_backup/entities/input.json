@@ -1,0 +1,9 @@
+{
+  "id": "b5af23a9-29c6-46c5-9918-0fdedf43b0c8",
+  "name": "input",
+  "isOverridable": true,
+  "isEnum": false,
+  "isRegexp": false,
+  "automatedExpansion": false,
+  "allowFuzzyExtraction": false
+}

@@ -1,0 +1,61 @@
+[
+  {
+    "id": "15ab8148-db2e-4526-958b-71a24fadb4e2",
+    "data": [
+      {
+        "text": "我要玩益智遊戲",
+        "meta": "@sys.ignore",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "23bbf676-be27-400a-84ce-c239c16b869f",
+    "data": [
+      {
+        "text": "我想玩益智遊戲",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "5c9ad73e-08d7-4beb-986a-981db9772b78",
+    "data": [
+      {
+        "text": "幫我叫大腦運動會",
+        "meta": "@sys.ignore",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "f27eb8ca-5d8c-4718-9b93-02d7abb57484",
+    "data": [
+      {
+        "text": "我要跟大腦運動會講話",
+        "meta": "@sys.ignore",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "1e0b894d-561e-4790-a991-6f5d36887a1e",
+    "data": [
+      {
+        "text": "打開大腦運動會",
+        "meta": "@sys.ignore",
+        "userDefined": true
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  }
+]

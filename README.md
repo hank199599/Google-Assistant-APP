@@ -14,9 +14,11 @@
 4. 為Dialogflow實現選擇正確的JSON文件，並記下該文件的URL (e.g. `https://${PROJECTID}.firebaseapp.com/v2/ActionsOnGoogle/RichResponses/SimpleResponse.json`)  
 5. 現在到Dialogflow控制台，並從左側導航菜單中選擇 **Fulfillment** 。  
 6. **Enable Webhook** > **URL** 到上一步的JSON文件的URL，然後選擇 **Save**.  
-7. 前往**Intents** 從左側導航菜單中，並建立您希望實現的意圖(Intent)，如'Default Welcome Intent'  
+7. 從左側導航菜單中前往**Intents** ，並建立您希望實現的意圖(Intent)，如'Default Welcome Intent'  
     + 選擇欲在 **Fulfillment** 實現呼叫的意圖(Intent)，進入選單。然後將「Enable WebWook Call for this Intent」打開  
-    + 在 **Fulfillment** > **Enable Webhook** 之中輸入欲呼叫的意圖(Intent)，像是這樣：  
+8. 從左側導航菜單中前往**Fulfillment** > 
+    + **Enable Webhook** 打開後
+    + 在下方的編輯框輸入欲呼叫的意圖(Intent)與回應，像是這樣：  
          app.intent('Default Welcome Intent', (conv) => {   
                      conv.ask('Hi,\n What can I do for you?');  
                      conv.ask(new Suggestions('GoodBye'));  

@@ -2,10 +2,9 @@
 
 在此提供我所製作的Google Assistant BOT 背後執行的代碼  
 
-部屬教學  
+部屬教學  [原始教學頁面](https://github.com/dialogflow/fulfillment-webhook-json#setup-instructions)  
 ----
-[原始教學頁面](https://github.com/dialogflow/fulfillment-webhook-json#setup-instructions)  
-+1. [註冊/登入](https://accounts.google.com/SignUp?hl=en) Google 帳號  
+1. [註冊/登入](https://accounts.google.com/SignUp?hl=en) Google 帳號  
 2. [建立一個 Firebase專案](https://console.firebase.google.com/)  
 3. 使用[Firebase託管](https://firebase.google.com/docs/hosting/)部署`responses`目錄:  
    + 按照說明[設置和初始化Firebase SDK for Cloud Functions](https://firebase.google.com/docs/functions/get-started#set_up_and_initialize_functions_sdk).   確保選擇之前在Google控制台上的操作中生成的項目，並在要求通過Firebase CLI覆蓋現有文件時回复“N”

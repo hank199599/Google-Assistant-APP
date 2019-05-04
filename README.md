@@ -2,8 +2,10 @@
 
 在此提供我所製作的Google Assistant BOT 背後執行的代碼  
 
-部屬教學  [原始教學頁面](https://github.com/dialogflow/fulfillment-webhook-json#setup-instructions)  
-----
+部屬教學  
+----  
+ [原始教學頁面](https://github.com/dialogflow/fulfillment-webhook-json#setup-instructions)   
+   
 1. [註冊/登入](https://accounts.google.com/SignUp?hl=en) Google 帳號  
 2. [建立一個 Firebase專案](https://console.firebase.google.com/)  
 3. 使用[Firebase託管](https://firebase.google.com/docs/hosting/)部署`responses`目錄:  
@@ -16,9 +18,9 @@
     + 選擇欲在 **Fulfillment** 實現呼叫的意圖(Intent)，進入選單。然後將「Enable WebWook Call for this Intent」打開  
     + 在 **Fulfillment** > **Enable Webhook** 之中輸入欲呼叫的意圖(Intent)，像是這樣：  
          app.intent('Default Welcome Intent', (conv) => {   
-         conv.ask('Hi,\n What can I do for you?');  
-         conv.ask(new Suggestions('GoodBye'));  
-          });    
+                     conv.ask('Hi,\n What can I do for you?');  
+                     conv.ask(new Suggestions('GoodBye'));  
+                });    
     
 額外需要的資源：
 -------

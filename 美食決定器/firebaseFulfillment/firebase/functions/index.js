@@ -19,7 +19,6 @@ const app = dialogflow({debug: true});
 var chosen='測試'; //宣告選擇的食物
 var type ='測試'; //宣告現在推薦的食物類別
 
-var picture_url='url';
 var time = new Date();
 var hour_now=(time.getHours()+8)%24; // 判斷現在時間自動給予建議
 var output_food=''; //更動輸出的美食發音
@@ -111,31 +110,25 @@ function Time_suggestion(){
 if(hour_now>=4&&hour_now<=8){      
       new Breakfast();
       type='早餐';icon='🌅';
-      picture_url='https://i.imgur.com/4fgZ5WT.png';
    }else if(hour_now>=9&&hour_now<=10){      
       new Breakfast();
       type='早午餐';icon='🌅';
-      picture_url='https://i.imgur.com/m1SvqAR.png';
    }
    else if(hour_now>=11&&hour_now<=13){ 
       new Lunch();
       type='午餐';icon='☀️';
-      picture_url='https://i.imgur.com/XPrb9hF.png';
    }
    else if(hour_now>=14&&hour_now<=16){
     new Afternoon_Tea();
       type='下午茶';icon='🌇';
-      picture_url='https://i.imgur.com/02WQr5G.png';
     } 
    else if(hour_now>=17&&hour_now<=20){ 
       new Dinner();
       type='晚餐';icon='🌃';
-      picture_url='https://i.imgur.com/2rMgl5I.png';
     }
      else{		  
        new Late_Night();
        type='宵夜';icon='🌙';
-       picture_url='https://i.imgur.com/rKVXihj.png';
       }
 }
 
@@ -161,7 +154,6 @@ app.intent('預設歡迎語句', (conv) => {
    if( chosen_link==='漢堡'){ chosen_link='漢堡店';}
    //輸出卡片
         conv.ask(new BasicCard({   
-        image: new Image({url:picture_url,alt:'Pictures',}),
         title: '覺得「'+chosen+'」如何呢?',
         subtitle: '基於現在'+hour_now+'點提供的'+type+'快速建議。  \n若建議可行請輕觸下方的搜尋地圖按鈕。  \n或輕觸建議卡片讓我想其他點子。',
         buttons: new Button({title:'在「地圖」中搜尋：'+chosen,url:'https://www.google.com.tw/maps/search/'+chosen_link+'/15z/data=!4m4!2m3!5m1!2e1!6e5',}), 

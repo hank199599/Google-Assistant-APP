@@ -32,8 +32,8 @@ Firebase：部屬Fulfillment
 
 其他教學頁面：
 -------
- [【Actions on Google 】五分鐘打造 Google 語音助理應用](https://makerpro.cc/2019/01/a-quick-start-for-google-actions/)
- [Google Assistant development with Actions on Google(Udemy)](https://www.udemy.com/actions-on-google-app-google-assistant/)
+ [【Actions on Google 】五分鐘打造 Google 語音助理應用](https://makerpro.cc/2019/01/a-quick-start-for-google-actions/)  
+ [Google Assistant development with Actions on Google(Udemy)](https://www.udemy.com/actions-on-google-app-google-assistant/)  
 
 
 詳細代碼說明與教學：  

@@ -30,6 +30,12 @@ Action on Google：發布應用至Google Assistant
 DialogFlow：設計對話與處理回應  
 Firebase：部屬Fulfillment  
 
+其他教學頁面：
+-------
+ [【Actions on Google 】五分鐘打造 Google 語音助理應用](https://makerpro.cc/2019/01/a-quick-start-for-google-actions/)
+ [Google Assistant development with Actions on Google(Udemy)](https://www.udemy.com/actions-on-google-app-google-assistant/)
+
+
 詳細代碼說明與教學：  
 -------
 Action on Google官方說明：https://developers.google.com/actions/  

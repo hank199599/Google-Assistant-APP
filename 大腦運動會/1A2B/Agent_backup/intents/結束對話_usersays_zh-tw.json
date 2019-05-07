@@ -1,0 +1,122 @@
+[
+  {
+    "id": "41255094-befb-4630-8f6d-6c4409ee2914",
+    "data": [
+      {
+        "text": "拜拜拜拜",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "90b03d7b-b570-48a4-a617-e90b25303f2e",
+    "data": [
+      {
+        "text": "拜拜",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1549474756
+  },
+  {
+    "id": "5208ca0f-04ec-4923-a09a-3eb9fe640527",
+    "data": [
+      {
+        "text": "不想",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "1903975a-b05a-452c-8efa-771c4f8b64a4",
+    "data": [
+      {
+        "text": "不",
+        "userDefined": false
+      },
+      {
+        "text": "要",
+        "meta": "@sys.ignore",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "512f8d16-3a69-44d8-934d-6737b2e23e7a",
+    "data": [
+      {
+        "text": "關閉",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1549475629
+  },
+  {
+    "id": "686f7f0c-00ed-49d8-b3a6-2ed2ea9b10d9",
+    "data": [
+      {
+        "text": "不了",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "b488ddde-f745-4f1c-b3ae-f5ce99fca309",
+    "data": [
+      {
+        "text": "離開",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1549475629
+  },
+  {
+    "id": "a1427ab3-955c-451d-bfd7-6195c9ae9244",
+    "data": [
+      {
+        "text": "👋 掰掰",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "c6526fd8-8b1e-4ce4-aaba-f29b26f05d63",
+    "data": [
+      {
+        "text": "再見",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1549474734
+  },
+  {
+    "id": "b22d6d5b-4a62-4e08-8d35-31bb94b66b40",
+    "data": [
+      {
+        "text": "掰掰",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1549474734
+  }
+]

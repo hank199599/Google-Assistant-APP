@@ -1,0 +1,57 @@
+[
+  {
+    "id": "47bdbccb-d66a-4d80-98d1-64c907c58dc7",
+    "data": [
+      {
+        "text": "持柴",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "c99f657e-7bb5-4892-b40d-2cc213108269",
+    "data": [
+      {
+        "text": "笨狗狗",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "543d4e0d-4a88-4cae-b8b8-21349919cd35",
+    "data": [
+      {
+        "text": "問號",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "5b688941-665f-4d29-be6b-0eb225d23e48",
+    "data": [
+      {
+        "text": "你在說啥",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 1
+  },
+  {
+    "id": "e2468ad7-e17f-4a8a-a28d-94e44c73cb40",
+    "data": [
+      {
+        "text": "柴柴",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  }
+]

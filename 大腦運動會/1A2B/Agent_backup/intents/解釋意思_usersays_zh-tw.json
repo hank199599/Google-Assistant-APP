@@ -1,0 +1,318 @@
+[
+  {
+    "id": "310a844a-1bc2-4a3d-bcb0-92fdac57e0c8",
+    "data": [
+      {
+        "text": "提示",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "dcb8dae6-f0d2-4f01-86e4-da22ea469229",
+    "data": [
+      {
+        "text": "解釋",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "2830996a-b349-41ca-b2ec-274157c5d777",
+    "data": [
+      {
+        "text": "解釋「",
+        "userDefined": false
+      },
+      {
+        "text": "0A0B",
+        "alias": "number",
+        "meta": "@sys.number",
+        "userDefined": false
+      },
+      {
+        "text": "」的意思",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "41d60a66-4892-41db-9cc9-f4c700617b1f",
+    "data": [
+      {
+        "text": "解釋「",
+        "userDefined": false
+      },
+      {
+        "text": "0A4B",
+        "alias": "number",
+        "meta": "@sys.number",
+        "userDefined": false
+      },
+      {
+        "text": "」的意思",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "734ad3c9-f2a6-4383-99ef-b29918963a93",
+    "data": [
+      {
+        "text": "解釋「",
+        "userDefined": false
+      },
+      {
+        "text": "2A0B",
+        "alias": "number",
+        "meta": "@sys.number",
+        "userDefined": false
+      },
+      {
+        "text": "」的意思",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "67d1943e-a348-4285-a100-5aa7ccc5c7c2",
+    "data": [
+      {
+        "text": "解釋「",
+        "userDefined": false
+      },
+      {
+        "text": "1A2B",
+        "alias": "number",
+        "meta": "@sys.number",
+        "userDefined": false
+      },
+      {
+        "text": "」的意思",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "1b648870-ab1f-44a9-988b-5f9bde03cbcb",
+    "data": [
+      {
+        "text": "解釋「",
+        "userDefined": false
+      },
+      {
+        "text": "2A2B",
+        "alias": "number",
+        "meta": "@sys.number",
+        "userDefined": false
+      },
+      {
+        "text": "」的意思",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "5bab91f6-3624-46ba-9ab8-bbc5fd5c4158",
+    "data": [
+      {
+        "text": "解釋「",
+        "userDefined": false
+      },
+      {
+        "text": "2A1B",
+        "alias": "number",
+        "meta": "@sys.number",
+        "userDefined": false
+      },
+      {
+        "text": "」的意思",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "28625c14-ef04-4efa-9638-1653454fba02",
+    "data": [
+      {
+        "text": "解釋「",
+        "userDefined": false
+      },
+      {
+        "text": "4A0B",
+        "alias": "number",
+        "meta": "@sys.number",
+        "userDefined": false
+      },
+      {
+        "text": "」的意思",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "c913bd92-283e-427a-88d5-8f80a74498f4",
+    "data": [
+      {
+        "text": "解釋「",
+        "userDefined": false
+      },
+      {
+        "text": "1A1B",
+        "alias": "number",
+        "meta": "@sys.number",
+        "userDefined": false
+      },
+      {
+        "text": "」的意思",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "128ac677-bcd3-4f32-99a0-92f8ed10673a",
+    "data": [
+      {
+        "text": "解釋「",
+        "userDefined": false
+      },
+      {
+        "text": "3A0B",
+        "alias": "number",
+        "meta": "@sys.number",
+        "userDefined": false
+      },
+      {
+        "text": "」的意思",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "2c97c237-218e-47e1-a760-f0fcb743040e",
+    "data": [
+      {
+        "text": "解釋「",
+        "userDefined": false
+      },
+      {
+        "text": "0A3B",
+        "alias": "number",
+        "meta": "@sys.number",
+        "userDefined": false
+      },
+      {
+        "text": "」的意思",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "51c48202-1dc6-40a4-ac8d-adb3f98b7506",
+    "data": [
+      {
+        "text": "解釋「",
+        "userDefined": false
+      },
+      {
+        "text": "1A3B",
+        "alias": "number",
+        "meta": "@sys.number",
+        "userDefined": false
+      },
+      {
+        "text": "」的意思",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "57f74a8a-7ade-4782-94f0-17fb388c636b",
+    "data": [
+      {
+        "text": "解釋「",
+        "userDefined": false
+      },
+      {
+        "text": "0A2B",
+        "alias": "number",
+        "meta": "@sys.number",
+        "userDefined": false
+      },
+      {
+        "text": "」的意思",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "f721f421-4883-422e-bac1-754fa045752d",
+    "data": [
+      {
+        "text": "解釋「",
+        "userDefined": false
+      },
+      {
+        "text": "1A0B",
+        "alias": "number",
+        "meta": "@sys.number",
+        "userDefined": false
+      },
+      {
+        "text": "」的意思",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "c3b330f8-3924-4fdb-b27f-f4e765250504",
+    "data": [
+      {
+        "text": "解釋「",
+        "userDefined": false
+      },
+      {
+        "text": "0A1B",
+        "alias": "number",
+        "meta": "@sys.number",
+        "userDefined": false
+      },
+      {
+        "text": "」的意思",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  }
+]

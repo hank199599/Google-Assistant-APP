@@ -1,0 +1,35 @@
+[
+  {
+    "id": "b0e044ee-ea31-4d79-bbde-12b4884805d8",
+    "data": [
+      {
+        "text": "看不懂",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "39afd220-6fb6-45c6-8209-5d4b429991bc",
+    "data": [
+      {
+        "text": "還是不懂",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  },
+  {
+    "id": "ba224da6-f7ac-4468-8260-76844f145329",
+    "data": [
+      {
+        "text": "問號",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0
+  }
+]

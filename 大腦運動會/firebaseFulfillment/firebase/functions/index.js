@@ -57,7 +57,7 @@ var roundDecimal = function (val, precision) { //進行四捨五入的函式呼�
 var Buttontext="";     
 var ButtonURL="";
 var selector=0;var section=0;
-var inputarray=["🔄 重新開始","⚡ 重新快速模式","🎮 試試一般模式","再來一次","再玩一次","再試一次","再來","重新開始","快速模式","試試一般模式","重來","好","OK","可以","再一次","好啊","重新快速模式"];
+var inputarray=["🔄 重新開始","🎮 試試一般模式","再來一次","再玩一次","再試一次","再來","重新開始","試試一般模式","重來","好","OK","可以","再一次","好啊"];
 
 
 //歡迎畫面
@@ -125,15 +125,11 @@ app.intent('問題產生器', (conv,{input}) => {
  next_question=conv.user.storage.next_question;
  Buttontext=conv.user.storage.Buttontext;
  ButtonURL=conv.user.storage.ButtonURL;
-   if(input==='開始遊戲'){ menu=true;question_output=false;answer_input=false;end_game=false;next_question=false;
+   if(input.indexOf('開始')!==-1){ menu=true;question_output=false;answer_input=false;end_game=false;next_question=false;
  heart_count=3;Total_Count=0;Correct_Count=0; Wrong_Count=0;
  Q_list= [];}
 
- if(input==='快速模式'){ menu=true;question_output=false;answer_input=false;end_game=false;next_question=false;
- heart_count=3;Total_Count=0;Correct_Count=0; Wrong_Count=0;
- Q_list= [];}
 
-  
 //「開始遊戲」啟動詞判斷
   if(menu===true&&end_game===false&&question_output===false&&answer_input===false&&end_game===false&&next_question===false){
     menu=false;question_output=true;answer_input=false;end_game=false;next_question=false;

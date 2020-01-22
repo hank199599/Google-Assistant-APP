@@ -1,41 +1,43 @@
 {
-  "name": "dialogflowFirebaseFulfillment",
+  "name": "game",
+  "messageType": "google.actions.v2.game.Game",
+  "externalType": "org.schema.type.Game",
+  "initializedValue": {
+    "@type": "Game",
+    "@context": "https://schema.org"
+  },
   "description": "This is the default fulfillment for a Dialogflow agents using Cloud Functions for Firebase",
   "version": "0.0.1",
   "private": true,
   "license": "Apache Version 2.0",
-  "author": "Shao Hung Yu",
+  "author": "Google Inc.",
   "engines": {
     "node": "8"
   },
   "scripts": {
-    "start": "firebase serve --only functions:dialogflowFirebaseFulfillment",
-    "deploy": "firebase deploy --only functions:dialogflowFirebaseFulfillment"
+    "serve": "firebase serve --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
   },
   "dependencies": {
-     "@google-cloud/firestore": "^0.16.1",
-    "actions-on-google": "^2.2.0",
-    "firebase-admin": "^6.0.0",
-    "firebase-functions": "^2.0.2",
+    "@google-cloud/firestore": "^0.16.1",
+    "actions-on-google": "^2.9.1",
     "dialogflow": "^0.6.0",
-    "dialogflow-fulfillment": "^0.5.0"
+    "dialogflow-fulfillment": "^0.5.0",
+    "firebase-admin": "^8.0.0",
+    "firebase-functions": "^3.0.2",
+    "get-json": "^1.0.1",
+    "replace-string": "^3.0.0"
   },
- "actions": [{
-        "description": "Configure Update Intent",
-        "name": "configure_routines",
-        "fulfillment": {
-          "conversationName": "configureUpdate"
-        },
-        "intent": {
-          "name": "actions.intent.CONFIGURE_UPDATES"
-        }
-      }
-    ],
-    "conversation": {
-      "configureUpdate": {
-        "name": "configure_routines",
-        "url": "YOUR_ENDPOINT_URL",
-        "fulfillmentApiVersion": 2
-      }
+  "exampleValues": [
+    {
+      "@type": "Game",
+      "@context": "https://schema.org",
+      "name": "大腦運動會",
+      "genre": "益智",
+      "description": "在娛樂中增長知識的小遊戲!"
     }
+  ]
 }

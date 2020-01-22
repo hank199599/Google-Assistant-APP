@@ -31,7 +31,7 @@ var Picture_url='';
 var Question_Title='';var Answer_A='';var Answer_B='';var Answer_C='';var Answer_D='';var Currect='';var Currect_Answer='';
 var Question_Title_Output='';var Answer_A_Output='';var Answer_B_Output='';var Answer_C_Output='';var Answer_D_Output='';var Currect_Answer_Output='';
 var Q=0; //提取題目編號
-var Q_Total=730; //題目總數
+var Q_Total=1; //題目總數
 var Q_list=new Array([]);//儲存題目編號
 var output_array="";
 var count=0;
@@ -54,7 +54,6 @@ var answer_input=false; //判別是否輸入許可的答案
 var next_question=false; //判別是否輸入許可的答案
 var roundDecimal = function (val, precision) { //進行四捨五入的函式呼叫
   return Math.round(Math.round(val * Math.pow(10, (precision || 0) + 1)) / 10) / Math.pow(10, (precision || 0));};
-var Buttontext="";     
 var ButtonURL="";
 var selector=0;var section=0;
 var inputarray=["🔄 重新開始","🎮 試試一般模式","再來一次","再玩一次","再試一次","再來","重新開始","試試一般模式","重來","好","OK","可以","再一次","好啊"];
@@ -123,7 +122,6 @@ app.intent('問題產生器', (conv,{input}) => {
  question_output=conv.user.storage.question_output;
  answer_input=conv.user.storage.answer_input;
  next_question=conv.user.storage.next_question;
- Buttontext=conv.user.storage.Buttontext;
  ButtonURL=conv.user.storage.ButtonURL;
    if(input.indexOf('開始')!==-1){ menu=true;question_output=false;answer_input=false;end_game=false;next_question=false;
  heart_count=3;Total_Count=0;Correct_Count=0; Wrong_Count=0;
@@ -165,8 +163,6 @@ if(menu===false&&question_output===true&&answer_input===false&&end_game===false&
   count= Object.keys(Q_list).length;
   output_array=question_list[Q];
   Question_Title=output_array[0]; //選出這次的題目標題
-  Buttontext=output_array[5]; //取得本題目的正確選項之連結按鈕文字說明
-  ButtonURL=output_array[6];  //取得本題目的正確選項之連結網址
 
   selector=parseInt(Math.random()*3);   //選擇正確答案之位置
   section=parseInt(Math.random()*5);    //選擇其餘錯誤選項之排列方式
@@ -315,21 +311,13 @@ if(input===Currect){
   if(input==='A'){Your_choice=Answer_A;}else if(input==='B'){Your_choice=Answer_B;}else if(input==='C'){Your_choice=Answer_C;}else if(input==='D'){Your_choice=Answer_D;}
  
   Outputtext='第'+Total_Count+'題 • 血量條 '+heart;	
-    if(Buttontext==="維基百科："){
-    conv.ask(new BasicCard({   
-        title:'你選擇 ('+input+') '+Your_choice,
-        subtitle:Output_SubTitle+'\n\n〈原始題目〉 \n'+Question_Title,
-        text:Outputtext,
-	    }));}
-	else{
-    conv.ask(new BasicCard({   
-        title:'你選擇 ('+input+') '+Your_choice,
-        subtitle:Output_SubTitle+'\n\n〈原始題目〉 \n'+Question_Title,
-        text:Outputtext,
-		buttons: new Button({title:Buttontext,url:ButtonURL,}), 
-	}));}
 
-  
+    conv.ask(new BasicCard({   
+        title:'你選擇 ('+input+') '+Your_choice,
+        subtitle:Output_SubTitle+'\n\n〈原始題目〉 \n'+Question_Title,
+        text:Outputtext,
+	    }));
+
     conv.ask(new Suggestions(suggestion));
   }
  else{
@@ -377,7 +365,6 @@ else{ 	 conv.ask(new SimpleResponse({
  conv.user.storage.question_output=question_output;
  conv.user.storage.answer_input=answer_input;
  conv.user.storage.next_question=next_question;
- conv.user.storage.Buttontext=Buttontext;
  conv.user.storage.ButtonURL=ButtonURL;
 
 });

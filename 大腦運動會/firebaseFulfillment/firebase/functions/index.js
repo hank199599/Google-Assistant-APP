@@ -19,7 +19,7 @@ const replaceString = require('replace-string');
 
 // Instantiate the Dialogflow client.
 const app = dialogflow({debug: true});
-var question_list = require('./question_list'); //引用外部函數來輸入國旗答案與解釋
+var question_list = require('./question_list.json'); //引用外部函數來輸入國旗答案與解釋
 
 //宣告陣列，隨機挑選開始畫面圖片
 
@@ -195,7 +195,7 @@ if(menu===false&&question_output===true&&answer_input===false&&end_game===false&
   Q_list.push(Q);// 將現在選出的編號存入陣列
   
   count= Object.keys(Q_list).length;
-  output_array=question_list.selector(Q);
+  output_array=question_list[Q];
   Question_Title=output_array[0]; //選出這次的題目標題
   Buttontext=output_array[5]; //取得本題目的正確選項之連結按鈕文字說明
   ButtonURL=output_array[6];  //取得本題目的正確選項之連結網址

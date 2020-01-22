@@ -34,9 +34,7 @@ var Q=0; //提取題目編號
 var Q_Total=730; //題目總數
 var Q_list=new Array([]);//儲存題目編號
 var output_array="";
-var quickmode=false;
-var quickmode_count=9;var count=0;
-var quickmode_notifyer=false;
+var count=0;
 var heart_count=3;//你的血量數
 var heart='';//你的血量(圖示化表示)
 var Total_Count=0; //統計已答題的總個數
@@ -54,12 +52,6 @@ var end_game=false;        //判別遊戲是否已結束
 var question_output=false; //判別是否拿到出題目許可
 var answer_input=false; //判別是否輸入許可的答案
 var next_question=false; //判別是否輸入許可的答案
-var Correct_sound='https://firebasestorage.googleapis.com/v0/b/hank199599.appspot.com/o/%E7%AD%94%E5%B0%8D%E9%9F%B3%E6%95%88.mp3?alt=media';
-var Wrong_sound='https://firebasestorage.googleapis.com/v0/b/hank199599.appspot.com/o/%E7%AD%94%E9%8C%AF%E9%9F%B3%E6%95%88.mp3?alt=media';
-var Appaused_sound='https://firebasestorage.googleapis.com/v0/b/hank199599.appspot.com/o/Applause%20sound%20effect%20clapping%20sounds.mp3?alt=media';
-var fail_sound='https://firebasestorage.googleapis.com/v0/b/hank199599.appspot.com/o/%E5%A4%B1%E6%95%97%E9%9F%B3%E6%95%88.mp3?alt=media';
-var welcome_sound="https://firebasestorage.googleapis.com/v0/b/hank199599.appspot.com/o/1990s-filtered_127bpm_A_major.wav?alt=media";
-var calculate_sound="https://firebasestorage.googleapis.com/v0/b/hank199599.appspot.com/o/%E8%A8%88%E7%AE%97%E9%9F%B3%E6%A0%A1.mp3?alt=media";
 var roundDecimal = function (val, precision) { //進行四捨五入的函式呼叫
   return Math.round(Math.round(val * Math.pow(10, (precision || 0) + 1)) / 10) / Math.pow(10, (precision || 0));};
 var Buttontext="";     
@@ -72,24 +64,24 @@ var inputarray=["🔄 重新開始","⚡ 重新快速模式","🎮 試試一般�
 app.intent('預設歡迎語句', (conv) => { 
 
  menu=true;question_output=false;answer_input=false;end_game=false;next_question=false;
- quickmode=false;quickmode_count=9;heart_count=3;Total_Count=0;Correct_Count=0; Wrong_Count=0;quickmode_notifyer=false;
+ heart_count=3;Total_Count=0;Correct_Count=0; Wrong_Count=0;
  Q_list= [];
  Picture_url=theArray[ranFun()];
     if (conv.user.last.seen) { conv.ask(new SimpleResponse({               
-                      speech: `<speak><audio src="${welcome_sound}"/><prosody volume="loud"><p><s>歡迎遊玩大腦運動會!</s><s>準備好就說聲「開始遊戲」接受挑戰八!</s></p></prosody></speak>`,
+                      speech: `<speak><prosody volume="loud"><p><s>歡迎遊玩大腦運動會!</s><s>準備好就說聲「開始遊戲」接受挑戰八!</s></p></prosody></speak>`,
                        text: '歡迎回來!',}));
    } else {conv.ask(new SimpleResponse({               
-                      speech: `<speak><audio src="${welcome_sound}"/><prosody volume="loud"><p><s>歡迎遊玩大腦運動會!</s><s>本服務內含有數百題的益智問答，若你的錯誤次數超過3次，遊戲就結束!</s><s>準備好就說聲「開始遊戲」接受挑戰八!</s></p></prosody></speak>`,
+                      speech: `<speak><prosody volume="loud"><p><s>歡迎遊玩大腦運動會!</s><s>本服務內含有數百題的益智問答，若你的錯誤次數超過3次，遊戲就結束!</s><s>準備好就說聲「開始遊戲」接受挑戰八!</s></p></prosody></speak>`,
                        text: '歡迎使用「大腦運動會」!',}));}
  
         conv.ask(new BasicCard({   
         image: new Image({url:Picture_url,alt:'Pictures',}),
         title: '準備好接受問題轟炸了嗎?',
-        subtitle:'本服務內含有數百題的益智問答，  \n若你的錯誤次數超過3次，遊戲就結束!  \n準備好就按下「開始遊戲」接受挑戰吧!',
+        subtitle:'若你的錯誤次數超過3次，遊戲就結束!  \n準備好就按下「開始遊戲」接受挑戰吧!',
         text:'圖片來源：Pxhere & NASA (CC0 公共領域授權)',
         display: 'CROPPED',//更改圖片顯示模式為自動擴展
         }));
- conv.ask(new Suggestions('🎮 開始遊戲','⚡ 快速模式','👋 掰掰'));
+ conv.ask(new Suggestions('🎮 開始遊戲','👋 掰掰'));
 
  //參數同步回手機
  conv.user.storage.Question_Title=Question_Title;
@@ -98,11 +90,7 @@ app.intent('預設歡迎語句', (conv) => {
  conv.user.storage.Answer_C=Answer_C;
  conv.user.storage.Answer_D=Answer_D;
  conv.user.storage.Currect=Currect;
- 
  conv.user.storage.Q_list=Q_list;
- conv.user.storage.quickmode=quickmode;
- conv.user.storage.quickmode_count=quickmode_count;
- conv.user.storage.quickmode_notifyer=quickmode_notifyer;
  conv.user.storage.heart_count=heart_count;
  conv.user.storage.Total_Count=Total_Count;
  conv.user.storage.Correct_Count=Correct_Count;
@@ -124,11 +112,7 @@ app.intent('問題產生器', (conv,{input}) => {
  Answer_C=conv.user.storage.Answer_C;
  Answer_D=conv.user.storage.Answer_D;
  Currect=conv.user.storage.Currect;
- 
  Q_list=conv.user.storage.Q_list;
- quickmode=conv.user.storage.quickmode;
- quickmode_count=conv.user.storage.quickmode_count;
- quickmode_notifyer=conv.user.storage.quickmode_notifyer;
  heart_count=conv.user.storage.heart_count;
  Total_Count=conv.user.storage.Total_Count;
  Correct_Count=conv.user.storage.Correct_Count;
@@ -142,21 +126,17 @@ app.intent('問題產生器', (conv,{input}) => {
  Buttontext=conv.user.storage.Buttontext;
  ButtonURL=conv.user.storage.ButtonURL;
    if(input==='開始遊戲'){ menu=true;question_output=false;answer_input=false;end_game=false;next_question=false;
- quickmode=false;quickmode_count=9;heart_count=3;Total_Count=0;Correct_Count=0; Wrong_Count=0;quickmode_notifyer=false;
+ heart_count=3;Total_Count=0;Correct_Count=0; Wrong_Count=0;
  Q_list= [];}
 
  if(input==='快速模式'){ menu=true;question_output=false;answer_input=false;end_game=false;next_question=false;
- quickmode=true;quickmode_count=9;heart_count=3;Total_Count=0;Correct_Count=0; Wrong_Count=0;quickmode_notifyer=false;
+ heart_count=3;Total_Count=0;Correct_Count=0; Wrong_Count=0;
  Q_list= [];}
 
   
-  
 //「開始遊戲」啟動詞判斷
   if(menu===true&&end_game===false&&question_output===false&&answer_input===false&&end_game===false&&next_question===false){
-   if(input==='快速模式'||input==='⚡ 快速模式'){quickmode=true;input='快速模式';}
-   else{input='開始遊戲';quickmode=false;}
-    
-   if(input==='開始遊戲'||input==='快速模式'){ menu=false;question_output=true;answer_input=false;end_game=false;next_question=false;}
+    menu=false;question_output=true;answer_input=false;end_game=false;next_question=false;
   }
   //「下一題」啟動詞判斷
  if(menu===false&&question_output===true&&answer_input===false&&end_game===false&&next_question===true){
@@ -173,16 +153,8 @@ app.intent('問題產生器', (conv,{input}) => {
  if(menu===false&&question_output===false&&answer_input===false&&end_game===true&&next_question===false){
   
  if(inputarray.indexOf(input)!==-1){
-  if(quickmode===true){
-    if(input==='試試一般模式'){quickmode=false;}
-    input='重新開始';
-  }
-  else{quickmode=false;input='重新開始';}
- }
-
- if(input==='重新開始'){
     conv.ask('熱機已完成，開始你的問題!'); 
-    quickmode_count=9;heart_count=3;Total_Count=0;Correct_Count=0; Wrong_Count=0;
+    heart_count=3;Total_Count=0;Correct_Count=0; Wrong_Count=0;
     menu=false;question_output=true;answer_input=false;end_game=false;next_question=false;}
   }
   
@@ -249,28 +221,17 @@ if(menu===false&&question_output===true&&answer_input===false&&end_game===false&
   Answer_C_Output=replaceString(Answer_C_Output, '傳》', '饌》');
   Answer_D_Output=replaceString(Answer_D_Output, '傳》', '饌》');
 
-  if(quickmode===true){quickmode_count=10-Total_Count;}//若為快速模式，則進行quickmode_count數值更動
-  if(quickmode===true&&quickmode_notifyer===false){
-  conv.ask(new SimpleResponse({speech:'於此模式下，總共有十題題目。失敗三次一樣會直接結束,祝你好運!',text:'⚡快速模式說明  \n共十題題目，失敗三次一樣會直接結束!',}));
-  quickmode_notifyer=true;}
   conv.ask(new SimpleResponse({speech:`<speak><p><s>第${Total_Count}題</s><break time="0.2s"/><s>${Question_Title_Output}</s><break time="0.15s"/><s>A、${Answer_A_Output}</s><break time="0.1s"/><s> B、${Answer_B_Output}</s><break time="0.1s"/><s>西、${Answer_C_Output}</s><break time="0.1s"/><s>D、${Answer_D_Output}</s><break time="0.1s"/></p></speak>`,text: '熱騰騰的題目來啦!'} ));
  
   //輸出圖像化的血量條
     if(heart_count==3){heart='⚫⚫⚫';}else if(heart_count==2){heart='⚫⚫';}else if(heart_count==1){heart='⚫';}
 
 	if(conv.user.verification === 'VERIFIED'){
-	  if(quickmode===true){  
-	   conv.ask(new BasicCard({   
-			title:'第'+Total_Count+'題/共10題  \n'+Question_Title,
-			subtitle:'⚡你正處於「快速遊玩」模式  \n  \n(A) '+Answer_A+'  \n(B) '+Answer_B+'  \n(C) '+Answer_C+'  \n(D) '+Answer_D+'  \n',   
-			text:'血量條 '+heart,
-	  }));}
-		  else{
 		 conv.ask(new BasicCard({
 			title:Total_Count+'.'+Question_Title,
 			subtitle:'   \n(A) '+Answer_A+'  \n(B) '+Answer_B+'  \n(C) '+Answer_C+'  \n(D) '+Answer_D+'  \n',   
 			text:'血量條 '+heart,
-	  }));}
+	  }));
   conv.ask(new Suggestions('    A    ','    B    ','    C    ','    D    '));
 	}else{
 		conv.ask(new SimpleResponse({               
@@ -289,8 +250,7 @@ else if(menu===true&&question_output===false&&answer_input===false&&end_game===t
 	 Prograss=(Total_Count/Q_Total)*100;
      Prograss=roundDecimal(Prograss, 1);
 	 
-    if(quickmode===true){conv.ask(new Suggestions('⚡ 重新快速模式','🎮 試試一般模式','👋 掰掰'));}
-	else{conv.ask(new Suggestions('🔄 重新開始','👋 掰掰'));}
+    conv.ask(new Suggestions('🔄 重新開始','👋 掰掰'));
     conv.ask(new SimpleResponse({speech:`<speak><audio src="${calculate_sound}"/><prosody volume="loud"><p><s>根據Google神通廣大的雲端計算!</s><s>你在這回合一共進行<break time="0.05s"/>${Total_Count}<break time="0.03s"/>題題目。</s><s>你要再試一次嗎?</s></p></prosody></speak>`,text: '驗收成果'}
                               ));
     conv.ask(new BasicCard({   
@@ -345,31 +305,20 @@ if(input===Currect){
     if(output_charactor==='C'){output_charactor='西';}
   //輸出文字
  var suggestion=''; var speech='';var outputtext='';
-  if(quickmode===false){
+
      if(heart_count>=1){
-       if(input===Currect){ conv.ask(new SimpleResponse({speech:`<speak><audio src="${Correct_sound}"/>恭喜你答對拉!</speak>`,text:'恭喜答對拉 🎉'})); suggestion='    下一題    ';}
+       if(input===Currect){ conv.ask(new SimpleResponse({speech:`<speak>恭喜你答對拉!</speak>`,text:'恭喜答對拉 🎉'})); suggestion='    下一題    ';}
        else{ 
-            conv.ask(new SimpleResponse({speech:`<speak><audio src="${Wrong_sound}"/>答錯啦!正確答案為${output_charactor}、${Currect_Answer_Output}</speak>`,text:'再接再厲 💪'}));
+            conv.ask(new SimpleResponse({speech:`<speak>答錯啦!正確答案為${output_charactor}、${Currect_Answer_Output}</speak>`,text:'再接再厲 💪'}));
             suggestion='    下一題    ';}
       }
        else{
-          conv.ask(new SimpleResponse({speech:`<speak><audio src="${fail_sound}"/>回合結束!這題正確答案為${output_charactor}、${Currect_Answer_Output}</speak>`,text:'別氣餒，下次再加油 🥊'}));
-         suggestion='休息，是為了走更長遠的路';quickmode_count=0;menu=false;question_output=false;answer_input=true;end_game=true;next_question=false;}
-  }else{
-     if(heart_count>=1&&quickmode_count>=1){
-          if(input===Currect){  conv.ask(new SimpleResponse({speech:`<speak><audio src="${Correct_sound}"/>恭喜你答對拉!</speak>`,text:'恭喜答對拉 🎉'})); suggestion='    下一題    ';}
-          else{ conv.ask(new SimpleResponse({speech:`<speak><audio src="${Wrong_sound}"/>答錯啦!正確答案為${output_charactor}、${Currect_Answer_Output}</speak>`,text:'再接再厲 💪'}));
-                suggestion='    下一題    ';}
-      }
-       else if(quickmode_count===0){ 
-         conv.ask(new SimpleResponse({speech:`<speak><audio src="${Appaused_sound}"/>恭喜你破關拉!這題正確答案為${output_charactor}、${Currect_Answer_Output}</speak>`,text:'恭喜你完成啦 👏'}));
-         suggestion='休息，是為了走更長遠的路';menu=false;question_output=false;answer_input=true;end_game=true;next_question=false;}else{ 
-        conv.ask(new SimpleResponse({speech:`<speak><audio src="${fail_sound}"/>回合結束!這題正確答案為${output_charactor}、${Currect_Answer_Output}</speak>`,text:'別氣餒，下次再加油 🥊'}));
+          conv.ask(new SimpleResponse({speech:`<speak>回合結束!這題正確答案為${output_charactor}、${Currect_Answer_Output}</speak>`,text:'別氣餒，下次再加油 🥊'}));
          suggestion='休息，是為了走更長遠的路';menu=false;question_output=false;answer_input=true;end_game=true;next_question=false;}
-  }
   
   if(input==='A'){Your_choice=Answer_A;}else if(input==='B'){Your_choice=Answer_B;}else if(input==='C'){Your_choice=Answer_C;}else if(input==='D'){Your_choice=Answer_D;}
-  if(quickmode===false){Outputtext='第'+Total_Count+'題 • 血量條 '+heart;}else{Outputtext='第'+Total_Count+'題 • **快速模式** • '+'血量條 '+heart;}	
+ 
+  Outputtext='第'+Total_Count+'題 • 血量條 '+heart;	
     if(Buttontext==="維基百科："){
     conv.ask(new BasicCard({   
         title:'你選擇 ('+input+') '+Your_choice,
@@ -390,23 +339,15 @@ if(input===Currect){
  else{
   conv.ask(new SimpleResponse({speech:'請點選建議卡片或說出選項內容，來回答問題!',text:'請點選建議卡片或說出選項內容!'}));
   if(heart_count==3){heart='⚫⚫⚫';}else if(heart_count==2){heart='⚫⚫';}else if(heart_count==1){heart='⚫';}
-  if(quickmode===true){ 
-   conv.ask(new BasicCard({   
-        title:'第'+Total_Count+'題/共10題  \n'+Question_Title,
-        subtitle:'⚡你正處於「快速遊玩」模式  \n  \n(A) '+Answer_A+'  \n(B) '+Answer_B+'  \n(C) '+Answer_C+'  \n(D) '+Answer_D+'  \n',   
-        text:'血量條 '+heart,
-  }));}
-      else{
      conv.ask(new BasicCard({
         title:Total_Count+'.'+Question_Title,
         subtitle:'   \n(A) '+Answer_A+'  \n(B) '+Answer_B+'  \n(C) '+Answer_C+'  \n(D) '+Answer_D+'  \n',   
         text:'血量條 '+heart,
-  }));}
+  }));
  conv.ask(new Suggestions('    A    ','    B    ','    C    ','    D    '));}
 }
 else if(menu===false&&question_output===false&&answer_input===false&&end_game===true&&next_question===false){
-    if(quickmode===true){conv.ask(new Suggestions('⚡ 重新快速模式','🎮 試試一般模式','👋 掰掰'));}
-	       else{conv.ask(new Suggestions('🔄 重新開始','👋 掰掰'));}
+    conv.ask(new Suggestions('🔄 重新開始','👋 掰掰'));
     conv.ask(new SimpleResponse(
 	{speech:`<speak><p><s>不好意思，我沒聽清楚。\n</s><s>請試著說<break time="0.2s"/>重新開始<break time="0.2s"/>或<break time="0.2s"/>掰掰<break time="0.2s"/>來確認你的操作。</s></p></speak>`,
 	text: '抱歉，我不懂你的意思。\n請點擊建議卡片來確認你的操作。'}));
@@ -430,9 +371,6 @@ else{ 	 conv.ask(new SimpleResponse({
  conv.user.storage.Answer_D=Answer_D;
  conv.user.storage.Currect=Currect;
  conv.user.storage.Q_list=Q_list;
- conv.user.storage.quickmode=quickmode;
- conv.user.storage.quickmode_count=quickmode_count;
- conv.user.storage.quickmode_notifyer=quickmode_notifyer;
  conv.user.storage.heart_count=heart_count;
  conv.user.storage.Total_Count=Total_Count;
  conv.user.storage.Correct_Count=Correct_Count;

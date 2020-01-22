@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 
 // Import the Dialogflow module from the Actions on Google client library.
 const {

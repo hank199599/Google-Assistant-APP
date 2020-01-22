@@ -19,12 +19,12 @@ const app = dialogflow({debug: true});
 var chosen='測試'; //宣告選擇的食物
 var type ='測試'; //宣告現在推薦的食物類別
 
+var picture_url='url';
 var time = new Date();
 var hour_now=(time.getHours()+8)%24; // 判斷現在時間自動給予建議
 var output_food=''; //更動輸出的美食發音
 var tip=false;//判別是否已經提示
 var I_think='';
-var thistime_food='';var lasttime_food='';
 var icon='';
 var number=0;//這次選取的數字
 var thistime=0;//儲存這次編號
@@ -47,7 +47,11 @@ function Breakfast(){
           theArray[30]="蛋";theArray[31]="饅頭";theArray[32]="熱狗捲";theArray[33]="粥";theArray[34]="帕尼尼";theArray[35]="貝果";theArray[36]="米堡";theArray[37]="捲餅";theArray[38]="排骨湯";theArray[39]="燕麥片";
           theArray[40]="餡餅";theArray[41]="薯條";theArray[42]="三明治";
           function ranFun(){return parseInt(Math.random()*42);}
-          chosen=theArray[ranFun()];}
+		  number=ranFun();
+		  new Small_picker();
+          chosen=theArray[number];
+		  
+		  }
 		  
 function Lunch(){
           theArray[0]="饅頭";theArray[1]="蛋餅";theArray[2]="吐司";theArray[3]="總匯";theArray[4]="漢堡";theArray[5]="炒麵";theArray[6]="煎餃";theArray[7]="三明治";theArray[8]="刈包";theArray[9]="沙拉";
@@ -60,7 +64,9 @@ function Lunch(){
           theArray[70]="飯糰";theArray[71]="牛肉麵";theArray[72]="熱狗捲";theArray[73]="美式料理";theArray[74]="帕帕尼";theArray[75]="拼盤";theArray[76]="滷肉飯";theArray[77]="炸菜肉絲麵";theArray[78]="雞腿飯";theArray[79]="焗烤";
           theArray[80]="速食店";theArray[81]="排骨湯";theArray[82]="餡餅"; theArray[83]="薯條";theArray[84]="麥當勞";theArray[85]="肯德基";theArray[86]="摩斯漢堡";theArray[87]="排骨湯";theArray[88]="甕仔雞";
           function ranFun(){return parseInt(Math.random()*88);}
-          chosen=theArray[ranFun()];}
+          number=ranFun();
+		  new Small_picker();
+          chosen=theArray[number];}
 function Dinner(){
           theArray[0]="鹹水雞";theArray[1]="夜市";theArray[2]="吐司";theArray[3]="鐵板燒";theArray[4]="漢堡";theArray[5]="炒麵";theArray[6]="煎餃";theArray[7]="三明治";theArray[8]="刈包";theArray[9]="沙拉";
           theArray[10]="飯糰";theArray[11]="麵包";theArray[12]="燒烤";theArray[13]="包子";theArray[14]="蘿蔔糕";theArray[15]="懷石料理";theArray[16]="丼飯";theArray[17]="優格";theArray[18]="乾麵";theArray[19]="迴轉壽司";
@@ -74,35 +80,55 @@ function Dinner(){
           theArray[90]="墨西哥料理";theArray[91]="港式料理";theArray[92]="加拿大料理";theArray[93]="緬甸料理";theArray[94]="蒙古料理";theArray[95]="蒙古烤肉";theArray[96]="拉麵";theArray[97]="自助餐";theArray[98]="蚵仔煎";theArray[99]="義大利餐廳";
           theArray[100]="甕仔雞";
           function ranFun(){return parseInt(Math.random()*100);}
-          chosen=theArray[ranFun()];}
+          number=ranFun();
+		  new Small_picker();
+          chosen=theArray[number];}
 function Afternoon_Tea() {
-          theArray[0]="咖啡廳";theArray[1]="皮麵糊";theArray[2]="豆花";theArray[3]="紅豆餅";theArray[4]="雞蛋糕";theArray[5]="地瓜酥";theArray[6]="煎餃";theArray[7]="三明治";theArray[8]="刈包";theArray[9]="沙拉";theArray[42]="排骨湯";
-          theArray[10]="飯糰";theArray[11]="麵包";theArray[12]="雪花冰";theArray[13]="包子";theArray[14]="蘿蔔糕";theArray[15]="叉燒酥";theArray[16]="核桃酥";theArray[17]="芋頭酥";theArray[18]="紅豆湯";theArray[19]="蛋黃酥";theArray[41]="鳳梨酥";
-          theArray[20]="燒餅";theArray[21]="水餃";theArray[22]="鍋貼";theArray[23]="筒仔米糕";theArray[24]="肉粽";theArray[25]="芋圓";theArray[26]="仙草";theArray[27]="元寶酥";theArray[28]="碗粿";theArray[29]="燒餅";theArray[43]="小窩頭";  
-          theArray[30]="港式蘿蔔糕";theArray[31]="蘿蔔絲餅";theArray[32]="糕仔餅";theArray[33]="銅鑼燒";theArray[34]="千層糕";theArray[35]="黑糖糕";theArray[36]="米堡";theArray[37]="捲餅";theArray[38]="蔥油餅";theArray[39]="發糕";theArray[40]="湯圓";
-          function ranFun(){return parseInt(Math.random()*40);}
-          chosen=theArray[ranFun()];}
-function Late_Night(){
-          theArray[0]="夜市";theArray[1]="黑巧克力";theArray[2]="吐司";theArray[3]="水餃";theArray[4]="榖物粥";theArray[5]="地瓜酥";theArray[6]="煎餃";theArray[7]="三明治";theArray[8]="堅果";theArray[9]="沙拉";theArray[42]="天然水果乾";
-          theArray[10]="鹽酥雞";theArray[11]="麵包";theArray[12]="燒烤";theArray[13]="榖物片";theArray[14]="蘿蔔糕";theArray[15]="叉燒酥";theArray[16]="烤地瓜";theArray[17]="芋頭酥";theArray[18]="乾麵";theArray[19]="蛋黃酥";theArray[41]="鳳梨酥";
-          theArray[20]="炸雞排";theArray[21]="烤肉串";theArray[22]="鍋貼";theArray[23]="筒仔米糕";theArray[24]="肉粽";theArray[25]="米果";theArray[26]="米香";theArray[27]="黑木耳飲";theArray[28]="碗粿";theArray[29]="燒餅";theArray[43]="肉乾";  
-          theArray[30]="快炒店";theArray[31]="蘿蔔絲餅";theArray[32]="無糖優格";theArray[33]="發糕";theArray[34]="糙米粥";theArray[35]="黑糖糕";theArray[36]="米堡";theArray[37]="捲餅";theArray[38]="蔥油餅";theArray[39]="洋芋片";theArray[40]="薯條";
+          theArray[0]="咖啡廳";theArray[1]="皮麵糊";theArray[2]="豆花";theArray[3]="紅豆餅";theArray[4]="雞蛋糕";theArray[5]="地瓜酥";theArray[6]="煎餃";theArray[7]="三明治";theArray[8]="刈包";theArray[9]="沙拉";
+          theArray[10]="飯糰";theArray[11]="麵包";theArray[12]="雪花冰";theArray[13]="包子";theArray[14]="蘿蔔糕";theArray[15]="叉燒酥";theArray[16]="核桃酥";theArray[17]="芋頭酥";theArray[18]="紅豆湯";theArray[19]="蛋黃酥";
+          theArray[20]="燒餅";theArray[21]="水餃";theArray[22]="鍋貼";theArray[23]="筒仔米糕";theArray[24]="肉粽";theArray[25]="芋圓";theArray[26]="仙草";theArray[27]="元寶酥";theArray[28]="碗粿";theArray[29]="燒餅";
+          theArray[30]="港式蘿蔔糕";theArray[31]="蘿蔔絲餅";theArray[32]="糕仔餅";theArray[33]="銅鑼燒";theArray[34]="千層糕";theArray[35]="黑糖糕";theArray[36]="米堡";theArray[37]="捲餅";theArray[38]="蔥油餅";theArray[39]="發糕";
+          theArray[40]="湯圓";theArray[41]="鳳梨酥";theArray[42]="排骨湯";theArray[43]="小窩頭";  
           function ranFun(){return parseInt(Math.random()*43);}
-          chosen=theArray[ranFun()];
+          number=ranFun();
+		  new Small_picker();
+          chosen=theArray[number];}
+function Late_Night(){
+          theArray[0]="夜市";theArray[1]="黑巧克力";theArray[2]="吐司";theArray[3]="水餃";theArray[4]="榖物粥";theArray[5]="地瓜酥";theArray[6]="煎餃";theArray[7]="三明治";theArray[8]="堅果";theArray[9]="沙拉";
+          theArray[10]="鹽酥雞";theArray[11]="麵包";theArray[12]="燒烤";theArray[13]="榖物片";theArray[14]="蘿蔔糕";theArray[15]="叉燒酥";theArray[16]="烤地瓜";theArray[17]="芋頭酥";theArray[18]="乾麵";theArray[19]="蛋黃酥";
+          theArray[20]="炸雞排";theArray[21]="烤肉串";theArray[22]="鍋貼";theArray[23]="筒仔米糕";theArray[24]="肉粽";theArray[25]="米果";theArray[26]="米香";theArray[27]="黑木耳飲";theArray[28]="碗粿";theArray[29]="燒餅";
+          theArray[30]="快炒店";theArray[31]="蘿蔔絲餅";theArray[32]="無糖優格";theArray[33]="發糕";theArray[34]="糙米粥";theArray[35]="黑糖糕";theArray[36]="米堡";theArray[37]="捲餅";theArray[38]="蔥油餅";theArray[39]="洋芋片";
+          theArray[40]="薯條";theArray[41]="鳳梨酥";theArray[42]="天然水果乾";theArray[43]="肉乾";  
+          function ranFun(){return parseInt(Math.random()*43);}
+          number=ranFun();
+		  new Small_picker();
+          chosen=theArray[number];
           }
 
 function Rice(){
-theArray[0]="炒飯";theArray[1]="燴飯";theArray[2]="火雞肉飯";theArray[3]="燒肉飯";theArray[4]="泡飯";theArray[5]="燉飯";theArray[6]="蓋飯";theArray[7]="滷肉飯";
-theArray[8]="油飯";theArray[9]="軟骨飯";theArray[10]="雞腿飯";theArray[11]="丼飯";theArray[12]="便當";theArray[13]="咖哩飯";
-function ranFun(){return parseInt(Math.random()*13);}
-chosen=theArray[ranFun()];
+		 theArray[0]="炒飯";theArray[1]="燴飯";theArray[2]="火雞肉飯";theArray[3]="燒肉飯";theArray[4]="泡飯";theArray[5]="燉飯";theArray[6]="蓋飯";theArray[7]="滷肉飯";
+		 theArray[8]="油飯";theArray[9]="軟骨飯";theArray[10]="雞腿飯";theArray[11]="丼飯";theArray[12]="便當";theArray[13]="咖哩飯";theArray[14]="雞排飯";theArray[15]="魚排飯";
+		 theArray[16]="五穀飯"; theArray[17]="飯糰";theArray[18]="豬油拌飯";
+		 function ranFun(){return parseInt(Math.random()*18);}
+		 number=ranFun();
+		 new Small_picker();
+         chosen=theArray[number];
 }
 
 function Noodle(){
-theArray[0]="炒麵";theArray[1]="燴麵";theArray[2]="牛肉麵";theArray[3]="陽春麵";theArray[4]="餛飩麵";theArray[5]="擔仔麵";theArray[6]="泡麵";theArray[7]="米粉";
-theArray[8]="鍋燒意麵";theArray[9]="義大利麵";theArray[10]="拉麵";theArray[11]="涼麵";theArray[12]="乾麵";theArray[13]="麻醬麵";
-function ranFun(){return parseInt(Math.random()*13);}
-chosen=theArray[ranFun()];}
+		 theArray[0]="炒麵";theArray[1]="燴麵";theArray[2]="牛肉麵";theArray[3]="陽春麵";theArray[4]="餛飩麵";theArray[5]="擔仔麵";theArray[6]="泡麵";theArray[7]="米粉";
+		 theArray[8]="鍋燒意麵";theArray[9]="義大利麵";theArray[10]="拉麵";theArray[11]="涼麵";theArray[12]="乾麵";theArray[13]="麻醬麵";theArray[14]="炸醬麵"; 
+		 theArray[15]="魯麵";theArray[16]="麵線糊";theArray[17]="麵疙瘩";theArray[18]="麵線羹";
+         function ranFun(){return parseInt(Math.random()*18);}
+		 number=ranFun();
+		 new Small_picker();
+         chosen=theArray[number];}
+
+function Small_picker(){
+for(number;number===thistime||number===lasttime;number=ranFun());
+lasttime=thistime;
+thistime=number;
+}
 
 function Time_suggestion(){
   time = new Date();
@@ -110,25 +136,31 @@ function Time_suggestion(){
 if(hour_now>=4&&hour_now<=8){      
       new Breakfast();
       type='早餐';icon='🌅';
+      picture_url='https://i.imgur.com/4fgZ5WT.png';
    }else if(hour_now>=9&&hour_now<=10){      
       new Breakfast();
       type='早午餐';icon='🌅';
+      picture_url='https://i.imgur.com/m1SvqAR.png';
    }
    else if(hour_now>=11&&hour_now<=13){ 
       new Lunch();
       type='午餐';icon='☀️';
+      picture_url='https://i.imgur.com/XPrb9hF.png';
    }
    else if(hour_now>=14&&hour_now<=16){
     new Afternoon_Tea();
       type='下午茶';icon='🌇';
+      picture_url='https://i.imgur.com/02WQr5G.png';
     } 
    else if(hour_now>=17&&hour_now<=20){ 
       new Dinner();
       type='晚餐';icon='🌃';
+      picture_url='https://i.imgur.com/2rMgl5I.png';
     }
      else{		  
        new Late_Night();
        type='宵夜';icon='🌙';
+       picture_url='https://i.imgur.com/rKVXihj.png';
       }
 }
 
@@ -154,6 +186,7 @@ app.intent('預設歡迎語句', (conv) => {
    if( chosen_link==='漢堡'){ chosen_link='漢堡店';}
    //輸出卡片
         conv.ask(new BasicCard({   
+        image: new Image({url:picture_url,alt:'Pictures',}),
         title: '覺得「'+chosen+'」如何呢?',
         subtitle: '基於現在'+hour_now+'點提供的'+type+'快速建議。  \n若建議可行請輕觸下方的搜尋地圖按鈕。  \n或輕觸建議卡片讓我想其他點子。',
         buttons: new Button({title:'在「地圖」中搜尋：'+chosen,url:'https://www.google.com.tw/maps/search/'+chosen_link+'/15z/data=!4m4!2m3!5m1!2e1!6e5',}), 
@@ -166,17 +199,9 @@ app.intent('預設歡迎語句', (conv) => {
 	conv.user.storage.chosen=chosen;
     conv.user.storage.tip=tip;
     conv.user.storage.icon=icon;
-    conv.user.storage.thistime_food=chosen;  
-    conv.user.storage.lasttime_food=lasttime_food;  
+    conv.user.storage.thistime=thistime;  
+    conv.user.storage.lasttime=lasttime;    
 });
-
-function picker(){return parseInt(Math.random()*11);}
-function small_picker(){
-  number=picker();
-if(number===lasttime){number++;}if(number===thistime){number++;}
- lasttime=thistime;
- thistime=number;
-}
 
 
 app.intent('輸出想到的美食', (conv,{input}) => {
@@ -185,9 +210,7 @@ chosen=conv.user.storage.chosen;
 icon=conv.user.storage.icon=icon;
 tip=conv.user.storage.tip;
 thistime=conv.user.storage.thistime;  
-lasttime=conv.user.storage.lasttime;  
-thistime_food=conv.user.storage.thistime_food;  
-lasttime_food=conv.user.storage.lasttime_food;  
+lasttime=conv.user.storage.lasttime;     
   
 if(input==='早餐'){type='早餐';}
 else if(input==='午餐'){type='午餐';}
@@ -246,23 +269,23 @@ else if (output_food==='吐司'){output_food='土司';}
  
  conv.ask(new Suggestions(icon+'再一個'+type+'建議',output_answer));
 
- lasttime_food=thistime_food;
- thistime_food=chosen;  
   
 conv.user.storage.type=type;
 conv.user.storage.chosen=chosen;
 conv.user.storage.tip=tip;
 conv.user.storage.thistime=thistime;  
-conv.user.storage.lasttime=lasttime; 
-conv.user.storage.thistime_food=thistime_food;  
-conv.user.storage.lasttime_food=lasttime_food;
+conv.user.storage.lasttime=lasttime;     
 conv.user.storage.icon=icon;
 });
 
 
 app.intent('Google地圖查詢', (conv,{food}) => {
-  type= conv.user.storage.type;
-  tip=conv.user.storage.tip;
+type=conv.user.storage.type;
+chosen=conv.user.storage.chosen;
+icon=conv.user.storage.icon=icon;
+tip=conv.user.storage.tip;
+conv.user.storage.thistime=thistime;  
+conv.user.storage.lasttime=lasttime;    
   
   if(food!==''){chosen=food;}
     else{chosen=conv.user.storage.chosen;}
@@ -293,16 +316,18 @@ app.intent('Google地圖查詢', (conv,{food}) => {
         text: '由於Google現行政策，無法在此提供內容。  \n請輕觸下方連結獲得Google地圖搜尋結果',                                         
         buttons: new Button({title:'在「地圖」中搜尋：'+chosen,url:'https://www.google.com.tw/maps/search/'+chosen_link+'/15z/data=!4m4!2m3!5m1!2e1!6e5',}), 
      }));
-     conv.ask(new Suggestions('回到選單','👋 掰掰'));
+     conv.ask(new Suggestions('回到選單',icon+'再一個'+type+'建議','👋 掰掰'));
    } else if (screenAvailable) {
      conv.ask(new NewSurface({context, notification, capabilities}));
   } else {
   conv.close('你選擇的是，'+chosen+'，請自行透過其他裝置進行搜尋，掰掰!');}
  
-  conv.user.storage.type=type;
-  conv.user.storage.chosen=chosen;
-  conv.user.storage.tip=tip;
-  conv.user.storage.screenAvailable=screenAvailable;
+ conv.user.storage.type=type;
+ conv.user.storage.chosen=chosen;
+ conv.user.storage.tip=tip;
+ conv.user.storage.thistime=thistime;  
+ conv.user.storage.lasttime=lasttime;    
+ conv.user.storage.icon=icon;
 });
 
 app.intent('在新裝置上進行對話', (conv, input, newSurface) => {
@@ -333,15 +358,18 @@ app.intent('在新裝置上進行對話', (conv, input, newSurface) => {
    conv.user.storage.type=type;
   conv.user.storage.chosen=chosen;
   conv.user.storage.tip=tip;
+  conv.user.storage.thistime=thistime;  
+  conv.user.storage.lasttime=lasttime;    
 });
 
 app.intent('回到預設選單', (conv) => {
 type= conv.user.storage.type;
 chosen=conv.user.storage.chosen;
 icon=conv.user.storage.icon;
-
+thistime=conv.user.storage.thistime;  
+lasttime=conv.user.storage.lasttime;   
+  
 new Time_suggestion();
-
 conv.ask(new SimpleResponse({speech:'請輸入相對應指令讓我為你服務!',text:'說出指令或點選建議卡片來進行操作：'}));
 conv.ask(new BasicCard({   
         title: '《語音指令說明》',
@@ -355,9 +383,7 @@ conv.user.storage.type=type;
 conv.user.storage.chosen=chosen;
 conv.user.storage.tip=tip;
 conv.user.storage.thistime=thistime;  
-conv.user.storage.lasttime=lasttime;
-conv.user.storage.thistime_food=chosen;  
-conv.user.storage.lasttime_food=lasttime_food;
+conv.user.storage.lasttime=lasttime;   
 conv.user.storage.icon=icon;
 });
 
@@ -378,10 +404,6 @@ conv.ask(new Suggestions(icon+'取得'+type+'建議','🤔飯和麵哪個好','�
 conv.user.storage.type=type;
 conv.user.storage.chosen=chosen;
 conv.user.storage.tip=tip;
-conv.user.storage.thistime=thistime;  
-conv.user.storage.lasttime=lasttime;
-conv.user.storage.thistime_food=chosen;  
-conv.user.storage.lasttime_food=lasttime_food;
 conv.user.storage.icon=icon;
 });
 
@@ -436,11 +458,10 @@ conv.ask(new BasicCard({
 
 });
 
-
 app.intent('教學區塊', (conv) => { 
 conv.ask(new SimpleResponse({speech:`<speak><p><s>除了一般詢問外，我也可以在兩個食物間幫你選擇<break time="0.2s"/>請說出或點擊下方選項試試看</s></p></speak>`,text:'試著說出指令問我看看吧!'}));
  conv.ask(new BasicCard({   
-        title:'《詢問語法說明﹞',
+        title:'《詢問語法說明》',
         subtitle:'除了一般建議外\n我也能幫你在兩個食物中做抉擇\n詢問方式：\n◎「食物A」跟「食物B」選一個\n◎「食物A」和「食物B」哪個好\n◎「食物A」與「食物B」選個',
         text:'*[!]你也可以試著詢問自己的組合*',
         }));
@@ -454,12 +475,11 @@ app.intent('結束對話', (conv) => {
     conv.ask(new SimpleResponse({speech: '下次見',text: '下次見 👋',}));
     conv.close(new BasicCard({   
         title: '感謝您的使用!',
-        subtitle:'若覺得這個服務不錯，  \n歡迎到Google助理的頁面評分或給予反饋。謝謝!',   
+        text:'如果有任何需要改進的地方，  \n歡迎到簡介頁面評分或給予反饋，謝謝!',   
         buttons: new Button({title: '開啟本程式的商店頁面',url: 'https://assistant.google.com/services/a/uid/00000058f29109ab?jsmode=o&hl=zh-Hant-TW&source=web',
   }),
   }));
-  conv.user.storage.type=type;
-  conv.user.storage.chosen=chosen;
+
 });
 
 

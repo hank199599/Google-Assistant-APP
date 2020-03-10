@@ -11,7 +11,7 @@
      
 執行原理
 -------
-<img src="https://3.bp.blogspot.com/-R24be9V7-Rw/W9sUc0z_vpI/AAAAAAAALQ8/VJwkyJOBUYMcjn-aFeGDDhCtX8UiQ4P4wCLcBGAs/s1600/%25E7%2584%25A1%25E6%25A8%2599%25E9%25A1%258C%25E7%25B0%25A1%25E5%25A0%25B1.jpg" />
+<img src="https://developers.google.com/assistant/conversational/images/aog-user-query-to-fulfillment.png" />
 
 助理Google：處理語音辨識及傳遞回應給使用者  
 DialogFlow：透過自然語言處理對話與進行回應  

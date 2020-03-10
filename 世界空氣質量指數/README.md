@@ -5,7 +5,7 @@
 透過API介接來自[The World Air Quality Project](https://aqicn.org/map/)的即時空氣品質資訊。  
 使用者只要傳送GPS資訊給Google助理，即可獲得距離最近的測站資訊。  
   
-本服務支援中文與廣東話(香港)  
+本服務支援**中文**與**廣東話(香港)**  
   
 試用
 -------

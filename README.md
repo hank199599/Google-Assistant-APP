@@ -3,42 +3,27 @@
 ### Google Assistant APP  
 
 在此提供我所製作的Google Assistant BOT 背後執行的代碼  
-
-部屬教學  
-----  
- [原始教學頁面](https://github.com/dialogflow/fulfillment-webhook-json#setup-instructions)(Dialogflow Fulfillment Webhook JSON Sample)  
-   
-1. [註冊/登入](https://accounts.google.com/SignUp?hl=en) Google 帳號  
-2. [建立一個 Firebase專案](https://console.firebase.google.com/)  
-3. 使用[Firebase託管](https://firebase.google.com/docs/hosting/)部署`responses`目錄:  
-   + 按照說明[設置和初始化Firebase SDK for Cloud Functions](https://firebase.google.com/docs/functions/get-started#set_up_and_initialize_functions_sdk).   確保選擇之前在Google控制台上的操作中生成的項目，並在要求通過Firebase CLI覆蓋現有文件時回复“N”
-   + 執行 `firebase deploy --only hosting` 並記下端點所在的位置 `responses` 資料夾已部屬。應該是這樣的`Hosting URL: https://${PROJECTID}.firebaseapp.com`  
-4. 為Dialogflow實現選擇正確的JSON文件，並記下該文件的URL (e.g. `https://${PROJECTID}.firebaseapp.com/v2/ActionsOnGoogle/RichResponses/SimpleResponse.json`)  
-5. 現在到Dialogflow控制台，並從左側導航菜單中選擇 **Fulfillment** 。  
-6. **Enable Webhook** > **URL** 到上一步的JSON文件的URL，然後選擇 **Save**.  
-7. 從左側導航菜單中前往**Intents** ，並建立您希望實現的意圖(Intent)，如'Default Welcome Intent'  
-    + 選擇欲在 **Fulfillment** 實現呼叫的意圖(Intent)，進入選單。然後將「Enable WebWook Call for this Intent」打開  
-8. 從左側導航菜單中前往**Fulfillment** > 
-    + **Enable Webhook** 打開後
-    + 在下方的編輯框輸入欲呼叫的意圖(Intent)與回應，像是這樣：  
-         app.intent('Default Welcome Intent', (conv) => {   
-                     conv.ask('Hi,\n What can I do for you?');  
-                     conv.ask(new Suggestions('GoodBye'));  
-                });    
+>Google助理是由Google所開發之智慧型個人助理，  
+>在2018年10月16日於臺灣上線。其後在隔年三月開放第三方程式可以與其介接。
+>(即__Action On Google__平台)
+>在這裡成列的是我自行開發並發布的Google Assistant 程式
+>提供原始碼供參考
     
-額外需要的資源：
+執行原理
 -------
+<img src="https://3.bp.blogspot.com/-R24be9V7-Rw/W9sUc0z_vpI/AAAAAAAALQ8/VJwkyJOBUYMcjn-aFeGDDhCtX8UiQ4P4wCLcBGAs/s1600/%25E7%2584%25A1%25E6%25A8%2599%25E9%25A1%258C%25E7%25B0%25A1%25E5%25A0%25B1.jpg" width=100px height=vm />
+
 Action on Google：發布應用至Google Assistant  
 DialogFlow：設計對話與處理回應  
 Firebase：部屬Fulfillment  
 
-其他教學頁面：
+其他教學頁面
 -------
  [【Actions on Google 】五分鐘打造 Google 語音助理應用](https://makerpro.cc/2019/01/a-quick-start-for-google-actions/)  
  [Google Assistant development with Actions on Google(Udemy)](https://www.udemy.com/actions-on-google-app-google-assistant/)  
 
 
-詳細代碼說明與教學：  
+詳細代碼說明與教學
 -------
 * [Action on Google官方說明](https://developers.google.com/actions/) 
 * [Dialogflow 官方說明](https://dialogflow.com/docs/getting-started)

@@ -1,12 +1,16 @@
-### 《1A2B》
+[![](https://lh3.googleusercontent.com/oI6uG6rwPuex3kpDmn2TkL_0zJVmYP7wEWTMQ5D05zSNOAk6hA_1vlQhBXAQOwVVnz5rEprvUSIZ=s81)](https://assistant.google.com/services/a/uid/00000038f48e6d7d)
 
-說明：
+說明
 -------
-Google助理版本的1A2B遊戲!  
-  
+使用來自[G0V.TW專案的血庫資訊](https://github.com/g0v/blood)，  
+讓使用者能隨時查詢前一日的血庫庫存情形。
+資訊於每日大約晚上十點半更新。  
 
-簡介
--------
-◆ 於Google助理上試用：https://assistant.google.com/services/invoke/uid/00000052af06dae7
+此外也提供查詢各縣市固定捐血站的服務。  
+可透過區域查詢或是利用GPS定位取得固定捐血站資訊。
   
-◆ Google助理上的說明頁面：https://assistant.google.com/services/a/uid/00000052af06dae7
+立即試用
+-------
+◆ [於Google助理上試用](https://assistant.google.com/services/invoke/uid/00000038f48e6d7d)
+  
+◆ [Google助理上的說明頁面](https://assistant.google.com/services/a/uid/00000038f48e6d7d)

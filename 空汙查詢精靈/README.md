@@ -2,12 +2,13 @@
   
 說明
 -------
-  透過[環境保護局開放資料平台](https://opendata.epa.gov.tw/Data/Details/AQI/)取得原始的空汙測站資訊，
-  在儲存至Firebase Cloud Store以隨時存取。
+  透過[環境保護局開放資料平台](https://opendata.epa.gov.tw/Data/Details/AQI/)取得原始的空汙測站資訊，  
+  在篩選留下所需資訊後，儲存至Firebase Cloud Store以利Fulfillment隨時存取。
   
-  提供使用者以口語快速查詢所需測站，
+  本服務提供使用者以口語快速查詢所需測站，
   或是透過區域查詢、GPS查詢等方式尋找測站。
-  
+   
+  也可以加入日常安排以自定義的詞彙呼叫本服務。
   
 試用
 ------- 

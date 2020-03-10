@@ -24,6 +24,7 @@
 
 簡介
 -------
-◆ 於Google助理上試用：https://assistant.google.com/services/invoke/uid/00000052af06dae7
+◆ [於Google助理上試用](https://assistant.google.com/services/invoke/uid/000000b5033b5e97)
   
-◆ Google助理上的說明頁面：https://assistant.google.com/services/a/uid/00000052af06dae7
+◆ [Google助理上的說明頁面](https://assistant.google.com/services/a/uid/000000b5033b5e97)
+

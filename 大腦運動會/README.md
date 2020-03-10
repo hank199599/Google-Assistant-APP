@@ -11,6 +11,11 @@
 
 簡介
 -------
-◆ 於Google助理上試用：https://assistant.google.com/services/invoke/uid/000000603cba0b27  
-  
-◆ Google助理上的說明頁面：https://assistant.google.com/services/a/uid/000000603cba0b27
+來自網路上或維基百科的題庫，  
+透過簡易選擇題或對話機制進行遊戲。  
+玩家可以選擇無限題目或是最多十題題目的模式。  
+每個題目在選擇後會判別錯誤與否並提供相關連結供參考(大多來自維基百科)。  
+
+◆ 於Google助理上試用：
+https://assistant.google.com/services/invoke/uid/000000603cba0b27 
+

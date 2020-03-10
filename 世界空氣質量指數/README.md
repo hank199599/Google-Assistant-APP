@@ -1,5 +1,5 @@
 ### 《世界空氣質量指數》
-[image](https://waqi.info/icons/logo.map.png?_=1583838645)
+![image](https://waqi.info/icons/logo.map.png?_=1583838645)
 
 說明：
 -------

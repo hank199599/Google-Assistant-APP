@@ -1,0 +1,105 @@
+{
+   "Default_Location":"Default timezone is：","Defalt_Location_Hint":".\nYou can change it if you not in this timezone.",
+   "Location":"To change your timezone",
+   "Locationprompt":"Would you grant permission?",
+   "LocationOutput":"Your Timezone has changed to %s,your instant suggestion will base on this timezone",  "Locationshow":"Setup is done!",
+
+   "LocationSubTitle":"Your Timezone has change to UTC ","Localtime":"  \nLocal time is ",
+   "LocationText":"[!]Instant sugestion will base on this timezone",
+   "YES":"OK","NO":"NO",
+   "LocationMiss":"Sorry, I could not figure out where you are.",
+   "LocationDeny":"Sorry, permission denied.",
+
+
+   "WELCOME_BASIC": "Thanks for using 'Food Decider'!","WELCOME_Return": "Welcome Back!",
+   "WELCOME_Talk1": "Thanks for using 'Food Decider'!","WELCOME_Talk2": "How about %s?","WELCOME_Talk3":"or you can say","WELCOME_Talk4":"another one","WELCOME_Talk5":"to get another advice",
+   "Return_Talk1": "Welcome Back!","Return_Talk2": "you can say",
+   "Return_Talk3": "Let me think of another idea, or say","Return_Talk4": "OK","Return_Talk5": "to check the nearby locations.",
+
+   "Title1": "How about %s?",
+   "Subtitle1": "Instant suggest base on your timezone.  \nIf it's ok then press the button below.  \nOr you can tap the suggestion chips.",
+   "Subtitle2": "Instant suggest base on your timezone.",
+   "SearchMap": "Search it on Google Map",
+   "Another":"Another %s","RiceorNoodle":"FastFood or Restaurant","ChangeLocaion":"Change Timezone","Goodbye":"Goodbye",
+
+   "Breakfast":"Breakfast","Brunch":"Brunch","Lunch":"Lunch", "Dinner":"Dinner", "Afternoon tea":"Afternoon tea","Late-night supper":"Late-night",
+   "Rice":"FastFood", "Noodle":"Restaurant",
+   "I_think_1":"FastFood","I_think_2":"Restaurant",
+
+  "HereComes":"Here comes '%s'",
+   "TeachTitle":"《Vocal Input Tutorial》",   "TeachSubTitle":"Besides clicking suggestion chips, you can also interact by voice.\n\n◎Denyed:'NO','Another','One more'\n◎Confirm:'OK','It's good','Fine'\n◎Change the category: 'Breakfast', 'Lunch', 'Dinner', 'Afternoon tea', 'Late-night'\n\n◎Examples：\n'Whats for breakfast'\n'Dinner advice'\n'How about lunch?'",
+   "TeachText":" ",
+   "Teach_Talk":"You can interact with suggestion chips or speaking!",
+
+   "think":"I think %s is nice","Help_with":"Give me some idea","Help_with_hint":"Let me think some idea of %s!",
+   "Help_suggest":"Think some %s",
+   "Hintsubtitle":"You can get suggestion by asking like:\n 'Give me some fast food idea.'  \n'What restaurant do you think is good?'",
+   "Hinttext":"[!] Note: This program can only serialize the input and give a corresponding response.",
+   
+   "DefaultTalk":"Say something to get advice.</s><s>For example,you can ask %s What do you think for %s?","DefaultText":"Say something to let me help you.",
+
+
+   "Falltack":"Sorry! I don't get it.you can ask %s What do you think for %s?", "Falloutput":"I don't know how to help with that.\nYou can tap cards below to get help.",
+   
+   "Menu":"Back to Menu",
+   "Maptalk1":"Here is the results of ", "Maptalk2":" ",
+   "MaptOutput":"Search results of %s.",
+   "MapChoice":"Your choose is %s'%s'. Please search by other devices by yourself, bye!",
+   "MapEND":"Ok, I understand that you don't want to see the search results. so be it.",
+ 
+   "EndTalk":"Glad to help you.\nSee you next time",
+   "EndTitle":"Thanks for your use!", "EndText":"If there is any need for improvement,  \nWelcome to the profile page to rate or give feedback, thank you!",
+   "EndButton":"Open Actions directory",
+  
+   "NewSerface_Context":"Because the device currently in use cannot view the search results","NewSerface_notifi":"This is the search result of '%s'",
+   "Results":"Search Results","SearchContext":"Due to current Google policies, content is not available here. \nPlease tap the link below to get Google Maps search results.",
+   "Results1":"This is the %s suggestion you've just selected",
+   "SearchContext1":"Thank you for your use.!",
+
+  
+    "//1": "早餐部分",
+   "0":"Fruit Bowl", "1":"Omelete","2":"Toast","3":"Club sandwich","4":"Burger","5":"Pancake","6":"French toast","7":"Sandwich","8":"Corn Flakes","9":"Salad","10":"Onigiri ",
+   "11":"Bread","12":"Belgian Waffle","13":"Bao","14":"Cereal","15":"Biscuit","16":"Lo-Carb","17":"Yogurt","18":"Beignets","19":"Hash brown","20":"Biscuits",
+   "21":"Dumplings","22":"Kedgeree","23":"Griddle Cakes","24":"Steak",
+   "25":"Omre","26":"Corn Flakes","27":"Ham and Eggs","28":"Kidneyand Bacon","29":"Thick White Toast","30":"Egg",
+   "31":"Soy milk","32":"Croissants","33":"Milk","34":"Panini","35":"Bago","36":"Benedict","37":"Burrito","38":"Skillet","39":"Oatmeal","40":"Meat pie",
+   "41":"English Muffin","42":"Light Meal",
+  "//2": "午晚餐部分",
+   "43":"Instant noodles","44":"Japanese cuisine","45":"BBQ","46":"Club sandwich","47":"Tacos","48":"Fried Shrimp","49":"Kabobs","50":"Skewers",
+   "51":"Chahan","52":"Parmigiana","53":"Turkish cuisine","54":"Rib","55":"Thai cuisine","56":"French cuisine","57":"Russian cuisine","58":"Risotto","59":"Cantonese cuisine","60":"Chowder",
+   "61":"Taiwanese cuisine","62":"Vietnamese cuisine","63":"Chinese cuisine","64":"Ramen","65":"Jamaican Grill","66":"Macaroni","67":"Xiao Long Bao","68":"Spaghetti","69":"Indian cuisine", "70":"Italian Restaurant",
+   "71":"Beef noodles","72":"Sukiyaki","73":"Curry rice","74":"French fries","75":"Platter","76":"Romano","77":"Piccata","78":"British cuisine","79":"Baked","80":"Fast food",
+   "81":"Korean cuisine","82":"Blue Ribbon","83":"Steamed dumplings","84":"McDonald's","85":"KFC","86":"FastFood","87":"Italian Restaurant","88":"Mexican cuisine", "89":"Burmese cuisine","90":"Cuban cuisine",
+   "91":"Fried rice","92":"Shanghai cuisine","93":"Greek cuisine","94":"Kanto cooking","96":"Sushi","97":"Teppanyaki","98":"Tempura","99":"Donburi","100":"Orange Chicken",
+   "101":"Teriyaki","102":"Tonkatsu","103":"Mongolian Barbecue","104":"Steak","105":"Hot Pot","106":"Oyster sauce","107":"Crispy Chicken","108":"Egg Foo Young","109":"Panda Express","110":"Almond Chicken",
+   "111":"Noodle","112":"Mongolian cuisine","113":"African cuisine","114":"Crab wonton","115":"Vegetarian restaurant","116":"Fried egg roll","117":"Sweet and Sour Chicken","118":"Kottu","119":"Takoyaki",
+  "//3": "下午茶部分",
+    "120":"Cafe","121":"Sundae","122":"Tea","123":"Finger sandwiches","124":"Fruit tea","125":"Green tea","126":"Matcha","127":"Egg tart","128":"Macron","129":"Salad",
+    "130":"Fries Ice Cream","131":"Bread","132":"Ice Cream","133":"Bao","134":"Black tea","135":"Herbal tea","136":"Waffle","137":"Boston pie","138":"Apple pie","139":"Caramel",
+    "140":"Brulee","141":"Tortillas","142":"Soufflé","143":"Meringue","144":"Hash brown","145":"Pudding ","146":"Doughnut ","147":"Cookie","148":"Muffin","149":"Chiffon cake",
+    "150":"Pie","151":" Tofu pudding","152":"Hot Dog","153":"Tapas","154":"Arancini","155":"Glace","156":"Sorbet","157":"Meat pie","158":"Blue Ribbon","159":"Pastry",
+    "160":"Toast","161":"Popcorn","162":"Jerky","163":"Omelete",  
+   "//4": "宵夜部分",
+    "164":"Omelete","165":"Instant noodles","166":"Toast","167":"Dumplings","168":"Cereal porridge","169":"Biscuits","170":"Pudding",
+    "171":"Tang Yuan","172":"Cookies","173":"Crackers","174":"Rice crackers","175":"Popcorn","176":"Jerky","177":"Candies","178":"Seeds","179":"Seaweed",
+    "180":"McDonald's","181":"KFC","182":"Ramen","183":"Pizza","184":"Noodle","185":"Nuts","186":"Dried tofu","187":"Dried fruit","188":"Pastry ","189":"Sushi",
+    "190":"Bibimbap","191":"Steamed dumplings","192":"Steak","193":"Burger","194":"Noodle","195":"Italian Restaurant","196":"BBQ","197":"Meat pie","198":"Blue Ribbon","199":"Potato chips",
+    "200":"French fries","201":"Bar","202":"Coffee","203":"Vegetarian restaurant","204":"Soy milk","205":"Sandwich","206":"Bread","207":"Salad",
+  
+   "//5": "速食部分",
+   "208":"Instant noodles","209":"Panda Express",
+   "210":"McDonald's","211":"KFC","212":"Windy's","213":"Instant noodles","214":"SUBWAY","215":"In-N-Out Burger","216":"Shake Shack","217":"Five Guys","218":"Chick-fil-A","219":"The Habit Burger Grill","220":"Arby's",
+   "221":"Habit Burger Grill","222":"Super Duper","223":"Burger King","224":"Quiznos","225":"Hardee's","226":"Chipotle Mexican Grill", "227":"Domino's",
+  
+  "//6": "餐廳部分", 
+  "228":"Japanese cuisine","229":"Russian cuisine","230":"Thai cuisine",
+  "231":"Taiwanese cuisine","232":"Vietnamese cuisine","233":"Jamaican Grill","234":"Malaysian cuisine","235":"Cantonese cuisine","236":"Burmese cuisine","237":"Mexican cuisine","238":"Canadian cuisine","239":"Korean cuisine","240":"Italian Restaurant",
+  "241":"Indian cuisine","242":"Shanghai cuisine","243":"Greek cuisine","244":"Turkish cuisine","245":"British cuisine","246":"Cuban cuisine","247":"Italian Restaurant","248":"African cuisine",
+
+  
+  "Q1":"How do you feel","Q2":"How about this one","Q3":"how does it feel","Q4":"How about this","Q5":"Feel good","Q6":"What do you think","Q7":"How about this","Q8":"Is it OK","Q9":"How is this",
+  "A1":"It's good","A2":"OK","A3":"I Feel good","A4":"OK","A5":"Alright","A6":"Nice","A7":"Feel good","A8":"OK","A9":"Excellent"
+
+
+  
+}

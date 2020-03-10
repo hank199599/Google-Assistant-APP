@@ -4,7 +4,7 @@
 
 在此提供我所製作的Google Assistant BOT 背後執行的代碼  
 >Google助理是由Google所開發之智慧型個人助理，  
->在2018年10月16日於臺灣上線。其後在隔年三月開放第三方程式可以與其介接。  
+>在2018年10月16日於臺灣上線。其後在隔年三月開放台灣的第三方程式可以與其介接。  
 >(即Action On Google平台)  
 >在這裡成列的是我自行開發並發布的Google Assistant 程式  
 >提供原始碼供參考  
@@ -19,9 +19,8 @@
 
 其他教學頁面
 -------
- * [【Actions on Google 】五分鐘打造 Google 語音助理應用](https://makerpro.cc/2019/01/a-quick-start-for-google-actions/)  
  * [Google Assistant development with Actions on Google(Udemy)](https://www.udemy.com/actions-on-google-app-google-assistant/)  
-
+ * [Google Assistant官方的說明頁面](https://developers.google.com/assistant/actions/dialogflow)
 
 詳細代碼說明與教學
 -------

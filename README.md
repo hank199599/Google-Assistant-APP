@@ -13,14 +13,14 @@
 -------
 <img src="https://developers.google.com/assistant/conversational/images/aog-user-query-to-fulfillment.png" />
 
-助理Google：處理語音辨識及傳遞回應給使用者  
-DialogFlow：透過自然語言處理對話與進行回應  
-Firebase：部屬Fulfillment，將DialogFlow所獲得之資訊進行分析再回傳回應
+* Google助理：處理語音辨識及傳遞回應給使用者  
+* DialogFlow：透過自然語言處理對話與進行回應  
+* Firebase：部屬Fulfillment，將DialogFlow所獲得之資訊進行分析再回傳回應
 
 其他教學頁面
 -------
- [【Actions on Google 】五分鐘打造 Google 語音助理應用](https://makerpro.cc/2019/01/a-quick-start-for-google-actions/)  
- [Google Assistant development with Actions on Google(Udemy)](https://www.udemy.com/actions-on-google-app-google-assistant/)  
+ * [【Actions on Google 】五分鐘打造 Google 語音助理應用](https://makerpro.cc/2019/01/a-quick-start-for-google-actions/)  
+ * [Google Assistant development with Actions on Google(Udemy)](https://www.udemy.com/actions-on-google-app-google-assistant/)  
 
 
 詳細代碼說明與教學

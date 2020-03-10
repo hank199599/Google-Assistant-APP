@@ -1,4 +1,4 @@
-[![](https://upload.wikimedia.org/wikipedia/commons/c/cb/Google_Assistant_logo.svg)](https://assistant.google.com/explore?hl=zh_tw)
+<img src="https://upload.wikimedia.org/wikipedia/commons/c/cb/Google_Assistant_logo.svg" width=100 height=100 />
 
 ### Google Assistant APP  
 

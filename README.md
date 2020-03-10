@@ -1,3 +1,5 @@
+[![](https://upload.wikimedia.org/wikipedia/commons/c/cb/Google_Assistant_logo.svg)](https://assistant.google.com/explore?hl=zh_tw)
+
 ### Google Assistant APP  
 
 在此提供我所製作的Google Assistant BOT 背後執行的代碼  
@@ -38,9 +40,9 @@ Firebase：部屬Fulfillment
 
 詳細代碼說明與教學：  
 -------
-Action on Google官方說明：https://developers.google.com/actions/  
-Dialogflow 官方說明：https://dialogflow.com/docs/getting-started  
-Firebase 官方說明：https://firebase.google.com/docs  
+* [Action on Google官方說明](https://developers.google.com/actions/) 
+* [Dialogflow 官方說明](https://dialogflow.com/docs/getting-started)
+* [Firebase 官方說明](https://firebase.google.com/docs)
 
 
 

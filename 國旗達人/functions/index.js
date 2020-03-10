@@ -18,8 +18,8 @@ const functions = require('firebase-functions');
 
 // Instantiate the Dialogflow client.
 const app = dialogflow({debug: true});
-var right = require('./country_detail'); //引用外部函數來輸入國旗答案與解釋
-var options = require('./country_name');  //引用外部函數來輸入國名
+var right = require('./country_detail.json'); //引用外部函數來輸入國旗答案與解釋
+var options = require('./country_name.json');  //引用外部函數來輸入國名
   
 
 function ranFun(){return parseInt(Math.random()*15);}
@@ -207,22 +207,21 @@ if(menu===false&&question_output===true&&answer_input===false&&end_game===false&
   
   selector=parseInt(Math.random()*3);
     
-  Currect_Answer=right.corrector(number)[0];  //取得本題目的正確國名
-  
-  
-  picture_url=right.corrector(number)[2];     //取得本題目的正確國旗
-  Describes=right.corrector(number)[3];
-  //隨機挑選答案位置
-  if(selector===0){Answer_A=right.corrector(number)[0];selector_A=number; Currect_Answer=Answer_A;Currect="A";}
-  else if(selector===1){Answer_B=right.corrector(number)[0];selector_B=number;Currect_Answer=Answer_B;Currect="B";}
-  else if(selector===2){Answer_C=right.corrector(number)[0];selector_C=number;Currect_Answer=Answer_C;Currect="C";}
-  else if(selector===3){Answer_D=right.corrector(number)[0];selector_D=number;Currect_Answer=Answer_D;Currect="D";}
+  Currect_Answer=right[number][0];  //取得本題目的正確國名
+  picture_url=right[number][2];     //取得本題目的正確國旗
+  Describes=right[number][3];
+ 
+ //隨機挑選答案位置
+  if(selector===0){Answer_A=right[number][0];selector_A=number; Currect_Answer=Answer_A;Currect="A";}
+  else if(selector===1){Answer_B=right[number][0];selector_B=number;Currect_Answer=Answer_B;Currect="B";}
+  else if(selector===2){Answer_C=right[number][0];selector_C=number;Currect_Answer=Answer_C;Currect="C";}
+  else if(selector===3){Answer_D=right[number][0];selector_D=number;Currect_Answer=Answer_D;Currect="D";}
 
   //其餘使用函數隨機挑選
-  if(Answer_A===""){ for(selector_A=parseInt(Math.random()*257);selector_A===number;selector_A++);Answer_A=options.selector(selector_A);}
-  if(Answer_B===""){ for(selector_B=parseInt(Math.random()*257);selector_B===number||selector_B===selector_A;selector_B++);Answer_B=options.selector(selector_B);}
-  if(Answer_C===""){ for(selector_C=parseInt(Math.random()*257);selector_C===number||selector_C===selector_A||selector_C===selector_B;selector_C++);Answer_C=options.selector(selector_C);}
-  if(Answer_D===""){ for(selector_D=parseInt(Math.random()*257);selector_D===number||selector_D===selector_A||selector_D===selector_B||selector_D===selector_C;selector_D++);Answer_D=options.selector(selector_D);}
+  if(Answer_A===""){ for(selector_A=parseInt(Math.random()*257);selector_A===number;selector_A++);Answer_A=options[selector_A];}
+  if(Answer_B===""){ for(selector_B=parseInt(Math.random()*257);selector_B===number||selector_B===selector_A;selector_B++);Answer_B=options[selector_B];}
+  if(Answer_C===""){ for(selector_C=parseInt(Math.random()*257);selector_C===number||selector_C===selector_A||selector_C===selector_B;selector_C++);Answer_C=options[selector_C];}
+  if(Answer_D===""){ for(selector_D=parseInt(Math.random()*257);selector_D===number||selector_D===selector_A||selector_D===selector_B||selector_D===selector_C;selector_D++);Answer_D=options[selector_D];}
  
   Total_Count++;
   

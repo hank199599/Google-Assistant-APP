@@ -21,7 +21,7 @@ const {
 const functions = require('firebase-functions');
 const replaceString = require('replace-string');
 const app = dialogflow({debug: true});
-var picker = require('./daily_quotes');
+var picker = require('./daily_quotes.json');
 var output_array="";
 var Quote="";
 var reference="";
@@ -42,7 +42,7 @@ function getDay() {
 app.intent('預設歡迎語句', (conv) => { 
 
   date=getDay();
-  output_array=picker.selector(date);
+  output_array=picker[date];
   Quote=output_array[0];
   reference=output_array[1];
   

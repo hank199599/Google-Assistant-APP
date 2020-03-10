@@ -34,9 +34,7 @@ function getDay() {
     var nowTime = today.getTime()+8*3600*1000;
     today.setTime(parseInt(nowTime));
     var oMoth = (today.getMonth() + 1).toString();
-    if (oMoth.length <= 1) oMoth = '0' + oMoth;
     var oDay = today.getDate().toString();
-    if (oDay.length <= 1) oDay = '0' + oDay;
     return oMoth + '月'+ oDay+'日';
 }
 

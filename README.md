@@ -17,12 +17,7 @@
 * DialogFlow：透過自然語言處理對話並傳遞資訊給Fulfillment  
 * Firebase：部屬Fulfillment，將DialogFlow所獲得之資訊進行分析再回傳回應
 
-其他教學頁面
--------
- * [Google Assistant development with Actions on Google(Udemy)](https://www.udemy.com/actions-on-google-app-google-assistant/)  
- * [Google Assistant官方的說明頁面](https://developers.google.com/assistant/actions/dialogflow)
-
-詳細代碼說明與教學
+官方說明頁面
 -------
 * [Action on Google官方說明](https://developers.google.com/actions/) 
 * [Dialogflow 官方說明](https://dialogflow.com/docs/getting-started)

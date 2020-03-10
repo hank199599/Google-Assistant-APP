@@ -1,7 +1,6 @@
- ![image](https://waqi.info/icons/logo.map.png?_=1583838645)  
-### 《世界空氣質量指數》                  
+ ![image](https://waqi.info/icons/logo.map.png?_=1583838645)     
   
-說明：
+《世界空氣質量指數》說明
 -------
 透過API介接來自[The World Air Quality Project](https://aqicn.org/map/)的即時空氣品質資訊。
 使用者只要傳送GPS資訊給Google助理，即可獲得距離最近的測站資訊。

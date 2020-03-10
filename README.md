@@ -15,7 +15,7 @@
 
 * Google助理：處理語音辨識及傳遞回應給使用者  
 * DialogFlow：透過自然語言處理對話並傳遞資訊給Fulfillment  
-* Firebase：部屬Fulfillment，將DialogFlow所獲得之資訊進行分析再回傳回應
+* Fulfillment：將來自DialogFlow的資訊進行分析再回應給使用者
 
 官方說明頁面
 -------

@@ -1,3 +1,5 @@
+[![](https://lh3.googleusercontent.com/IC_vSx1qVU6iTofmMzVjUIDjEcQ33KicmwUQS8CInXLghiMVayuCmn2aXEMTqp6DTrg7fbFLBxUT=s81)](https://assistant.google.com/services/a/uid/000000603cba0b27)
+
 
 >在2019年7月31日  
 >本服務登上[Google臺灣官方部落格](https://taiwan.googleblog.com/2019/07/google_31.html?m=1&fbclid=IwAR1pEfrGuM1E46B0lkbT_47vvfb7yBRI08eC_y3yT5ig0ihO5uI-xsi2UPU)
@@ -21,5 +23,7 @@
 立即試用
 --------
 
-◆ [於Google助理上試用](https://assistant.google.com/services/invoke/uid/000000603cba0b27)
+◆ [於Google助理上試用](https://assistant.google.com/services/invoke/uid/000000603cba0b27)  
+  
+◆ [查看Google助理上的簡介頁面](https://assistant.google.com/services/a/uid/000000603cba0b27)  
 

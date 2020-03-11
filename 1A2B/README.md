@@ -3,9 +3,11 @@
 >在2019年7月31日  
 >本服務登上[Google臺灣官方部落格](https://taiwan.googleblog.com/2019/07/google_31.html?m=1&fbclid=IwAR1pEfrGuM1E46B0lkbT_47vvfb7yBRI08eC_y3yT5ig0ihO5uI-xsi2UPU)
 
-### Google Assistant Developer Community
+#### Google Assistant Developer Community
 ###### 在2019年6月3日獲得"Keeping Users Engaged Pin" 
 [![image](https://i.imgur.com/JUffzAJ.png)](https://developers.google.com/assistant/community/developer-community-program)  
+ ###### 在2019年9月16日獲得"Taking Your App Global" 
+[![image](https://i.imgur.com/WH77t3L.png)](https://developers.google.com/assistant/community/developer-community-program)
  
 說明
 -------

@@ -5,7 +5,7 @@
 
 ### Google Assistant Developer Community
 ###### 在2019年6月3日獲得"Keeping Users Engaged Pin" 
-[![](https://i.imgur.com/JUffzAJ.png)](https://developers.google.com/assistant/community/developer-community-program)  
+[![image](https://i.imgur.com/JUffzAJ.png)](https://developers.google.com/assistant/community/developer-community-program)  
  
 說明
 -------

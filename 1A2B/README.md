@@ -2,7 +2,11 @@
  
 >在2019年7月31日  
 >本服務登上[Google臺灣官方部落格](https://taiwan.googleblog.com/2019/07/google_31.html?m=1&fbclid=IwAR1pEfrGuM1E46B0lkbT_47vvfb7yBRI08eC_y3yT5ig0ihO5uI-xsi2UPU)
- 
+
+> ### Google Assistant Developer Community
+> ***"Keeping Users Engaged Pin" Pin***
+![](https://i.imgur.com/tx9tEXS.png)
+
 說明
 -------
 遊戲開始時，會產生一個四位數字，其中：  

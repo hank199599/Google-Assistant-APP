@@ -30,30 +30,6 @@ var day ="";
 var Hournow="";
 var left_day=0;
 var word1="";var word2="";var word3="";
-
-function Time_get(){
-	Time= new Date();
-	month =months[Time.getMonth()];
-	day =Time.getDate();
-	Hournow=Time.getHours()+8;
-	
-	if(Hournow>=24){day++;}
-	date=month+day+'日';
-    if(date==="1月32日"){date="2月1日"}
-	else if(date==="2月29日"&&(Time.getFullYear()%4)!==0){date="3月1日"}
-	else if(date==="2月30日"&&(Time.getFullYear()%4)===0){date="3月1日"}
-    else if(date==="3月32日"){date="4月1日"}
-    else if(date==="4月31日"){date="5月1日"}
-    else if(date==="5月32日"){date="6月1日"}
-    else if(date==="6月31日"){date="7月1日"}
-    else if(date==="7月32日"){date="8月1日"}
-    else if(date==="8月32日"){date="9月1日"}
-    else if(date==="9月31日"){date="10月1日"}
-    else if(date==="10月32日"){date="11月1日"}
-    else if(date==="11月31日"){date="12月1日"}
-    else if(date==="12月32日"){date="1月1日"}
-	return date;
-}
 var currentYear="" ;
 var hasTimestamp = "" ;
 var day_cal=0;
@@ -71,25 +47,23 @@ function day_countdown(date){
  return Math.ceil(hasTimestamp / 86400000) + 1;
 }
 
-function getDay(num, str) {
+function getDay(num) {
     var today = new Date();
     var nowTime = today.getTime();
     var ms = 24*3600*1000*num;
     today.setTime(parseInt(nowTime + ms));
     var oYear = today.getFullYear();
     var oMoth = (today.getMonth() + 1).toString();
-    if (oMoth.length <= 1) oMoth = '0' + oMoth;
     var oDay = today.getDate().toString();
-    if (oDay.length <= 1) oDay = '0' + oDay;
-    return oYear + str + oMoth + str + oDay;
+    return oMoth + '月' + oDay+'日';
 }
 
 function Randomday(){
 	var random=parseInt(Math.random()*1)
-	if(random===0){temp=getDay(parseInt(Math.random()*365),'-')}
-	else{temp=getDay(parseInt(Math.random()*(-365)), '-')}
+	if(random===0){temp=getDay(parseInt(Math.random()*365))}
+	else{temp=getDay(parseInt(Math.random()*(-365)))}
 	
-	return (parseInt(temp.split('-')[1]))+'月'+(parseInt(temp.split('-')[2]))+'日';
+	return temp;
 }
 
 function count(arr,num){ 
@@ -102,7 +76,7 @@ var day_array=["元旦","上禮拜一","下禮拜一","前天","1天前","1天�
   
 app.intent('預設歡迎語句', (conv) => {
 	
-	input_date=Time_get();
+	input_date=getDay(0);
 	
 	todayarray=daily_history[input_date];//進入資料庫取得對應資訊
 	
@@ -111,7 +85,7 @@ app.intent('預設歡迎語句', (conv) => {
 	Year_record=random_output.split('：')[0];
 	context=random_output.split('：')[1];
 	Year_record_output=replaceString(Year_record, '年', ''); ;
-	Year_record_output=replaceString(Year_record_output, '前', '-'); ;
+	Year_record_output=replaceString(Year_record_output, '前'); ;
 	left_day=day_countdown(input_date);
 
     if (conv.user.last.seen) {
@@ -171,48 +145,48 @@ app.intent('指定查詢時間', (conv,{input_date,another_name}) => {
 		temp=date.split('T')[0];}
     else{
 		if(date==="2月29日"){}
-		else if(date.indexOf('大前天')!==-1){temp=getDay(-3, '-');}
-		else if(date.indexOf('前天')!==-1){temp=getDay(-2, '-');}
-		else if(date.indexOf('昨天')!==-1){temp=getDay(-1, '-');}
-		else if(date.indexOf('今天')!==-1){temp=getDay(0, '-');}
-		else if(date.indexOf('明天')!==-1){temp=getDay(1, '-');}
-		else if(date.indexOf('大後天')!==-1){temp=getDay(3, '-');}
-		else if(date.indexOf('後天')!==-1){temp=getDay(2, '-');}
+		else if(date.indexOf('大前天')!==-1){temp=getDay(-3);}
+		else if(date.indexOf('前天')!==-1){temp=getDay(-2);}
+		else if(date.indexOf('昨天')!==-1){temp=getDay(-1);}
+		else if(date.indexOf('今天')!==-1){temp=getDay(0);}
+		else if(date.indexOf('明天')!==-1){temp=getDay(1);}
+		else if(date.indexOf('大後天')!==-1){temp=getDay(3);}
+		else if(date.indexOf('後天')!==-1){temp=getDay(2);}
 		else if(date.indexOf('天前')!==-1){
 			var upcount=date.split('天')[0];
-			temp=getDay((-1)*upcount, '-');
+			temp=getDay((-1)*upcount);
 		}
 		else if(date.indexOf('天後')!==-1){
 			var upcount=date.split('天')[0];
-			temp=getDay(1*upcount, '-');
+			temp=getDay(1*upcount);
 		}
 		else if(date.indexOf('禮拜')!==-1&&date.indexOf('上')!==-1){
 			var tem_array=(date.split('禮拜')[0]).split('');
 			var upcount=count(tem_array,'上');
-			temp=getDay(upcount*(-7), '-');
+			temp=getDay(upcount*(-7));
 		}
 		else if(date.indexOf('禮拜')!==-1&&date.indexOf('下')!==-1){
 			var tem_array=(date.split('禮拜')[0]).split('');
 			var upcount=count(tem_array,'下');
-			temp=getDay(upcount*7, '-');
+			temp=getDay(upcount*7);
 		}
 		else if(date.indexOf('個月前')!==-1){
 			var upcount=date.split('個')[0];
-			temp=getDay(upcount*(-30), '-');
+			temp=getDay(upcount*(-30));
 		}
 		else if(date.indexOf('個月後')!==-1){
 			var upcount=date.split('個')[0];
-			temp=getDay(upcount*(+30), '-');
+			temp=getDay(upcount*(+30));
 		}
 		else if(date.indexOf('月')!==-1&&date.indexOf('上')!==-1){
 			var tem_array=(date.split('禮拜')[0]).split('');
 			var upcount=count(tem_array,'上');
-			temp=getDay(upcount*(-30), '-');
+			temp=getDay(upcount*(-30));
 		}
 		else if(date.indexOf('月')!==-1&&date.indexOf('下')!==-1){
 			var tem_array=(date.split('禮拜')[0]).split('');
 			var upcount=count(tem_array,'下');
-			temp=getDay(upcount*30, '-');
+			temp=getDay(upcount*30);
 		}
 		else{flag=true;}
 		}	
@@ -222,7 +196,7 @@ app.intent('指定查詢時間', (conv,{input_date,another_name}) => {
 
 	if(flag===false){
 		if(date==="2月29日"){input_date=date;}
-		else{input_date=(parseInt(temp.split('-')[1]))+'月'+(parseInt(temp.split('-')[2]))+'日';}
+		else{input_date=temp;}
 
 		output_array=daily_history[input_date];//進入資料庫取得對應資訊
 
@@ -243,7 +217,7 @@ app.intent('指定查詢時間', (conv,{input_date,another_name}) => {
 	random_output=todayarray[arraynumber];
 	Year_record=random_output.split('：')[0];
 	Year_record_output=replaceString(Year_record, '年', ''); ;
-	Year_record_output=replaceString(Year_record_output, '前', '-'); ;
+	Year_record_output=replaceString(Year_record_output, '前'); ;
 	context=random_output.split('：')[1];
 	currentYear = new Date().getFullYear().toString(); // 今天减今年的第一天（xxxx年01月01日）
 
@@ -309,7 +283,7 @@ app.intent('重複查詢同一天', (conv) => {
 	random_output=todayarray[arraynumber];
 	Year_record=random_output.split('：')[0];
 	Year_record_output=replaceString(Year_record, '年', ''); ;
-	Year_record_output=replaceString(Year_record_output, '前', '-'); ;
+	Year_record_output=replaceString(Year_record_output, '前'); ;
 	context=random_output.split('：')[1];
 
 	left_day=day_countdown(input_date);

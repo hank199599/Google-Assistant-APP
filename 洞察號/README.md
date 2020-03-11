@@ -1,5 +1,9 @@
 [![](https://lh3.googleusercontent.com/m6AndjL1T-BndHICYTed_LPaF2P3APyFaOL_DxpSlkPORIi6w14xob0V-CbDdtd-I5KNWzsygMw=s81)](https://assistant.google.com/services/a/uid/00000038183bf1fb)
-  
+
+#### Google Assistant Developer Community
+ ###### 在2019年6月24日獲得"Taking Your App Global"徽章  
+[![image](https://i.imgur.com/WH77t3L.png)](https://developers.google.com/assistant/community/developer-community-program)  
+
 說明
 -------
 「洞察號」是一顆用於研究火星內部結構的無人著陸探測器。  
@@ -11,7 +15,7 @@
   
 立即試用
 -------
-###### *本服務支援中文、廣東話(香港)及英文*  
+###### *本服務支援中文、廣東話(香港)、日文及英文*  
 ◆ [於Google助理上試用](https://assistant.google.com/services/invoke/uid/00000038183bf1fb)
   
 ◆ [Google助理上的說明頁面](https://assistant.google.com/services/a/uid/00000038183bf1fb)

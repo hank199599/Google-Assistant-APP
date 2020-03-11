@@ -1,6 +1,11 @@
 [![images](https://lh3.googleusercontent.com/98fcN9pEn4mfaJJxil5jvKD6PADUa7d2LfMexZriVgMxXw47y8_If3bxuhibtClnscx4TvE0d7cP=s81)](https://assistant.google.com/services/a/uid/0000008473a60dc8)
- 
- 
+
+#### Google Assistant Developer Community
+###### 在2019年9月9日獲得"Taking Your App Global"徽章
+[![image](https://i.imgur.com/WH77t3L.png)](https://developers.google.com/assistant/community/developer-community-program)  
+###### 在2019年9月23日獲得"Getting Initial Traction"徽章 
+[![image](https://i.imgur.com/P9PbU5E.png)](https://developers.google.com/assistant/community/developer-community-program)  
+
 說明
 -------
 在遊戲開始前，使用者必須選擇一個數字做為上限。  

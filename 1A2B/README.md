@@ -4,7 +4,7 @@
 >本服務登上[Google臺灣官方部落格](https://taiwan.googleblog.com/2019/07/google_31.html?m=1&fbclid=IwAR1pEfrGuM1E46B0lkbT_47vvfb7yBRI08eC_y3yT5ig0ihO5uI-xsi2UPU)
 
 > ### Google Assistant Developer Community  
->| 在2019年6月3日獲得"Keeping Users Engaged Pin" |[![](https://i.imgur.com/tx9tEXS.png)](https://developers.google.com/assistant/community/developer-community-program)  
+>[![](https://i.imgur.com/tx9tEXS.png)](https://developers.google.com/assistant/community/developer-community-program)在2019年6月3日獲得"Keeping Users Engaged Pin" 
  
 說明
 -------

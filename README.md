@@ -11,7 +11,7 @@
      
 執行原理
 -------
-<img src="https://developers.google.com/assistant/conversational/images/aog-user-query-to-fulfillment.png" />
+[<img src="https://developers.google.com/assistant/conversational/images/aog-user-query-to-fulfillment.png" />](https://developers.google.com/assistant/conversational/overview)
 
 * Google助理：處理語音辨識及傳遞回應給使用者  
 * DialogFlow：透過自然語言處理對話並傳遞資訊給Fulfillment  

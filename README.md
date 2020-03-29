@@ -9,7 +9,7 @@
 >在這裡成列的是我自行開發並發布的Google Assistant 程式  
 >提供原始碼供參考  
 
-登上台灣Google新聞稿
+登上Google台灣新聞稿
 ------
 >新聞稿發布時間：2019年7月31日  
 [Google臺灣 新聞稿連結](https://taiwan.googleblog.com/2019/07/google_31.html?m=1&fbclid=IwAR1pEfrGuM1E46B0lkbT_47vvfb7yBRI08eC_y3yT5ig0ihO5uI-xsi2UPU)

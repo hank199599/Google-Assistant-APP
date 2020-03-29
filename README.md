@@ -10,9 +10,9 @@
 >提供原始碼供參考  
 
 登上台灣Google新聞稿
------->
->在2019年7月31日  
->我所製作的APP曾登上[Google臺灣官方部落格](https://taiwan.googleblog.com/2019/07/google_31.html?m=1&fbclid=IwAR1pEfrGuM1E46B0lkbT_47vvfb7yBRI08eC_y3yT5ig0ihO5uI-xsi2UPU)
+------
+>新聞稿發布時間：2019年7月31日  
+[Google臺灣 新聞稿連結](https://taiwan.googleblog.com/2019/07/google_31.html?m=1&fbclid=IwAR1pEfrGuM1E46B0lkbT_47vvfb7yBRI08eC_y3yT5ig0ihO5uI-xsi2UPU)
 出現在新聞稿的APP列表：
 * [美食決定器](https://assistant.google.com/services/a/uid/00000058f29109ab?hl=zh_tw)
 * [1A2B猜數](https://assistant.google.com/services/a/uid/000000b5033b5e97?hl=zh_tw)

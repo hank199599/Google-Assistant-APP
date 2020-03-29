@@ -26,13 +26,17 @@ i18n.configure({
   defaultLocale: 'en',
 });
 
-var MarsInsightWeather = require('mars-insight-weather-node');
-var marsweather = new MarsInsightWeather('C', 'Pa', 'm/s');
+app.middleware((conv) => {
+  i18n.setLocale(conv.user.locale);
+});
+
+var getJSON = require('get-json')
 
 var Temperature="NaN"; var Temperature_max="NaN"; var Temperature_min="NaN";
 var Pressure="NaN"; var Pressure_max="NaN"; var Pressure_min="NaN";
 var Wind_Speed="NaN";var Wind_Speed_max="NaN";var Wind_Speed_min="NaN";
 var Wind_direction="NaN";var Wind_direction_1='';
+var language_array=['zh-TW','zh-CN','zh-HK','ja-JP'];
 var Season='NaN';
 var sol=0;
 var temp_date="";
@@ -40,33 +44,38 @@ var month=0;var date=0;
 var lastestsol="";
 var output="";  //客製化輸出
 var subtext="";  //客製化副標題輸出
+var	time = "";
+var	minute_now="";
 
 var Month_array=["January","February","March","April","May","June","July","August","September","October","November","December"];
+
 var month_output="";
+
 var roundDecimal = function (val, precision) { //進行四捨五入的函式呼叫
   return Math.round(Math.round(val * Math.pow(10, (precision || 0) + 1)) / 10) / Math.pow(10, (precision || 0));};
 
-app.middleware((conv) => {
-  i18n.setLocale(conv.user.locale);
-});
 
-const admin = require('firebase-admin');
+app.intent('取得天氣速覽', (conv) => {
 
-let serviceAccount = require("./config/b1a2b-krmfch-firebase-adminsdk-1tgdm-65b74bdbc0.json");
+ Temperature="NaN";  Temperature_max="NaN";  Temperature_min="NaN"; Pressure="NaN";  Pressure_max="NaN";  Pressure_min="NaN";
+ Wind_Speed="NaN"; Wind_Speed_max="NaN"; Wind_Speed_min="NaN"; Wind_direction="NaN"; Wind_direction_1='';
+ Season='NaN'; sol=0; lastestsol="undefined";month=0;date=0; output="";   subtext=""; 
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://b1a2b-krmfch.firebaseio.com/"
-});
+  return new Promise(function(resolve,reject){
+	
+  getJSON('https://mars.nasa.gov/rss/api/?feed=weather&category=insight&feedtype=json&ver=1.0')
+    .then(function(response) {
+	  resolve(response)
+    }).catch(function(error) {
+	 var reason=new Error('資料獲取失敗');
+     reject(reason)
+    });
+}).then(function (origin_data) {
 
-const database = admin.database();
-let db = admin.firestore(); 
+//處理獲取的資料....
 
- 
-function WeatherAPI()
-{   
-    database.ref('/Mars').on('value',e=>{sol=e.val().sol;});
-    database.ref('/Mars').on('value',e=>{lastestsol=e.val().lastestsol;});
+	sol=origin_data.sol_keys.pop();
+	lastestsol=origin_data[sol];
 	  
   if(typeof(lastestsol)!=="undefined"){
 	
@@ -103,53 +112,33 @@ function WeatherAPI()
 	Wind_Speed_min = roundDecimal(Wind_Speed_min,1);
    
    if((lastestsol.WD.most_common == undefined)!==true){
+   var dirction={"N":i18n.__('N'),"NbE":i18n.__('NbE'),"NNE":i18n.__('NNE'),"NEbN":i18n.__('NEbN'),"NE":i18n.__('NE'),"NEbE":i18n.__('NEbE'),"ENE":i18n.__('ENE'),"EbN":i18n.__('EbN'),"E":i18n.__('E'),"EbS":i18n.__('EbS'),"ESE":i18n.__('ESE'),"SEbE":i18n.__('SEbE'),"SE":i18n.__('SE'),"SEbS":i18n.__('SEbS'),"SSE":i18n.__('SSE'),"SbE":i18n.__('SbE'),"S":i18n.__('S'),"SbW":i18n.__('SbW'),"SSW":i18n.__('SSW'),"SWbS":i18n.__('SWbS'),"SW":i18n.__('SW'),"SWbW":i18n.__('SWbW'),"WSW":i18n.__('WSW'),"WbS":i18n.__('WbS'),"W":i18n.__('W'),"WbN":i18n.__('WbN'),"WNW":i18n.__('WNW'),"NWbW":i18n.__('NWbW'),"NW":i18n.__('NW'),"NWbN":i18n.__('NWbN'),"NNW":i18n.__('NNW'),"NbW":i18n.__('NbW')};
 
     Wind_direction = lastestsol.WD.most_common.compass_point;
 	Wind_direction = String(Wind_direction);
 	Wind_direction_1=Wind_direction;
-	if(Wind_direction==='N'){Wind_direction=i18n.__('N');}else if(Wind_direction==='NbE'){Wind_direction=i18n.__('NbE');}else if(Wind_direction==='NNE'){Wind_direction=i18n.__('NNE');}else if(Wind_direction==='NEbN'){Wind_direction=i18n.__('NEbN');}
-	else if(Wind_direction==='NE'){Wind_direction=i18n.__('NE');}else if(Wind_direction==='NEbE'){Wind_direction=i18n.__('NEbE');}else if(Wind_direction==='ENE'){Wind_direction=i18n.__('ENE');}else if(Wind_direction==='EbN'){Wind_direction=i18n.__('EbN');}
-	else if(Wind_direction==='E'){Wind_direction=i18n.__('E');}else if(Wind_direction==='EbS'){Wind_direction=i18n.__('EbS');} else if(Wind_direction==='ESE'){Wind_direction=i18n.__('ESE');} else if(Wind_direction==='SEbE'){Wind_direction=i18n.__('SEbE');}
-	else if(Wind_direction==='SE'){Wind_direction=i18n.__('SE');}else if(Wind_direction==='SEbS'){Wind_direction=i18n.__('SEbS');}else if(Wind_direction==='SSE'){Wind_direction=i18n.__('SSE');}else if(Wind_direction==='SbE'){Wind_direction=i18n.__('SbE');}
-	else if(Wind_direction==='S'){Wind_direction=i18n.__('S');}else if(Wind_direction==='SbW'){Wind_direction=i18n.__('SbW');}else if(Wind_direction==='SSW'){Wind_direction=i18n.__('SSW');}else if(Wind_direction==='SWbS'){Wind_direction=i18n.__('SWbS');}	
-	else if(Wind_direction==='SW'){Wind_direction=i18n.__('SW');}else if(Wind_direction==='SWbW'){Wind_direction=i18n.__('SWbW');} else if(Wind_direction==='WSW'){Wind_direction=i18n.__('WSW');}else if(Wind_direction==='WbS'){Wind_direction=i18n.__('WbS');}	
-	else if(Wind_direction==='W'){Wind_direction=i18n.__('W');}  else if(Wind_direction==='WbN'){Wind_direction=i18n.__('WbN');} else if(Wind_direction==='WNW'){Wind_direction=i18n.__('WNW');}else if(Wind_direction==='NWbW'){Wind_direction=i18n.__('NWbW');}
-	else if(Wind_direction==='NW'){Wind_direction=i18n.__('NW');}else if(Wind_direction==='NWbN'){Wind_direction=i18n.__('NWbN');}else if(Wind_direction==='NNW'){Wind_direction=i18n.__('NNW');}else if(Wind_direction==='NbW'){Wind_direction=i18n.__('NbW');}
-		}
-	}
+	Wind_direction=dirction[Wind_direction];
+	 }
+ }
 	if(typeof (lastestsol.Season)!=="undefined"){
+	var seasons={"spring":i18n.__('Spring'),"summer":i18n.__('Summer'),"autumn":i18n.__('Autumn'),"winter":i18n.__('Winter')};
 	Season = lastestsol.Season;
     Season = String(Season);
-	if(Season==='spring'){Season=i18n.__('Spring');}else if(Season==='summer'){Season=i18n.__('Summer');}else if(Season==='autumn'){Season=i18n.__('Autumn');}else if(Season==='winter'){Season=i18n.__('Winter');}
+	Season=seasons[Season];
 	}
 
    }
- }
 
-app.intent('取得天氣速覽', (conv) => {
-
- Temperature="NaN";  Temperature_max="NaN";  Temperature_min="NaN";
- Pressure="NaN";  Pressure_max="NaN";  Pressure_min="NaN";
- Wind_Speed="NaN"; Wind_Speed_max="NaN"; Wind_Speed_min="NaN";
- Wind_direction="NaN"; Wind_direction_1='';
- Season='NaN'; sol=0; lastestsol="undefined";month=0;date=0;
- output="";  
- subtext=""; 
-
-   new WeatherAPI();//呼叫API
-
+//開始制定輸出樣式	
  month_output=parseInt(month);
-if((conv.user.locale!=='zh-TW')&&(conv.user.locale!=='zh-CN')&&(conv.user.locale!=='zh-HK')&&(conv.user.locale!=='ja-JP'))  
-  {month_output=Month_array[month_output-1];}
+ 
+ if(language_array.indexOf(conv.user.locale)===-1){month_output=Month_array[month_output-1];}
   
   if(String(Temperature_max)==="NaN"&&String(Pressure)==="NaN"&&String(Wind_Speed)==="NaN"){
      output=i18n.__('Errorout');     
-	 subtext=i18n.__('CardSubTitle',month_output,date,Season)+ i18n.__('Errortext');
-}
-  else if(typeof(lastestsol)==="undefined"){
-    output=i18n.__('Errorout');     }
-  else{  
-  output=i18n.__('IntroSpeak1',sol,month_output,date);
+	 subtext=i18n.__('CardSubTitle',month_output,date,Season)+ i18n.__('Errortext');}
+  else if(typeof(lastestsol)==="undefined"){output=i18n.__('Errorout');     }
+  else{  output=i18n.__('IntroSpeak1',sol,month_output,date);
 
   if(String(Temperature_max)!=="NaN"){ output=output+'</s><break time="0.3s"/><s>'+i18n.__('IntroSpeak2',Temperature_max,Temperature_min);} else{ Temperature='--';  Temperature_max='--';  Temperature_min='--';}
   if(String(Pressure)!=="NaN"){ output=output+'</s><break time="0.3s"/><s>'+i18n.__('IntroSpeak3',Pressure);}else{ Pressure='--';  Pressure_max='--';  Pressure_min='--';}
@@ -168,7 +157,7 @@ if((conv.user.locale!=='zh-TW')&&(conv.user.locale!=='zh-CN')&&(conv.user.locale
               text: i18n.__('IntroText')}));
 
 if((conv.user.locale!=='zh-TW')&&(conv.user.locale!=='zh-CN')&&(conv.user.locale!=='zh-HK')&&(conv.user.locale!=='ja-JP')){Wind_direction=Wind_direction_1;}
- if(typeof(lastestsol)!=="undefined"){	  
+ if(sol!==0){	  
   conv.close(new Table({
   title: i18n.__('CardTitle',sol)+'\n'+subtext,
   columns: [
@@ -209,9 +198,8 @@ if((conv.user.locale!=='zh-TW')&&(conv.user.locale!=='zh-CN')&&(conv.user.locale
   ],
   buttons: new Button({
     title: i18n.__('CheckDaily'),
-    url: 'https://mars.nasa.gov/insight/weather/'
-  }),
- }));}
+    url: 'https://mars.nasa.gov/insight/weather/'}),}));
+}
  else{
 	 conv.close(new BasicCard({   
         title:i18n.__('Errortitle') ,
@@ -221,17 +209,26 @@ if((conv.user.locale!=='zh-TW')&&(conv.user.locale!=='zh-CN')&&(conv.user.locale
 			title: i18n.__('CheckDaily'),
 			url: 'https://mars.nasa.gov/insight/weather/'}),
         }));
- 
+
  }
+}).catch(function (error) {
+
+  console.log(error)
+  conv.ask(new SimpleResponse({               
+  speech: `<speak><p><s>${i18n.__('Errorout')}</s></p></speak>`,
+              text: i18n.__('IntroText')}));
+
+	 conv.close(new BasicCard({   
+        title:i18n.__('Errortitle') ,
+        subtitle:i18n.__('notify'), 
+		text:i18n.__('Solution'),
+		buttons: new Button({
+			title: i18n.__('CheckDaily'),
+			url: 'https://mars.nasa.gov/insight/weather/'}),
+        }));
  
- //呼叫洞察號天氣資訊API
-	marsweather.request(function(err, response){
-		sol = this.getLatestSolKey();
-		lastestsol=this.getLatestSol();
-     });
-  if(typeof(lastestsol)!=="undefined"){
- 	database.ref('/Mars').update({lastestsol:lastestsol});
-	database.ref('/Mars').update({sol:sol});}
+ });
+ 	
 });
 
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app); 

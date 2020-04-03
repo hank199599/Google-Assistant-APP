@@ -1,5 +1,8 @@
 [![](https://lh3.googleusercontent.com/Cc6BaW2bvr3i7N5V0pPb9RDtIZo8wIVFPFPV9Ev9tWtYgMvRBf8kCnhBpldEV-dG0eqDNlchpXQlhw=s81)](https://assistant.google.com/services/a/uid/000000ca4e8b5d65)
 
+>在2020年3月31日  
+>本服務登上[Google臺灣官方部落格](https://taiwan.googleblog.com/2020/03/tips-for-home-entertainment.html?fbclid=IwAR3S6u6NuAm8fCKOuRePjseSoDyMmnvgE16oYXs7Eafthw9IFFtfAB71Neo)
+
 說明
 -------
 使用來自[《教育部重編國語辭典修訂本》](http://dict.revised.moe.edu.tw/cbdic/)收錄的詞彙，  

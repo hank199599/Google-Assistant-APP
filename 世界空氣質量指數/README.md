@@ -7,7 +7,7 @@
   
 試用
 -------
-###### *本服務支援中文、廣東話(香港)*  
+###### *本服務支援中文、廣東話(香港)及日文*  
 ◆ [於Google助理上試用](https://assistant.google.com/services/invoke/uid/000000b85163c25c)
   
 ◆ [Google助理上的說明頁面](https://assistant.google.com/services/a/uid/000000b85163c25c)

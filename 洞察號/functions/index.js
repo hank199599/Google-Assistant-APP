@@ -21,7 +21,7 @@ const i18n = require('i18n');
 const app = dialogflow({debug: true});
 
 i18n.configure({
-  locales: ['zh-TW','en','zh-CN','zh-HK','ja-JP'],
+  locales: ['zh-TW','en','zh-CN','zh-HK','ja-JP','ko-KR'],
   directory: __dirname + '/locales',
   defaultLocale: 'en',
 });
@@ -36,7 +36,7 @@ var Temperature="NaN"; var Temperature_max="NaN"; var Temperature_min="NaN";
 var Pressure="NaN"; var Pressure_max="NaN"; var Pressure_min="NaN";
 var Wind_Speed="NaN";var Wind_Speed_max="NaN";var Wind_Speed_min="NaN";
 var Wind_direction="NaN";var Wind_direction_1='';
-var language_array=['zh-TW','zh-CN','zh-HK','ja-JP'];
+var language_array=['zh-TW','zh-CN','zh-HK','ja-JP','ko-KR'];
 var Season='NaN';
 var sol=0;
 var temp_date="";
@@ -83,7 +83,7 @@ app.intent('取得天氣速覽', (conv) => {
     temp_date=lastestsol.First_UTC;
     temp_date=(temp_date.split('T')[0]).split('-');
     month=temp_date[1];
-	date=temp_date[2];}
+	date=parseInt(temp_date[2]);}
 
   	if(typeof (lastestsol.AT)!=="undefined"){
     Temperature = lastestsol.AT.av;
@@ -156,7 +156,7 @@ app.intent('取得天氣速覽', (conv) => {
   speech: `<speak><p><s>${output}</s></p></speak>`,
               text: i18n.__('IntroText')}));
 
-if((conv.user.locale!=='zh-TW')&&(conv.user.locale!=='zh-CN')&&(conv.user.locale!=='zh-HK')&&(conv.user.locale!=='ja-JP')){Wind_direction=Wind_direction_1;}
+if(language_array.indexOf(conv.user.locale)===-1){Wind_direction=Wind_direction_1;}
  if(sol!==0){	  
   conv.close(new Table({
   title: i18n.__('CardTitle',sol)+'\n'+subtext,

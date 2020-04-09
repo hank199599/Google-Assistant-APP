@@ -1,0 +1,15 @@
+{
+"output": "Actualmente, las tres principales tendencias de búsqueda son",
+"display": "Aquí está la clasificación de las tendencias de búsqueda actuales en su ubicación, \n Haga clic para ver más información",
+"count": " búsquedas",
+"title": "Ranking de búsqueda superior",
+"rank": "rank",
+"key": "Palabras clave",
+"cuenta": "Cuenta",
+"seach": "Tendencia",
+"ERROR_talk": "Lo siento, no puedo obtener tendencias de búsqueda para su ubicación",
+"ERROR_show": "No se pueden obtener tendencias de búsqueda",
+"ERROR_text": "No se pueden obtener datos",
+"ERROR": "Error"
+
+}

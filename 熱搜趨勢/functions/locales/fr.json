@@ -1,0 +1,15 @@
+{
+"output": "Actuellement, les trois principales tendances de recherche sont",
+"display": "Voici le classement des tendances de recherche actuelles dans votre emplacement, \n Cliquez pour voir plus d'informations",
+"count": " recherches",
+"title": "Top Search Rankings",
+"rank": "rang",
+"key": "Mots clés",
+"counts": "comptes",
+"seach": "Trend",
+"ERROR_talk": "Désolé, je ne peux pas obtenir les tendances de recherche pour votre emplacement",
+"ERROR_show": "Impossible d'obtenir les tendances de recherche",
+"ERROR_text": "Impossible d'obtenir les données",
+"ERREUR": "Erreur"
+
+}

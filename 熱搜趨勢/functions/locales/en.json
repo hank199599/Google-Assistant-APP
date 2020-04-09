@@ -1,0 +1,15 @@
+{
+"output":"Currently, the top three search trends are",
+"display":"Here's the ranking of current search trends in your location,\nClick to see more information",
+"count":" searchs",
+"title":"Top Search Rankings",
+"rank":"Ranking",
+"key":"Keywords",
+"counts":"Counts",
+"seach":"Trend",
+"ERROR_talk":"Sorry, I can't get search trends for your location",
+"ERROR_show":"Can't get search trends",
+"ERROR_text":"Can't get data",
+"ERROR":"Error"
+
+}

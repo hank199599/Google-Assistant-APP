@@ -2,7 +2,7 @@
 
 
 >*製作緣由*  
->仿造美國區的「 [ISS Info](https://assistant.google.com/services/a/uid/00000076f707ada7?hl=en-US)」Action
+>仿造美國區的「[ISS Info](https://assistant.google.com/services/a/uid/00000076f707ada7?hl=en-US)」Action
 
 特色說明
 -------

@@ -1,5 +1,7 @@
 {
 "output": "Actuellement, les trois principales tendances de recherche sont",
+"output1":"Actuellement, un seul mot clé est dans le rang, le nom est",
+"output2":"Il n’y a que deux mots clés dans le classement actuel,",
 "display": "Voici le classement des tendances de recherche actuelles dans votre emplacement, \n Cliquez pour voir plus d'informations",
 "count": " recherches",
 "title": "Top Search Rankings",
@@ -7,6 +9,8 @@
 "key": "Mots clés",
 "counts": "comptes",
 "seach": "Trend",
+"notify":"Plus de mots clés",
+"click":"Actuellement, il n’y a qu’un seul mot clé sur la liste.",
 "ERROR_talk": "Désolé, je ne peux pas obtenir les tendances de recherche pour votre emplacement",
 "ERROR_show": "Impossible d'obtenir les tendances de recherche",
 "ERROR_text": "Impossible d'obtenir les données",

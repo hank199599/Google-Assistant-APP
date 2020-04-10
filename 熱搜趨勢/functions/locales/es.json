@@ -1,5 +1,7 @@
 {
 "output": "Actualmente, las tres principales tendencias de búsqueda son",
+"output1":"Actualmente, sólo una palabra clave está en el rango, el nombre es",
+"output2":"Sólo hay dos palabras clave en la tabla de clasificación actual,",
 "display": "Aquí está la clasificación de las tendencias de búsqueda actuales en su ubicación, \n Haga clic para ver más información",
 "count": " búsquedas",
 "title": "Ranking de búsqueda superior",
@@ -7,6 +9,8 @@
 "key": "Palabras clave",
 "cuenta": "Cuenta",
 "seach": "Tendencia",
+"notify":"No más palabras clave",
+"click":"Actualmente, solo hay una palabra clave en la lista.",
 "ERROR_talk": "Lo siento, no puedo obtener tendencias de búsqueda para su ubicación",
 "ERROR_show": "No se pueden obtener tendencias de búsqueda",
 "ERROR_text": "No se pueden obtener datos",

@@ -23,7 +23,7 @@ let parser = new Parser({
 
 
 i18n.configure({
-  locales: ['zh-TW','zh-HK','ja-JP','ko-KR','en','fr','es'],
+  locales: ['zh-TW','zh-HK','ja-JP','ko-KR','en','fr','es','th'],
   directory: __dirname + '/locales',
   defaultLocale: 'zh-TW',
 });
@@ -33,12 +33,18 @@ app.middleware((conv) => {
   if(language.indexOf('en')!==-1){language="en";}
   else if(language.indexOf('fr')!==-1){language="fr";}
   else if(language.indexOf('es')!==-1){language="es";}
+  else if(language.indexOf('th')!==-1){language="th";}
 	
   i18n.setLocale(language);
 });
 
 var return_data=[];
 var location="";
+var Carouselarray=[];
+var rowsarray=[];
+var color="";
+var i=0;
+var verb="";
 
 app.intent('今日搜尋趨勢', (conv) => {
 
@@ -63,113 +69,69 @@ app.intent('今日搜尋趨勢', (conv) => {
   }).then(function (final_data) {
   const hasWebBrowser = conv.surface.capabilities.has('actions.capability.WEB_BROWSER');
 
-	if(conv.screen){
-   conv.ask(new SimpleResponse({ 
-			 speech: `<speak><p><s>${i18n.__('output')}：${final_data[0][0]}<break time="0.3s"/>${final_data[1][0]}<break time="0.3s"/>${final_data[2][0]}</s></p></speak>`,
-			  text: i18n.__('display'),}));
+	 Carouselarray=[];
+	 rowsarray=[];
+	
+	for(i=0;i<10;i++){
+	  var num1=final_data[i][1].replace(/[\,|\+|]/g,"");
+	  var num2=final_data[i+1][1].replace(/[\,|\+|]/g,"");
+	  num1=parseInt(num1);
+	  num2=parseInt(num2);  
+	  
+	  if(i===0){color="ea4335";}
+	  else if(i===1){color="fbbc05";}
+	  else if(i===2){color="34a853";}
+	  else{color="4285f4";}
+	  	  
+		  Carouselarray.push(
+			 new BrowseCarouselItem({
+				title: final_data[i][0],
+				url: 'https://trends.google.com/trends/explore?q='+final_data[i][0]+'&date=now%201-d&geo='+location,
+				description: final_data[i][1]+i18n.__('count'),
+				image: new Image({
+				  url: 'https://dummyimage.com/232x128/'+color+'/ffffff.png&text='+(i+1),
+				  alt: '排名符號',
+				}),
+			})
+		  );
+		  
+	     rowsarray.push({cells: [(i+1).toString(),final_data[i][0],final_data[i][1]],dividerAfter: false,});
+
+		if(num1<num2){ break;}
+	}
+
+	if(Carouselarray.length===1){verb=`<speak><p><s>${i18n.__('output1')}<break time="0.5s"/>${final_data[0][0]}</s></p></speak>`;}
+	else if (Carouselarray.length===1){verb=`<speak><p><s>${i18n.__('output2')}<break time="0.5s"/>${final_data[0][0]}<break time="0.3s"/>${final_data[1][0]}</s></p></speak>`;}
+	else{verb=`<speak><p><s>${i18n.__('output')}<break time="0.5s"/>${final_data[0][0]}<break time="0.3s"/>${final_data[1][0]}<break time="0.3s"/>${final_data[2][0]}</s></p></speak>`;}
+ 
+ if(Carouselarray.length<=1){
+	   
+		  Carouselarray.push(
+			 new BrowseCarouselItem({
+				title: i18n.__('notify'),
+				url: 'https://trends.google.com.tw/trends/trendingsearches/daily?geo='+location,
+				description: i18n.__('click'),
+				image: new Image({
+				  url: 'https://i.imgur.com/hMTn8OV.png',
+				  alt: '排名符號',
+				}),
+			})
+		  );
+   }	
+	
+ if(conv.screen){
+   conv.ask(new SimpleResponse({ speech: verb,text: i18n.__('display'),}));
+
    if (hasWebBrowser) {
   conv.close(new BrowseCarousel({
-    items: [
-      new BrowseCarouselItem({
-        title: final_data[0][0],
-        url: 'https://trends.google.com/trends/explore?q='+final_data[0][0]+'&date=now%201-d&geo='+location,
-        description: final_data[0][1]+i18n.__('count'),
-		image: new Image({
-          url: 'https://dummyimage.com/232x128/ea4335/ffffff.png&text=1',
-          alt: '排名符號',
-        }),
-      }),
-      new BrowseCarouselItem({
-        title: final_data[1][0],
-        url: 'https://trends.google.com/trends/explore?q='+final_data[1][0]+'&date=now%201-d&geo='+location,
-        description: final_data[1][1]+i18n.__('count'),
-		image: new Image({
-          url: 'https://dummyimage.com/232x128/fbbc05/ffffff.png&text=2',
-          alt: '排名符號',}),
-      }),
-      new BrowseCarouselItem({
-        title: final_data[2][0],
-        url: 'https://trends.google.com/trends/explore?q='+final_data[2][0]+'&date=now%201-d&geo='+location,
-        description: final_data[2][1]+i18n.__('count'),
-		image: new Image({
-          url: 'https://dummyimage.com/232x128/34a853/ffffff.png&text=3',
-          alt: '排名符號',}),
-      }),      
-      new BrowseCarouselItem({
-        title: final_data[3][0],
-        url: 'https://trends.google.com/trends/explore?q='+final_data[3][0]+'&date=now%201-d&geo='+location,
-        description: final_data[3][1]+i18n.__('count'),
-		image: new Image({
-          url: 'https://dummyimage.com/232x128/4285f4/ffffff.png&text=4',
-          alt: '排名符號',
-        }),
-      }),      
-      new BrowseCarouselItem({
-        title: final_data[4][0],
-        url: 'https://trends.google.com/trends/explore?q='+final_data[4][0]+'&date=now%201-d&geo='+location,
-        description: final_data[4][1]+i18n.__('count'),
-		image: new Image({
-          url: 'https://dummyimage.com/232x128/4285f4/ffffff.png&text=5',
-          alt: '排名符號',}),
-      }), 
-      new BrowseCarouselItem({
-        title: final_data[5][0],
-        url: 'https://trends.google.com/trends/explore?q='+final_data[5][0]+'&date=now%201-d&geo='+location,
-        description: final_data[5][1]+i18n.__('count'),
-		image: new Image({
-          url: 'https://dummyimage.com/232x128/4285f4/ffffff.png&text=6',
-          alt: '排名符號',}),
-      }), 
-      new BrowseCarouselItem({
-        title: final_data[6][0],
-        url: 'https://trends.google.com/trends/explore?q='+final_data[6][0]+'&date=now%201-d&geo='+location,
-        description: final_data[7][1]+i18n.__('count'),
-		image: new Image({
-          url: 'https://dummyimage.com/232x128/4285f4/ffffff.png&text=7',
-          alt: '排名符號',}),
-      }), 
-      new BrowseCarouselItem({
-        title: final_data[7][0],
-        url: 'https://trends.google.com/trends/explore?q='+final_data[7][0]+'&date=now%201-d&geo='+location,
-        description: final_data[8][1]+i18n.__('count'),
-		image: new Image({
-          url: 'https://dummyimage.com/232x128/4285f4/ffffff.png&text=8',
-          alt: '排名符號',}),
-      }), 
-      new BrowseCarouselItem({
-        title:final_data[8][0],
-        url: 'https://trends.google.com/trends/explore?q='+final_data[8][0]+'&date=now%201-d&geo='+location,
-        description: final_data[8][1]+i18n.__('count'),
-		image: new Image({
-          url: 'https://dummyimage.com/232x128/4285f4/ffffff.png&text=9',
-          alt: '排名符號',}),
-      }), 
-      new BrowseCarouselItem({
-        title: final_data[9][0],
-        url: 'https://trends.google.com/trends/explore?q='+final_data[9][0]+'&date=now%201-d&geo='+location,
-        description: final_data[9][1]+i18n.__('count'),
-		image: new Image({
-          url: 'https://dummyimage.com/232x128/4285f4/ffffff.png&text=10',
-          alt: '排名符號',}),
-      }), 
-	  ],
+    items: Carouselarray,
     }));
    }
    else{
-	   
 	conv.close(new Table({
 		title: i18n.__('title'),
 		columns: [{header: i18n.__('rank'),align: 'CENTER',},{header: i18n.__('key'),align: 'CENTER',},{header: i18n.__('counts'),align: 'CENTER',},],
-		rows: [{cells: ["1",final_data[0][0],final_data[0][1]],dividerAfter: false,},
-				{cells: ["2",final_data[1][0],final_data[1][1]],dividerAfter: false,},
-				{cells: ["3",final_data[2][0],final_data[2][1]],dividerAfter: false,},
-				{cells: ["4",final_data[3][0],final_data[3][1]],dividerAfter: false,},
-				{cells: ["5",final_data[4][0],final_data[4][1]],dividerAfter: false,},
-				{cells: ["6",final_data[5][0],final_data[5][1]],dividerAfter: false,},
-				{cells: ["7",final_data[6][0],final_data[6][1]],dividerAfter: false,},
-				{cells: ["8",final_data[7][0],final_data[7][1]],dividerAfter: false,},
-				{cells: ["9",final_data[8][0],final_data[8][1]],dividerAfter: false,},
-				{cells: ["10",final_data[9][0],final_data[9][1]],dividerAfter: false,}],
+		rows:rowsarray,
 		buttons: new Button({
 			title: 'Google'+i18n.__('seach'),
 			url: 'https://trends.google.com.tw/trends/trendingsearches/daily?geo='+location, }),		
@@ -177,9 +139,7 @@ app.intent('今日搜尋趨勢', (conv) => {
      }
    }
 	else{
-   conv.close(new SimpleResponse({ 
-			 speech: `<speak><p><s>${i18n.__('output')}：${final_data[0][0]}<break time="0.3s"/>${final_data[1][0]}<break time="0.3s"/>${final_data[2][0]}</s></p></speak>`,
-			  text: i18n.__('display1'),}));
+   conv.close(verb);
 	}
 	}).catch(function (error) {
     conv.ask(new SimpleResponse({ 

@@ -1,0 +1,17 @@
+{
+	"output":"Derzeit sind die drei wichtigsten Suchtrends",
+	"output1":"Derzeit befindet sich nur ein Keyword im Rang. Der Name lautet",
+	"output2":"Die aktuelle Rangliste enthält nur zwei Schlüsselwörter.",
+	"display":"Hier ist die Rangfolge der aktuellen Suchtrends an Ihrem Standort \n Klicken Sie, um weitere Informationen anzuzeigen.",
+	"count":"sucht",
+	"title":"Top Suchrankings",
+	"rank":"Rangfolge",
+	"key":"Schlüsselwörter",
+	"counts":"Zählt",
+	"notify":"Keine Schlüsselwörter mehr",
+	"click":"Derzeit gibt es nur ein Schlüsselwort in der Liste.",
+	"ERROR_talk":"Entschuldigung, ich kann keine Suchtrends für Ihren Standort erhalten.",
+	"ERROR_show":"Ich kann keine Suchtrends erhalten.",
+	"ERROR_text":"Daten können nicht abgerufen werden",
+	"ERROR":"Error"
+}

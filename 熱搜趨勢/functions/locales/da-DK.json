@@ -1,0 +1,17 @@
+{
+	"output":"I øjeblikket er de tre bedste søgetendenser",
+	"output1":"I øjeblikket er kun et nøgleord i rang, navnet er",
+	"output2":"Der er kun to nøgleord i det aktuelle rangliste ",
+	"display":"Her er rangeringen af aktuelle søgetendenser på din placering, \n Klik for at se flere oplysninger",
+	"count":"  searchs",
+	"title":"Bedste søgerangeringer",
+	"rank":"Ranking",
+	"key":"Emneord",
+	"counts":"Tæller",
+	"notify":"Ikke flere nøgleord",
+	"click":"I øjeblikket er der kun et nøgleord på listen.",
+	"ERROR_talk":"Beklager, jeg kan ikke få søgetendenser for din placering",
+	"ERROR_show":"Kan ikke få søgetendenser",
+	"ERROR_text":"Kan ikke hente data",
+	"ERROR":"Fejl"
+}

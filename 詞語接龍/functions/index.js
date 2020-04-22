@@ -45,7 +45,7 @@ var return_array=["準備接招吧!","小菜一碟 😎","能接的詞顯而易�
 var wrong_array="";
 var jumpcount="";
 var subtitle_suggest="";
-
+var wrong_count=0;
 
 function isChn(str){
             var reg=/^[\u4E00-\u9FA5]+$/;
@@ -76,17 +76,14 @@ if(conv.user.verification === 'VERIFIED'){
 	}));
    conv.ask(new Suggestions('🎮 開始挑戰','👋 掰掰'));
   }else{
+
 	   menu=false;question_output=true;end_game=false;Total_Count=0;input_list=[];start_game=true;
 	   input_word=""; last_word=""; first_word="";
         
 		 if (conv.user.last.seen) {
-	  	conv.ask(new SimpleResponse({               
-		speech: `<speak><p><s>歡迎回來!</s><break time="0.3s"/><s>在你開始接龍前，可以說<break time="0.2s"/>重新開始<break time="0.2s"/>讓我重新想一個詞彙作為開頭。</s><s>當你想結束挑戰時，可以說<break time="0.2s"/>放棄本回合<break time="0.2s"/>來存取該回合的接龍次數!</s><break time="0.3s"/><s>準備好了嗎?<break time="1s"/></s></p></speak>`,
-		 text: '遊戲前說明',}));}
+	  	conv.ask(`<speak><p><s>歡迎回來!</s><break time="0.3s"/><s>在你開始接龍前，可以說<break time="0.2s"/>重新開始<break time="0.2s"/>讓我重新想一個詞彙作為開頭。</s><s>當你接不下去時，可以對我說<break time="0.2s"/>跳ㄍㄨㄛˋ<break time="0.2s"/>讓我幫你想一個詞彙</s><break time="0.3s"/><s>準備好了嗎?<break time="1s"/></s></p></speak>`);}
 		else{
-	  	conv.ask(new SimpleResponse({               
-		speech: `<speak><p><s>在開始遊戲前，我需要跟您進行說明。本服務的語音辨識由Google執行。</s><s>碰到同音詞或雜音等問題時，可能會發生辨識錯誤。僅此知會你一聲!</s><break time="0.5s"/><s>此外，在你開始接龍前，你可以說<break time="0.2s"/>重新開始<break time="0.2s"/>讓我重新想一個詞彙作為開頭。</s><s>當你想結束挑戰時，可以說<break time="0.2s"/>放棄本回合<break time="0.2s"/>來存取該回合的接龍次數!</s><break time="0.3s"/><s>準備好了嗎?<break time="1s"/></s></p></speak>`,
-		 text: '遊戲前說明',}));}
+	  	conv.ask(`<speak><p><s>在開始遊戲前，我需要跟您進行說明。本服務的語音辨識由Google執行。</s><s>碰到同音詞或雜音等問題時，可能會發生辨識錯誤。僅此知會你一聲!</s><break time="0.5s"/><s>此外，在你開始接龍前，你可以說<break time="0.2s"/>重新開始<break time="0.2s"/>讓我重新想一個詞彙作為開頭。</s><s>當你接不下去時，可以對我說<break time="0.2s"/>跳過<break time="0.2s"/>讓我幫你想一個詞彙</s><break time="0.3s"/><s>準備好了嗎?<break time="1s"/></s>`);}
 
 		number=parseInt(Math.random()*1511)
 		sys_word=text_start[number];   
@@ -98,6 +95,8 @@ if(conv.user.verification === 'VERIFIED'){
 	   	conv.ask(new SimpleResponse({               
 			speech: `<speak><p><s>第一個詞彙是<break time="0.2s"/>${sys_word}</s></p></speak>`,
 			text: '開始啦🏁\n若輸入重複的詞彙直接結束。',}));
+	    conv.noInputs = ["我剛剛說的是"+sys_word+"，請說以"+last_word+"為開頭的詞彙","遊戲已經開始囉，請說以"+last_word+"為開頭的詞彙","抱歉，由於您沒有回應因此遊戲到此結束。下次見。"];	   
+	
 		}
 	}else{
 		conv.ask(new SimpleResponse({               
@@ -120,6 +119,7 @@ if(conv.user.verification === 'VERIFIED'){
  conv.user.storage.start_game=start_game;
  conv.user.storage.reported=reported;
  conv.user.storage.jumpcount=0;
+ conv.user.storage.wrong_count=0;
 
 });
 
@@ -135,10 +135,12 @@ app.intent('問題產生器', (conv,{input}) => {
  start_game=conv.user.storage.start_game;
  reported=conv.user.storage.reported;
  jumpcount=conv.user.storage.jumpcount;
+ wrong_count=conv.user.storage.wrong_count;
+
 
  if(input==='開始挑戰'){
  menu=true;question_output=false;end_game=false;Total_Count=0;input_list=[];start_game=false;
- input_word=""; last_word=""; first_word="";reported=false; jumpcount=0;
+ input_word=""; last_word=""; first_word="";reported=false; jumpcount=0;wrong_count=0;
 }
 
 //「開始遊戲」啟動詞判斷
@@ -156,7 +158,7 @@ app.intent('問題產生器', (conv,{input}) => {
 if(conv.user.verification === 'VERIFIED'){
   if(menu===false&&end_game===false&&question_output===true&&reported===false){
 	  
-  if((input==='重新開始'||input==='🔄 重新開始')&&Total_Count===0){input_list=[];start_game=false;reported=false;jumpcount=0;}
+  if((input==='重新開始'||input==='🔄 重新開始')&&Total_Count===0){input_list=[];start_game=false;reported=false;jumpcount=0;wrong_count=0;}
 
 	if(start_game===false){
 		start_game=true;
@@ -217,9 +219,10 @@ if(conv.user.verification === 'VERIFIED'){
 		first_word=input_init[0];
 		
 		checker=input_init.length;
+	    conv.noInputs = ["我剛剛說的是"+sys_word+"，請說以"+last_word+"為開頭的詞彙","現在的詞彙是"+sys_word+"，請繼續接下去","抱歉，由於您一直沒有回應。因此遊戲到此結束。你在這回合進行"+Total_Count+"次接龍，我們下次見。"];	   
 
 		if(isChn(input)===false){	
-
+		wrong_count++;
 		wrong_array=[`<speak><p><s>錯誤!</s><s>不能將中文以外的字符作為輸入!</s></p></speak>`,
 			`<speak><p><s>${input}包含非法字元，母湯喔!</s></p></speak>`,
 			`<speak><p><s>安ㄋㄟˉ母湯，請換一個詞來試看看</s></p></speak>`,
@@ -227,19 +230,23 @@ if(conv.user.verification === 'VERIFIED'){
 			`<speak><p><s>這個詞彙裡有怪怪的東西，請換一個。</s></p></speak>`,];
 
 		conv.ask(new SimpleResponse({               
-		speech:wrong_array[parseInt(Math.random()*4)],
-		text: '你的輸入包含中文外的字符',}));
-
+				speech:wrong_array[parseInt(Math.random()*4)],
+				text: '你的輸入包含中文外的字符',}));		
+		if(conv.screen){
 		 conv.ask(new BasicCard({   
 			title: '『'+sys_word+'』',
 			subtitle:'請輸入以「'+last_word+'」開頭的詞彙',
 			text:'_[!]非法輸入，不能加入英文等非法符號!_',}));
    	     if(jumpcount<=2){conv.ask(new Suggestions('跳過這個詞'));}
    	     conv.ask(new Suggestions('放棄本回合'));
-		}
+		}else{
+			if(wrong_count<=2){conv.ask(`<speak><p><s>現在接到<break time="0.2s"/>${sys_word}<break time="0.2s"/>請試著繼續接下去</s></p></speak>`);}
+			else if(wrong_count<5){conv.ask(`<speak><p><s>現在接到<break time="0.2s"/>${sys_word}<break time="0.2s"/>如果仍想不到可以接甚麼詞彙，可以對我說<break time="0.2s"/>跳過它</s></p></speak>`);}
+			else{conv.close(`<speak><p><s>由於我們的對話無法繼續，遊戲先到這裡八<break time="0.2s"/>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);}
+		}		}
 		else{	
 		if(checker===1){
-
+		wrong_count++;
 		wrong_array=[`<speak><p><s>錯誤!</s><s>不能只輸入一個字!</s></p></speak>`,
 			`<speak><p><s>${input}只有一個字，母湯喔!</s></p></speak>`,
 			`<speak><p><s>安ㄋㄟˉ母湯，請說至少有兩的字的詞彙</s></p></speak>`,
@@ -249,37 +256,44 @@ if(conv.user.verification === 'VERIFIED'){
 		conv.ask(new SimpleResponse({               
 		speech:wrong_array[parseInt(Math.random()*4)],
 			text: '「'+input+'」只有一個字是不行的',}));
-			
+		if(conv.screen){
 		conv.ask(new BasicCard({   
 			title: '『'+sys_word+'』',
 			subtitle:'請輸入以「'+last_word+'」開頭的詞彙',
 			text:'_[!]你至少要輸入由兩個字構成的詞語。_',}));
    	     if(jumpcount<=2){conv.ask(new Suggestions('跳過這個詞'));}
    	     conv.ask(new Suggestions('放棄本回合'));
+		 
+		}else{
+			if(wrong_count<=2){conv.ask(`<speak><p><s>現在接到<break time="0.2s"/>${sys_word}<break time="0.2s"/>請試著繼續接下去</s></p></speak>`);}
+			else if(wrong_count<5){conv.ask(`<speak><p><s>現在接到<break time="0.2s"/>${sys_word}<break time="0.2s"/>如果仍想不到可以接甚麼詞彙，可以對我說<break time="0.2s"/>跳過它</s></p></speak>`);}
+			else{conv.close(`<speak><p><s>由於我們的對話無法繼續，遊戲先到這裡八<break time="0.2s"/>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);}
+			}
 		}
 		else{		
 		if(last_word!==first_word){
-		
+		wrong_count++;		
 		repeat=false;
 		
 		wrong_array=[`<speak><p><s>想的好，但是${input}的自首不是${last_word}喔!再想一個八!</s></p></speak>`,
 			`<speak><p><s>${input}的字首好像ㄅㄨˊ太對喔，試著換一個八!</s></p></speak>`,
-			`<speak><p><s>${input}的字首對ㄅㄨˊ上呢，再想一想${sys_word}後頭可以接什麼詞彙!</s></p></speak>`,
+			`<speak><p><s>${input}的字首對ㄅㄨˊ上呢，再想一想後頭可以接什麼詞彙!</s></p></speak>`,
 			`<speak><p><s>${input}的字首ㄅㄨˊ太對，換一個試看看!</s></p></speak>`,						
 			`<speak><p><s>這個成語的字首不是我要的，請換一個。</s></p></speak>`,];
 
 		conv.ask(new SimpleResponse({               
 		speech:wrong_array[parseInt(Math.random()*4)],
 		text: '不好意思，請再講一次好嗎？',})); 
-		 
+		
+		if(conv.screen){	 
 		if(conv.input.type==="VOICE"){  //如果輸入是語音，則顯示錯誤處理方法
-	
 		conv.ask(new BasicCard({
 				title: '『'+sys_word+'』',
 				subtitle:'請輸入以「'+last_word+'」開頭的詞彙',
 				text:'*〈錯誤說明〉*  \n*Google語音辨識可能發生錯誤，你可以嘗試：*  \n• 試著再說一次  \n• 若錯誤源自同音詞辨識，請試著加長詞彙長度  \n• 透過鍵盤輸入欲表達的詞彙  \n• 向Google回報該錯誤改善其辨識能力'})); 
-   	     conv.ask(new Suggestions('我要進行回報'));}
-		else{ //輸入方式不是語音則顯示輸入錯誤
+   	     conv.ask(new Suggestions('我要進行回報'));
+	    }
+	    else{ //輸入方式不是語音則顯示輸入錯誤
 
         conv.ask(new BasicCard({   
 				title: '『'+sys_word+'』',
@@ -288,9 +302,15 @@ if(conv.user.verification === 'VERIFIED'){
 		  }
    	     if(jumpcount<=2){conv.ask(new Suggestions('跳過這個詞'));}
    	     conv.ask(new Suggestions('放棄本回合'));
+		}else{
+			if(wrong_count<=2){conv.ask(`<speak><p><s>現在接到<break time="0.2s"/>${sys_word}<break time="0.2s"/>請試著繼續接下去</s></p></speak>`);}
+			else if(wrong_count<5){conv.ask(`<speak><p><s>現在接到<break time="0.2s"/>${sys_word}<break time="0.2s"/>如果仍想不到可以接甚麼詞彙，可以對我說<break time="0.2s"/>跳過它</s></p></speak>`);}
+			else{conv.close(`<speak><p><s>由於我們的對話無法繼續，遊戲先到這裡八<break time="0.2s"/>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);}
+		  }	
 	  }
 		else{
 		Total_Count++;
+		wrong_count=0;
 
 	   if(input_list.indexOf(input)===-1){   //檢查輸入的詞彙是否已重複
  
@@ -303,13 +323,17 @@ if(conv.user.verification === 'VERIFIED'){
 		conv.ask(new SimpleResponse({               
 			speech: `<speak><p><s>可<break time="0.2s"/>可<break time="0.2s"/>可惡<break time="0.2s"/></s><s>我竟然找不到可以接下去的詞，你贏我了呢!</s></p></speak>`,
 			text: '我輸了 😱',}));
+		if(conv.screen){	
 		conv.ask(new BasicCard({   
 			title: '我不知道『'+input+'』後面該接什麼...',
 			subtitle:'本回合已結束',
 			text:'共進行'+Total_Count+'次接龍(不計入跳過的詞彙)',}));
 		conv.ask(new Suggestions('🔄 重新開始','👋 掰掰'));
-        Total_Count=0;input_list=[];start_game=false;
-			
+        Total_Count=0;input_list=[];start_game=false;}
+		else{
+		conv.close(`<speak><p><s>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);
+		conv.user.storage = {}; //離開同時清除暫存資料
+		 }	
 		}
 		else{
 		sys_word=output_array[parseInt(Math.random()*(output_array.length-1))];
@@ -321,12 +345,17 @@ if(conv.user.verification === 'VERIFIED'){
 		conv.ask(new SimpleResponse({               
 			speech: `<speak><p><s>可惡</s><s>我不小心說了曾經說過的詞，你贏我了呢!</s></p></speak>`,
 			text: '我輸了 😱',}));
+		if(conv.screen){	
 		conv.ask(new BasicCard({   
 			title: '沒想到『'+sys_word+'』已經說過了',
 			subtitle:'本回合已結束',
 			text:'共進行'+Total_Count+'次接龍(不計入跳過的詞彙)',}));
 		conv.ask(new Suggestions('🔄 重新開始','👋 掰掰'));
-        Total_Count=0;input_list=[];start_game=false;
+		Total_Count=0;input_list=[];start_game=false;
+		}else{
+		conv.close(`<speak><p><s>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);
+		conv.user.storage = {}; //離開同時清除暫存資料
+	   	 }
 		}
 		else{
 		
@@ -339,18 +368,26 @@ if(conv.user.verification === 'VERIFIED'){
 		conv.ask(new SimpleResponse({               
 			speech: `<speak><p><s>糟糕<break time="0.2s"/>我所想的${sys_word}是沒辦法接下去的!回合結束!</s></p></speak>`,
 			text: '我所想的詞是接不下去的，\n因此回合結束拉!',}));
+
+		if(conv.screen){	
 		conv.ask(new BasicCard({   
             title: '我想的『'+sys_word+'』接不下去拉!',
 			subtitle:'本回合已結束',
 			text:'你共進行'+Total_Count+'次接龍(不計入跳過的詞彙)',}));
 		conv.ask(new Suggestions('🔄 重新開始','👋 掰掰'));
-        Total_Count=0;input_list=[];start_game=false;
-		   }
+		Total_Count=0;input_list=[];start_game=false;
+		}else{
+		conv.close(`<speak><p><s>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);
+		conv.user.storage = {}; //離開同時清除暫存資料
+		}	
+	   }
 		   else{
 	     conv.ask(new SimpleResponse({               
 						speech: `<speak><p><s>${sys_word}</s></p></speak>`,
 						text: return_array[parseInt(Math.random()*4)],}));
-			
+
+		 conv.noInputs = ["我剛剛說的是"+sys_word+"，請說以"+last_word+"為開頭的詞彙","現在的詞彙是"+sys_word+"，請繼續接下去","抱歉，由於您一直沒有回應。因此遊戲到此結束。你在這回合進行"+Total_Count+"次接龍，我們下次見。"];	   
+
 		 conv.ask(new BasicCard({   
 			title: '『'+sys_word+'』',
 			subtitle:'請輸入以「'+last_word+'」開頭的詞彙',
@@ -375,7 +412,7 @@ if(conv.user.verification === 'VERIFIED'){
         conv.ask(new SimpleResponse({               
 					speech: `<speak><p><s>居居<break time="0.2s"/>你輸入的${input}重複囉!</s><s>回合結束!</s></p></speak>`,
 					text: '你輸入重複的詞，因此回合結束拉!',}));
-
+		if(conv.screen){	
 		conv.ask(new BasicCard({   
 			title: '『'+input+'』已經輸入過囉!',
 			subtitle:'本回合已結束 • 共進行'+Total_Count+'次接龍\n\n✮增強功力：\n以「'+last_word+'」開頭的詞彙'+subtitle_suggest, 
@@ -383,6 +420,10 @@ if(conv.user.verification === 'VERIFIED'){
 								 url: 'https://www.moedict.tw/'+last_word,}), 		
 			}));
 		conv.ask(new Suggestions('🔄 重新開始','👋 掰掰'));
+		Total_Count=0;input_list=[];start_game=false;
+		}else{
+		conv.user.storage = {}; //離開同時清除暫存資料	
+		conv.close(`<speak><p><s>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);}
        }	
 	  } 
 	 }
@@ -447,6 +488,7 @@ if(conv.user.verification === 'VERIFIED'){
  conv.user.storage.start_game=start_game;
  conv.user.storage.reported=reported;
  conv.user.storage.jumpcount=jumpcount;
+ conv.user.storage.wrong_count=wrong_count;
 
 });
 
@@ -503,7 +545,9 @@ app.intent('繼續進行', (conv) => {
 
   if(menu===false&&end_game===false&&question_output===true&&reported===true){
     reported=false;
-        conv.ask(new SimpleResponse({               
+	    conv.noInputs = ["我剛剛說的是"+sys_word+"，請說以"+last_word+"為開頭的詞彙","現在的詞彙是"+sys_word+"，請繼續接下去","抱歉，由於您一直沒有回應。因此遊戲到此結束。你在這回合進行"+Total_Count+"次接龍，我們下次見。"];	   
+
+		conv.ask(new SimpleResponse({               
 			speech: `<speak><p><s>好的!我剛剛說的是<break time="0.2s"/>${sys_word}，繼續接下去八!</s></p></speak>`,
 			text: 'OK，我們繼續進行!',}));
 			
@@ -562,7 +606,7 @@ app.intent('結束挑戰', (conv,{end_game}) => {
 	menu=false;question_output=false;end_game=true;reported=false; 
 	
 	output_array=text_library[last_word]; //進入詞彙庫取得對應詞彙
-  
+ 
    if(typeof output_array==="undefined"){subtitle_suggest='我找不到...';}
    else{
 	sys_word=output_array[parseInt(Math.random()*(output_array.length-1))];
@@ -626,7 +670,7 @@ app.intent('跳過題目', (conv) => {
  jumpcount=conv.user.storage.jumpcount;
  
  jumpcount++;
- 
+
  if(jumpcount<=3){
 
 	if((3-jumpcount)!==0){
@@ -645,12 +689,16 @@ app.intent('跳過題目', (conv) => {
 		conv.ask(new SimpleResponse({               
 			speech: `<speak><p><s>看來這個詞彙是接不下去的，回合結束!</s></p></speak>`,
 			text: '這個詞是接不下去的，回合結束',}));
+		if(conv.screen){	
 		conv.ask(new BasicCard({   
 			title: '看來『'+sys_think+'』是接不下去的',
 			subtitle:'本回合已結束',
 			text:'共進行'+Total_Count+'次接龍(不計入跳過的詞彙)',}));
 		conv.ask(new Suggestions('🔄 重新開始','👋 掰掰'));
         Total_Count=0;input_list=[];start_game=false;
+		}else{
+		conv.user.storage = {}; //離開同時清除暫存資料	
+		conv.close(`<speak><p><s>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);}
 			
 		}
 		else{
@@ -664,12 +712,16 @@ app.intent('跳過題目', (conv) => {
 		conv.ask(new SimpleResponse({               
 			speech: `<speak><p><s>糟糕</s><s>我不小心選了曾經說過的詞，回合結束!</s></p></speak>`,
 			text: '回合已結束',}));
+		if(conv.screen){	
 		conv.ask(new BasicCard({   
 			title: '『'+sys_word+'』是說過的詞',
 			subtitle:'本回合已結束',
 			text:'共進行'+Total_Count+'次接龍(不計入跳過的詞彙)',}));
 		conv.ask(new Suggestions('🔄 重新開始','👋 掰掰'));
         Total_Count=0;input_list=[];start_game=false;
+		}else{
+		conv.user.storage = {}; //離開同時清除暫存資料	
+		conv.close(`<speak><p><s>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);}
 		}
 		else{
 		
@@ -682,18 +734,23 @@ app.intent('跳過題目', (conv) => {
 		conv.ask(new SimpleResponse({               
 			speech: `<speak><p><s>糟糕<break time="0.2s"/>我所選的${sys_word}是沒辦法接下去的!回合結束!</s></p></speak>`,
 			text: '我所想的詞是接不下去的，\n因此回合結束拉!',}));
+		if(conv.screen){	
 		conv.ask(new BasicCard({   
             title: '我想的『'+sys_word+'』接不下去拉!',
 			subtitle:'本回合已結束',
 			text:'你共進行'+Total_Count+'次接龍(不計入跳過的詞彙)',}));
 		conv.ask(new Suggestions('🔄 重新開始','👋 掰掰'));
         Total_Count=0;input_list=[];start_game=false;
+		}else{
+		conv.user.storage = {}; //離開同時清除暫存資料	
+		conv.close(`<speak><p><s>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);}
 		   }
 		   else{
 	     conv.ask(new SimpleResponse({               
 						speech: `<speak><p><s>${pre_word}後頭可以接${sys_word}<break time="0.5s"/>接著，請你繼續接下去</s></p></speak>`,
 						text: "「"+pre_word+"」可以接「"+sys_word+"」， \n請試著繼續接下去。",}));
-			
+	     conv.noInputs = ["我剛剛說的是"+sys_word+"，請說以"+last_word+"為開頭的詞彙","現在的詞彙是"+sys_word+"，請繼續接下去","抱歉，由於您一直沒有回應。因此遊戲到此結束。你在這回合進行"+Total_Count+"次接龍，我們下次見。"];	   
+		
 		 conv.ask(new BasicCard({   
 			title: '『'+sys_word+'』',
 			subtitle:'請輸入以「'+last_word+'」開頭的詞彙',
@@ -762,6 +819,7 @@ app.intent('結束對話', (conv) => {
  jumpcount=conv.user.storage.jumpcount;
 
  var input=conv.input.raw;
+ conv.noInputs = ["我剛剛說的是"+sys_word+"，請說以"+last_word+"為開頭的詞彙","現在的詞彙是"+sys_word+"，請繼續接下去","抱歉，由於您一直沒有回應。因此遊戲到此結束。你在這回合進行"+Total_Count+"次接龍，我們下次見。"];	   
  
   if(menu===false&&end_game===false&&question_output===true&&reported===false){
 	  
@@ -817,14 +875,19 @@ app.intent('結束對話', (conv) => {
 		conv.ask(new SimpleResponse({               
 		speech:wrong_array[parseInt(Math.random()*4)],
 		text: '你的輸入包含中文外的字符',}));
-
-		 conv.ask(new BasicCard({   
+		if(conv.screen){
+		conv.ask(new BasicCard({   
 			title: '『'+sys_word+'』',
 			subtitle:'請輸入以「'+last_word+'」開頭的詞彙',
 			text:'_[!]你目前剩下'+(3-jumpcount)+'次跳過機會_',}));
    
    	     if(jumpcount<=2){conv.ask(new Suggestions('跳過這個詞'));}
    	     conv.ask(new Suggestions('放棄本回合'));
+		}else{
+			if(wrong_count<=2){conv.ask(`<speak><p><s>現在接到<break time="0.2s"/>${sys_word}<break time="0.2s"/>請試著繼續接下去</s></p></speak>`);}
+			else if(wrong_count<5){conv.ask(`<speak><p><s>現在接到<break time="0.2s"/>${sys_word}<break time="0.2s"/>如果仍想不到可以接甚麼詞彙，可以對我說<break time="0.2s"/>跳過它</s></p></speak>`);}
+			else{conv.close(`<speak><p><s>由於我們的對話無法繼續，遊戲先到這裡八<break time="0.2s"/>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);}
+			}	
 		 }
 		else{			
 		if(checker===1){
@@ -838,7 +901,7 @@ app.intent('結束對話', (conv) => {
 		conv.ask(new SimpleResponse({
 				speech:wrong_array[parseInt(Math.random()*4)],
 				text: '「'+input+'」只有一個字是不行的',}));
-			
+		if(conv.screen){
 		 conv.ask(new BasicCard({   
 			title: '『'+sys_word+'』',
 			subtitle:'請輸入以「'+last_word+'」開頭的詞彙',
@@ -846,6 +909,11 @@ app.intent('結束對話', (conv) => {
  
    	     if(jumpcount<=2){conv.ask(new Suggestions('跳過這個詞'));}
    	     conv.ask(new Suggestions('放棄本回合'));
+		}else{
+			if(wrong_count<=2){conv.ask(`<speak><p><s>現在接到<break time="0.2s"/>${sys_word}<break time="0.2s"/>請試著繼續接下去</s></p></speak>`);}
+			else if(wrong_count<5){conv.ask(`<speak><p><s>現在接到<break time="0.2s"/>${sys_word}<break time="0.2s"/>如果仍想不到可以接甚麼詞彙，可以對我說<break time="0.2s"/>跳過它</s></p></speak>`);}
+			else{conv.close(`<speak><p><s>由於我們的對話無法繼續，遊戲先到這裡八<break time="0.2s"/>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);}
+			}				
 		}
 		else{		
 		if(last_word!==first_word){
@@ -854,21 +922,23 @@ app.intent('結束對話', (conv) => {
 		
 		wrong_array=[`<speak><p><s>想的好，但是${input}的自首不是${last_word}喔!再想一個八!</s></p></speak>`,
 			`<speak><p><s>${input}的字首好像不太對喔，試著換一個八!</s></p></speak>`,
-			`<speak><p><s>${input}的字首對不上呢，再想一想${sys_word}後頭可以接什麼詞彙!</s></p></speak>`,
+			`<speak><p><s>${input}的字首對ㄅㄨˊ上呢，再想一想後頭可以接什麼詞彙!</s></p></speak>`,
 			`<speak><p><s>${input}的字首不太對，換一個試看看!</s></p></speak>`,						
 			`<speak><p><s>這個成語的字首不是我要的，請換一個。</s></p></speak>`,];
 
 		conv.ask(new SimpleResponse({               
 		speech:wrong_array[parseInt(Math.random()*4)],
 		text: '不好意思，請再講一次好嗎？',}));
+
+		if(conv.screen){
 		 
 		if(conv.input.type==="VOICE"){  //如果輸入是語音，則顯示錯誤處理方法
-	
 		conv.ask(new BasicCard({
 				title: '『'+sys_word+'』',
 				subtitle:'請輸入以「'+last_word+'」開頭的詞彙',
 				text:'*〈錯誤說明〉*  \n*Google語音辨識可能發生錯誤，你可以嘗試：*  \n• 試著再說一次  \n• 若錯誤源自同音詞辨識，請試著加長詞彙長度  \n• 透過鍵盤輸入欲表達的詞彙  \n• 向Google回報該錯誤改善其辨識能力'})); 
-   	     conv.ask(new Suggestions('我要進行回報'));}
+   	     conv.ask(new Suggestions('我要進行回報'));
+		 }
 		else{ //輸入方式不是語音則顯示輸入錯誤
 
         conv.ask(new BasicCard({   
@@ -879,6 +949,11 @@ app.intent('結束對話', (conv) => {
 
    	     if(jumpcount<=2){conv.ask(new Suggestions('跳過這個詞'));}
    	     conv.ask(new Suggestions('放棄本回合'));
+		}else{
+			if(wrong_count<=2){conv.ask(`<speak><p><s>現在接到<break time="0.2s"/>${sys_word}<break time="0.2s"/>請試著繼續接下去</s></p></speak>`);}
+			else if(wrong_count<5){conv.ask(`<speak><p><s>現在接到<break time="0.2s"/>${sys_word}<break time="0.2s"/>如果仍想不到可以接甚麼詞彙，可以對我說<break time="0.2s"/>跳過它</s></p></speak>`);}
+			else{conv.close(`<speak><p><s>由於我們的對話無法繼續，遊戲先到這裡八<break time="0.2s"/>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);}
+		  }		
 	  }
 		else{
 		Total_Count++;
@@ -894,13 +969,16 @@ app.intent('結束對話', (conv) => {
 		conv.ask(new SimpleResponse({               
 			speech: `<speak><p><s>可<break time="0.2s"/>可<break time="0.2s"/>可惡<break time="0.2s"/></s><s>我竟然找不到可以接下去的詞，你贏我了呢!</s></p></speak>`,
 			text: '我輸了 😱',}));
+		if(conv.screen){	
 		conv.ask(new BasicCard({   
 			title: '我不知道『'+input+'』後面該接什麼...',
 			subtitle:'本回合已結束',
 			text:'共進行'+Total_Count+'次接龍(不計入跳過的詞彙)',}));
 		conv.ask(new Suggestions('🔄 重新開始','👋 掰掰'));
-        Total_Count=0;input_list=[];start_game=false;
-			
+        Total_Count=0;input_list=[];start_game=false;		
+		}else{
+		conv.user.storage = {}; //離開同時清除暫存資料			
+		conv.close(`<speak><p><s>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);}
 		}
 		else{
 		sys_word=output_array[parseInt(Math.random()*(output_array.length-1))];
@@ -912,12 +990,16 @@ app.intent('結束對話', (conv) => {
 		conv.ask(new SimpleResponse({               
 			speech: `<speak><p><s>可惡</s><s>我不小心說了曾經說過的詞，你贏我了呢!</s></p></speak>`,
 			text: '我輸了 😱',}));
+		if(conv.screen){	
 		conv.ask(new BasicCard({   
 			title: '沒想到『'+sys_word+'』已經說過了',
 			subtitle:'本回合已結束',
 			text:'共進行'+Total_Count+'次接龍(不計入跳過的詞彙)',}));
 		conv.ask(new Suggestions('🔄 重新開始','👋 掰掰'));
-        Total_Count=0;input_list=[];start_game=false;
+        Total_Count=0;input_list=[];start_game=false;		
+		}else{
+		conv.user.storage = {}; //離開同時清除暫存資料						
+		conv.close(`<speak><p><s>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);}
 		}
 		else{
 		
@@ -930,18 +1012,23 @@ app.intent('結束對話', (conv) => {
 		conv.ask(new SimpleResponse({               
 			speech: `<speak><p><s>糟糕<break time="0.2s"/>我所想的${sys_word}是沒辦法接下去的!回合結束!</s></p></speak>`,
 			text: '我所想的詞是接不下去的，\n因此回合結束拉!',}));
+		if(conv.screen){	
 		conv.ask(new BasicCard({   
             title: '我想的『'+sys_word+'』接不下去拉!',
 			subtitle:'本回合已結束',
 			text:'你共進行'+Total_Count+'次接龍(不計入跳過的詞彙)',}));
 		conv.ask(new Suggestions('🔄 重新開始','👋 掰掰'));
-        Total_Count=0;input_list=[];start_game=false;
+        Total_Count=0;input_list=[];start_game=false;		
+		}else{
+		conv.user.storage = {}; //離開同時清除暫存資料						
+		conv.close(`<speak><p><s>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);}
 		   }
 		   else{
 	     conv.ask(new SimpleResponse({               
 						speech: `<speak><p><s>${sys_word}</s></p></speak>`,
 						text: return_array[parseInt(Math.random()*4)],}));
-			
+		conv.noInputs = ["我剛剛說的是"+sys_word+"，請說以"+last_word+"為開頭的詞彙","現在的詞彙是"+sys_word+"，請繼續接下去","抱歉，由於您一直沒有回應。因此遊戲到此結束。你在這回合進行"+Total_Count+"次接龍，我們下次見。"];	   
+		
 		 conv.ask(new BasicCard({   
 			title: '『'+sys_word+'』',
 			subtitle:'請輸入以「'+last_word+'」開頭的詞彙',
@@ -966,7 +1053,7 @@ app.intent('結束對話', (conv) => {
         conv.ask(new SimpleResponse({               
 					speech: `<speak><p><s>居居<break time="0.2s"/>你輸入的${input}重複囉!</s><s>回合結束!</s></p></speak>`,
 					text: '你輸入重複的詞，因此回合結束拉!',}));
-
+		if(conv.screen){	
 		conv.ask(new BasicCard({   
 			title: '『'+input+'』已經輸入過囉!',
 			subtitle:'本回合已結束 • 共進行'+Total_Count+'次接龍\n\n✮增強功力：\n以「'+last_word+'」開頭的詞彙'+subtitle_suggest, 
@@ -974,6 +1061,10 @@ app.intent('結束對話', (conv) => {
 								 url: 'https://www.moedict.tw/'+last_word,}), 		
 			}));
 		conv.ask(new Suggestions('🔄 重新開始','👋 掰掰'));
+        Total_Count=0;input_list=[];start_game=false;		
+		}else{
+		conv.user.storage = {}; //離開同時清除暫存資料
+		conv.close(`<speak><p><s>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);}
        }	
 	  } 
 	 }
@@ -992,7 +1083,7 @@ app.intent('結束對話', (conv) => {
 			text:'_[!]你隨時都能退出遊戲_',}));
 	   
 	  conv.ask(new Suggestions('放棄本回合'));}
-  else if(menu===false&&end_game===true&&question_output===true&&reported===true){
+   else if(menu===false&&end_game===true&&question_output===true&&reported===true){
 	 	menu=false;question_output=false;end_game=true;reported=false; 
      conv.ask(new SimpleResponse({               
 			speech: `<speak><p><s>你的回合已經結束了，請問你還要再玩一次嗎?</s></p></speak>`,

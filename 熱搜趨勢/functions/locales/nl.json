@@ -1,0 +1,17 @@
+{
+	"output": "Momenteel zijn de drie belangrijkste zoektrends",
+	"output1": "Momenteel staat er slechts één zoekwoord in de rangorde, de naam is",
+	"output2": "Er zijn slechts twee zoekwoorden in het huidige scorebord,",
+	"display": "Hier is de rangschikking van de huidige zoektrends op uw locatie, \n Klik voor meer informatie",
+	"count": "zoekt",
+	"title": "Topzoekranglijst",
+	"rank": "Ranking",
+	"key": "Sleutelwoorden",
+	"counts": "Counts",
+	"informeren": "Geen zoekwoorden meer",
+	"click": "Momenteel staat er slechts één trefwoord in de lijst.",
+	"ERROR_talk": "Sorry, ik kan geen zoektrends voor uw locatie krijgen",
+	"ERROR_show": "Kan geen zoektrends krijgen",
+	"ERROR_text": "Kan geen gegevens ophalen",
+	"ERROR": "Error"
+	}

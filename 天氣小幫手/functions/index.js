@@ -7,20 +7,21 @@
 	  items,Image,Table,BasicCard,Suggestions
 	} = require('actions-on-google');
 
-const functions = require('firebase-functions');
-const app = dialogflow({debug: true});
+	const functions = require('firebase-functions');
+	const app = dialogflow({debug: true});
 
-var iconv = require('iconv-lite');
-var FetchStream = require("fetch").FetchStream;
-const replaceString = require('replace-string');
-var getJSON = require('get-json');
-var converter=require('./report_convert.json');
-var links=require('./link_convert.json');
-var county_array=["臺北市","新北市","基隆市","桃園市","新竹縣","新竹市","苗栗縣","新竹市","台中市","南投縣","彰化縣","雲林縣","嘉義縣","嘉義市","臺南市","高雄市","屏東縣","宜蘭縣","花蓮縣","臺東縣","金門縣","澎湖縣","連江縣"];
-var word1="";
-var word2="";
-var report_context="";
-
+	var iconv = require('iconv-lite');
+	var FetchStream = require("fetch").FetchStream;
+	const replaceString = require('replace-string');
+	var getJSON = require('get-json');
+	var converter=require('./report_convert.json');
+	var links=require('./link_convert.json');
+	var county_array=["臺北市","新北市","基隆市","桃園市","新竹縣","新竹市","苗栗縣","新竹市","台中市","南投縣","彰化縣","雲林縣","嘉義縣","嘉義市","臺南市","高雄市","屏東縣","宜蘭縣","花蓮縣","臺東縣","金門縣","澎湖縣","連江縣"];
+	var word1="";
+	var word2="";
+	var report_context="";
+	var output_context="";var pre_report="";		
+	var output_counter=0;var pre_counter=0;
 
 function reduceSIZE(input){
 	 input=replaceString(input, '．', '.');
@@ -65,7 +66,7 @@ app.intent('今日天氣概況', (conv) => {
 	var subtitle=(final_data.split('【')[1]).split('】')[0];
 
 	var hour_now=HourNOW();
-	if(hour_now<19){ var report_contect="今天"+((final_data.split('今天')[1]).split('根據環保署')[0]).split('日）')[1];}
+	if(final_data.indexOf('明天')===-1){ var report_contect="今天"+((final_data.split('今天')[1]).split('根據環保署')[0]).split('日）')[1];}
 			   else{var report_contect="明天"+((final_data.split('明天')[1]).split('根據環保署')[0]).split('日）')[1];}
 
  var display_report=replaceString(final_data.split('】。')[1], '；https://airtw.epa.gov.tw/', '');
@@ -89,7 +90,7 @@ app.intent('今日天氣概況', (conv) => {
  else{
 	conv.noInputs = [`<speak><p><s>請試著問我<break time="0.2s"/>${word1}天氣如何?</s></p></speak>`,"請試著問我要查詢的縣市","很抱歉，我幫不上忙"];	   	 
 	word1=county_array[parseInt(Math.random()*11)];word2=county_array[11+parseInt(Math.random()*10)];
-	conv.ask(`<speak><p><s>你可以透過詢問來看縣市的天氣</s><s>例如，請試著問我<break time="0.2s"/>${word1}天氣如何?<break time="0.2s"/>或<break time="0.2s"/>幫我查詢${word2}</s></p></speak>`); 
+	conv.ask(`<speak><p><s>接著，你可以透過詢問查看縣市的天氣</s><s>例如，請試著問我<break time="0.2s"/>${word1}天氣如何?<break time="0.2s"/>或<break time="0.2s"/>幫我查詢${word2}</s></p></speak>`); 
  }
  
 
@@ -109,6 +110,7 @@ app.intent('今日天氣概況', (conv) => {
 app.intent('查詢各縣市的天氣概況', (conv) => {
 
 	word1=county_array[parseInt(Math.random()*11)];word2=county_array[11+parseInt(Math.random()*10)];
+	conv.noInputs = [`<speak><p><s>請試著問我<break time="0.2s"/>${word1}天氣如何?</s></p></speak>`,"請試著問我要查詢的縣市","很抱歉，我幫不上忙"];	   	 
 	
 	conv.ask(new SimpleResponse({               
 		  speech: `<speak><p><s>在任意畫面中，你隨時都能快速查詢縣市的天氣報告</s><s>你可以試著問<break time="0.2s"/>${word1}天氣如何?<break time="0.2s"/>或<break time="0.2s"/>幫我查詢${word2}</s></p></speak>`,
@@ -127,6 +129,7 @@ app.intent('查詢各縣市的天氣概況', (conv) => {
 
 app.intent('預設罐頭回覆', (conv) => {
 	word1=county_array[parseInt(Math.random()*11)];word2=county_array[11+parseInt(Math.random()*10)];
+	conv.noInputs = [`<speak><p><s>請試著問我<break time="0.2s"/>${word1}天氣如何?</s></p></speak>`,"請試著問我要查詢的縣市","很抱歉，我幫不上忙"];	   	 
 
 	if(conv.input.type==="VOICE"){ //如果輸入是語音，則顯示錯誤處理方法
 	conv.ask(new SimpleResponse({               
@@ -185,47 +188,46 @@ app.intent('快速查詢縣市資訊', (conv, {county}) => {
 	 subtitle=replaceString(subtitle,'。','\n');
 	 
     report_context="";
-	var output_context="";var output_counter=0;var pre_counter=0;var pre_report=0;		
-
+    output_context=""; pre_report="";		
+	
 	var i=0;
 	for(i=1;i<final_data.length;i++){
 		report_context=report_context+final_data[i].parameterValue;
-		if(output_counter<2){
+		if(output_context.length===0){
 			if(final_data[i].parameterValue.indexOf('今天')!==-1){output_context=final_data[i].parameterValue;}
 			else if(final_data[i].parameterValue.indexOf('今日')!==-1){output_context=final_data[i].parameterValue;}
 			else if(final_data[i].parameterValue.indexOf('今(')!==-1){output_context=final_data[i].parameterValue;}
 			else if(final_data[i].parameterValue.indexOf('今（')!==-1){output_context=final_data[i].parameterValue;}
-			output_counter++
 		}
 		//檢測是否存在明日的預報資訊，如果存在則以明日的預報優先
-		if(pre_counter<2){
+		if(pre_report.length===0){
 			if(final_data[i].parameterValue.indexOf('明天')!==-1){pre_report=final_data[i].parameterValue;}
 			else if(final_data[i].parameterValue.indexOf('明日')!==-1){pre_report=final_data[i].parameterValue;}
 			else if(final_data[i].parameterValue.indexOf('明(')!==-1){pre_report=final_data[i].parameterValue;}
 			else if(final_data[i].parameterValue.indexOf('明（')!==-1){pre_report=final_data[i].parameterValue;}
-			pre_counter++
 		}
-		if(pre_report.length!==0){output_context=pre_report;}
 		
 		if(final_data[i+1]!==undefined){
 			report_context=report_context+"  \n  \n";
 		    if(final_data[i+1].parameterValue.indexOf('預報總結')!==-1){break;}}
 	}
-	
+	//收尾語音輸出的報告
+	if(pre_report.length!==0){output_context=pre_report;}
+
+	//收尾文字輸出的報告格式
 	report_context=reduceSIZE(report_context);
-	var output=output_context;
+	
 	if(report_context.indexOf('＝基隆預報現況＝')!==-1){
 		report_context=report_context.split('＝基隆預報現況＝')[1];
-	    output=report_context.split('。')[0];
 		report_context=replaceString(report_context,'  \n  \n','');	
     	report_context=replaceString(report_context,'。','  \n  \n');}	
 		
-	    output=replaceString(output,'  \n  \n','</s><break time="0.5s"/><s>');
 
 	conv.ask(new SimpleResponse({               
-			speech: `<speak><p><s>以下是${county}的天氣報告<break time="1s"/>${output}</s></p></speak>`,
+			speech: `<speak><p><s>以下是${county}的天氣報告<break time="1s"/>${output_context}</s></p></speak>`,
 			text: '下面是「'+county+'」的天氣概況'}));
-
+			
+ if(conv.screen){
 	if(conv.user.storage.direct===false){
 	conv.ask(new BasicCard({  
 			title:county,
@@ -242,10 +244,14 @@ app.intent('快速查詢縣市資訊', (conv, {county}) => {
 			text:report_context,
 			buttons: new Button({title: "前往中央氣象局看詳細報告",url:"https://www.cwb.gov.tw/V8/C/W/County/County.html?CID="+links[county],}),}));
 	 }		
-
+   }else{
+	conv.ask(`<speak><p><s>下次有需要時，可以對我說<break time="1s"/>叫天氣小幫手查詢${county}的天氣，下次見</s></p></speak>`);}
+	
 	}else{
 	 var report_time=(final_data.split('發布時間：')[1]).split('分')[0]+"分";
 		 report_time=reduceSIZE(report_time);
+	 if(final_data.indexOf('明天')===-1){ var report_contect="今天"+((final_data.split('今天')[1]).split('根據環保署')[0]).split('日）')[1];}
+			   else{var report_contect="明天"+((final_data.split('明天')[1]).split('根據環保署')[0]).split('日）')[1];}
 	 var subtitle=(final_data.split('【')[1]).split('】')[0];
 	 var report_contect="今天"+((final_data.split('今天')[1]).split('根據環保署')[0]).split('）')[1];
 	 var report_contect="今天"+((final_data.split('今天')[1]).split('根據環保署')[0]).split('日）')[1];
@@ -257,6 +263,7 @@ app.intent('快速查詢縣市資訊', (conv, {county}) => {
 		 
     conv.ask(new SimpleResponse({speech:`<speak><p><s>以下是中央氣象局，在${report_time}所發布的天氣概況。<break time="0.5s"/>${report_contect}</s></p></speak>`,text: '下面是氣象局的最新消息\n發佈時間是'+report_time} ));
 
+  if(conv.screen){
 	if(conv.user.storage.direct===false){
 	 conv.ask(new BasicCard({   
 				title: '全台天氣概況',
@@ -272,7 +279,9 @@ app.intent('快速查詢縣市資訊', (conv, {county}) => {
 				text:display_report,
 				buttons: new Button({title: "前往中央氣象局看詳細報告",url:"https://www.cwb.gov.tw/V8/C/W/index.html",}),}));
 	 }
-	}
+    }else{
+	conv.ask(`<speak><p><s>下次有需要時，可以對我說<break time="1s"/>叫天氣小幫手查詢${county}的天氣，下次見</s></p></speak>`);}
+  }
 	}).catch(function (error) {
 	console.log(error)
 	word1=county_array[parseInt(Math.random()*11)];word2=county_array[11+parseInt(Math.random()*10)];

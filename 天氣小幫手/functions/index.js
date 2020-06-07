@@ -16,12 +16,12 @@
 	var getJSON = require('get-json');
 	var converter=require('./report_convert.json');
 	var links=require('./link_convert.json');
-	var county_array=["臺北市","新北市","基隆市","桃園市","新竹縣","新竹市","苗栗縣","新竹市","台中市","南投縣","彰化縣","雲林縣","嘉義縣","嘉義市","臺南市","高雄市","屏東縣","宜蘭縣","花蓮縣","臺東縣","金門縣","澎湖縣","連江縣"];
+	var county_array=["臺北市","新北市","基隆市","桃園市","新竹縣","新竹市","苗栗縣","新竹市","臺中市","南投縣","彰化縣","雲林縣","嘉義縣","嘉義市","臺南市","高雄市","屏東縣","宜蘭縣","花蓮縣","臺東縣","金門縣","澎湖縣","連江縣"];
+	var vacation_array=["阿里山","日月潭","明德水庫","鯉魚潭水庫","雪霸國家公園觀霧遊憩區","參天國家風景區","大雪山國家森林遊樂區","台中港","塔塔加","奧萬大","清境農場","惠蓀林場"];
 	var word1="";
 	var word2="";
 	var report_context="";
-	var output_context="";var pre_report="";		
-	var output_counter=0;var pre_counter=0;
+	var output_context="";var pre_report=""; var temp_report="";
 
 function reduceSIZE(input){
 	 input=replaceString(input, '．', '.');
@@ -38,14 +38,23 @@ function reduceSIZE(input){
 	 return input;
  }
  
- function HourNOW(){
+ function ReportTime(input){
 	 
-	var today = new Date();
-	var nowTime = today.getTime()+8*3600*1000;
-	today.setTime(parseInt(nowTime));
-	return today.getHours();	
+	 input=replaceString(input, '-', '/');
+	 input=replaceString(input, 'T', ' ');
+	 input=input.split('+')[0];
+	return input;	
  }
 
+function textindexer(input){
+	var k=0;var j=0;
+	var indexarray=["明德","今明","明顯","明晨"];
+	for(j=0;j<indexarray.length;j++){
+	 if(input.indexOf(indexarray[j])!==-1){k++;}
+	}
+	
+	return k
+}
 
 app.intent('今日天氣概況', (conv) => {
 
@@ -65,7 +74,6 @@ app.intent('今日天氣概況', (conv) => {
 		report_time=reduceSIZE(report_time);
 	var subtitle=(final_data.split('【')[1]).split('】')[0];
 
-	var hour_now=HourNOW();
 	if(final_data.indexOf('明天')===-1){ var report_contect="今天"+((final_data.split('今天')[1]).split('根據環保署')[0]).split('日）')[1];}
 			   else{var report_contect="明天"+((final_data.split('明天')[1]).split('根據環保署')[0]).split('日）')[1];}
 
@@ -88,7 +96,7 @@ app.intent('今日天氣概況', (conv) => {
   conv.user.storage.station="全臺";
  }
  else{
-	conv.noInputs = [`<speak><p><s>請試著問我<break time="0.2s"/>${word1}天氣如何?</s></p></speak>`,"請試著問我要查詢的縣市","很抱歉，我幫不上忙"];	   	 
+	conv.noInputs = ["請試著問我，"+word1+"天氣如何?","請試著問我要查詢的縣市","很抱歉，我幫不上忙"];	   	 
 	word1=county_array[parseInt(Math.random()*11)];word2=county_array[11+parseInt(Math.random()*10)];
 	conv.ask(`<speak><p><s>接著，你可以透過詢問查看縣市的天氣</s><s>例如，請試著問我<break time="0.2s"/>${word1}天氣如何?<break time="0.2s"/>或<break time="0.2s"/>幫我查詢${word2}</s></p></speak>`); 
  }
@@ -109,19 +117,21 @@ app.intent('今日天氣概況', (conv) => {
 
 app.intent('查詢各縣市的天氣概況', (conv) => {
 
-	word1=county_array[parseInt(Math.random()*11)];word2=county_array[11+parseInt(Math.random()*10)];
-	conv.noInputs = [`<speak><p><s>請試著問我<break time="0.2s"/>${word1}天氣如何?</s></p></speak>`,"請試著問我要查詢的縣市","很抱歉，我幫不上忙"];	   	 
+	word1=county_array[parseInt(Math.random()*21)];
+	word2=county_array[parseInt(Math.random()*21)];	
+	var word3=vacation_array[parseInt(Math.random()*11)];
+	conv.noInputs = ["請試著問我，"+word1+"天氣如何?","請試著問我要查詢的縣市","很抱歉，我幫不上忙"];	   	 
 	
 	conv.ask(new SimpleResponse({               
-		  speech: `<speak><p><s>在任意畫面中，你隨時都能快速查詢縣市的天氣報告</s><s>你可以試著問<break time="0.2s"/>${word1}天氣如何?<break time="0.2s"/>或<break time="0.2s"/>幫我查詢${word2}</s></p></speak>`,
-		  text: '試著提問來快速存取縣市的天氣報告，\n以下是你可以嘗試的詢問方式!'}));
+		  speech: `<speak><p><s>在任意畫面中，你隨時都能快速查詢縣市的天氣報告</s><s>你可以試著問<break time="0.2s"/>${word1}天氣如何?</s></p></speak>`,
+		  text: '試著提問來快速存取縣市的天氣報告，\或是查看特定地點的天氣資訊!'}));
 	
     conv.ask(new BasicCard({  
-				title:"語音查詢範例",
-				subtitle:"以下是你可以嘗試的指令",
-				text:" • *「"+word1+"天氣如何?」*  \n • *「幫我查詢"+word2+"」*  \n • *「我想知道"+county_array[parseInt(Math.random()*21)]+"怎樣」*  \n • *「幫我找"+county_array[parseInt(Math.random()*21)]+"」*  \n • *「我想看"+county_array[parseInt(Math.random()*21)]+"」*  \n • *「"+county_array[parseInt(Math.random()*21)]+"天氣好嗎?」*  \n • *「我要查"+county_array[parseInt(Math.random()*21)]+"」*", 
+				title:"目前支援的特定地點",
+				subtitle:"支援各縣市與特定地點查詢",
+				text:" • 阿里山  \n • 日月潭  \n • 明德水庫  \n • 鯉魚潭水庫  \n • 雪霸國家公園觀霧遊憩區  \n • 參天國家風景區  \n • 大雪山國家森林遊樂區  \n • 台中港  \n • 塔塔加、奧萬大、清境農場、惠蓀林場 (*仁愛信義山區*)",
 	}));
-	conv.ask(new Suggestions(word1+'天氣如何?','幫我查詢'+word2,'如何加入日常安排','👋 掰掰'));
+	conv.ask(new Suggestions(word1+'天氣如何?','我想看'+word2,'幫我查詢'+word3,'如何加入日常安排','👋 掰掰'));
     conv.user.storage.direct=false;
     conv.user.storage.station="全臺";
  
@@ -129,7 +139,7 @@ app.intent('查詢各縣市的天氣概況', (conv) => {
 
 app.intent('預設罐頭回覆', (conv) => {
 	word1=county_array[parseInt(Math.random()*11)];word2=county_array[11+parseInt(Math.random()*10)];
-	conv.noInputs = [`<speak><p><s>請試著問我<break time="0.2s"/>${word1}天氣如何?</s></p></speak>`,"請試著問我要查詢的縣市","很抱歉，我幫不上忙"];	   	 
+	conv.noInputs = ["請試著問我，"+word1+"天氣如何?","請試著問我要查詢的縣市","很抱歉，我幫不上忙"];	   	 
 
 	if(conv.input.type==="VOICE"){ //如果輸入是語音，則顯示錯誤處理方法
 	conv.ask(new SimpleResponse({               
@@ -144,7 +154,7 @@ app.intent('預設罐頭回覆', (conv) => {
 	conv.ask(new Suggestions(word1+'天氣如何?','幫我查詢'+word2));}
 	else{ 
 	conv.ask(`<speak><p><s>或對我說<break time="0.2s"/>區域查詢<break time="0.2s"/>查看縣市的天氣報告</s></p></speak>`);}
-	conv.noInputs = [`<speak><p><s>請試著問我<break time="0.2s"/>${word1}天氣如何?</s></p></speak>`,"請試著問我要查詢的縣市","很抱歉，我幫不上忙"];	   
+	conv.noInputs = ["請試著問我，"+word1+"天氣如何?","請試著問我要查詢的縣市","很抱歉，我幫不上忙"];	   
 
 	 }else{
 	 conv.ask('抱歉，我不懂你的意思，\n請點選建議卡片來進行操作。');
@@ -166,7 +176,7 @@ app.intent('快速查詢縣市資訊', (conv, {county}) => {
 
 		getJSON('https://opendata.cwb.gov.tw/fileapi/v1/opendataapi/F-C0032-'+converter[county]+'?Authorization=CWB-D48B64A0-8BCB-497F-96E3-BD5EB63CF502&downloadType=WEB&format=JSON')
 		.then(function(response) {
-		resolve(response.cwbopendata.dataset.parameterSet.parameter)
+		resolve([response.cwbopendata.dataset.parameterSet.parameter,response.cwbopendata.dataset.datasetInfo.issueTime])
 		}).catch(function(error) {
 		 var reason=new Error('資料獲取失敗');
 		 reject(reason)	});
@@ -181,47 +191,93 @@ app.intent('快速查詢縣市資訊', (conv, {county}) => {
 	}).then(function (final_data) {
 		
 	if(county_array.indexOf(county)!==-1){
-
+	
+	var reporttime=ReportTime(final_data[1]);
+	final_data=final_data[0];
 	var subtitle=final_data[0].parameterValue;
 	 subtitle=replaceString(subtitle,'，',' • ');
 	 subtitle=replaceString(subtitle,'；',' • ');
-	 subtitle=replaceString(subtitle,'。','\n');
+	 subtitle=replaceString(subtitle,'。','');
+	 subtitle=replaceString(subtitle,'【','');
+	 subtitle=replaceString(subtitle,'】','');
+	 if(subtitle.indexOf(')日')!==-1){subtitle=subtitle.split(')日')[1];}
+	 if(subtitle.indexOf('）日')!==-1){subtitle=subtitle.split('）日')[1];}
 	 
     report_context="";
-    output_context=""; pre_report="";		
+    output_context=""; pre_report="";  temp_report="";	
 	
-	var i=0;
+	var i=0; var keelung="";
 	for(i=1;i<final_data.length;i++){
+		//
+		if(county==="基隆市"){
+				if(final_data[i].parameterValue.indexOf('預報總結')!==-1){
+				output_context=final_data[i+1].parameterValue;
+				report_context=output_context;
+				break;}}
+		else{
 		report_context=report_context+final_data[i].parameterValue;
-		if(output_context.length===0){
-			if(final_data[i].parameterValue.indexOf('今天')!==-1){output_context=final_data[i].parameterValue;}
-			else if(final_data[i].parameterValue.indexOf('今日')!==-1){output_context=final_data[i].parameterValue;}
-			else if(final_data[i].parameterValue.indexOf('今(')!==-1){output_context=final_data[i].parameterValue;}
-			else if(final_data[i].parameterValue.indexOf('今（')!==-1){output_context=final_data[i].parameterValue;}
+		if(output_context.length===0&&final_data[i].parameterValue.indexOf('今')!==-1){
+			if(final_data[i].parameterValue.indexOf(')日')!==-1){output_context="今天"+final_data[i].parameterValue.split(')日')[1];;}
+			else if(final_data[i].parameterValue.indexOf('）日')!==-1){output_context="今天"+final_data[i].parameterValue.split('）日')[1];}
+			else if(final_data[i].parameterValue.indexOf('日)')!==-1){output_context="今天"+final_data[i].parameterValue.split('日)')[1];;}
+			else if(final_data[i].parameterValue.indexOf('日）')!==-1){output_context="今天"+final_data[i].parameterValue.split('日）')[1];}
+			else if(final_data[i].parameterValue.indexOf('今(')!==-1){output_context="今天"+final_data[i].parameterValue.split(')')[1];}
+			else if(final_data[i].parameterValue.indexOf('今（')!==-1){output_context="今天"+final_data[i].parameterValue.split('）')[1];;}
 		}
 		//檢測是否存在明日的預報資訊，如果存在則以明日的預報優先
-		if(pre_report.length===0){
-			if(final_data[i].parameterValue.indexOf('明天')!==-1){pre_report=final_data[i].parameterValue;}
-			else if(final_data[i].parameterValue.indexOf('明日')!==-1){pre_report=final_data[i].parameterValue;}
-			else if(final_data[i].parameterValue.indexOf('明(')!==-1){pre_report=final_data[i].parameterValue;}
-			else if(final_data[i].parameterValue.indexOf('明（')!==-1){pre_report=final_data[i].parameterValue;}
+		if(pre_report.length===0&&final_data[i].parameterValue.indexOf('明')!==-1&&textindexer(final_data[i].parameterValue)===0){
+			if(final_data[i].parameterValue.indexOf(')日')!==-1){pre_report="明天"+final_data[i].parameterValue.split(')日')[1];;}
+			else if(final_data[i].parameterValue.indexOf('）日')!==-1){pre_report="明天"+final_data[i].parameterValue.split('）日')[1];}
+			else if(final_data[i].parameterValue.indexOf('日)')!==-1){pre_report="明天"+final_data[i].parameterValue.split('日)')[1];;}
+			else if(final_data[i].parameterValue.indexOf('日）')!==-1){pre_report="明天"+final_data[i].parameterValue.split('日）')[1];}
+			else if(final_data[i].parameterValue.indexOf('明(')!==-1){pre_report="明天"+final_data[i].parameterValue.split('）')[1];}
+			else if(final_data[i].parameterValue.indexOf('明（')!==-1){pre_report="明天"+final_data[i].parameterValue.split(')')[1];}
+		}
+		if(temp_report.length===0){
+		    if(final_data[i].parameterValue.indexOf(')日')!==-1){temp_report=final_data[i].parameterValue.split(')日')[1];;}
+			else if(final_data[i].parameterValue.indexOf('）日')!==-1){temp_report=final_data[i].parameterValue.split('）日')[1];}
+			else if(final_data[i].parameterValue.indexOf('日)')!==-1){temp_report=final_data[i].parameterValue.split('日)')[1];;}
+			else if(final_data[i].parameterValue.indexOf('日）')!==-1){temp_report=final_data[i].parameterValue.split('日）')[1];}
 		}
 		
 		if(final_data[i+1]!==undefined){
 			report_context=report_context+"  \n  \n";
-		    if(final_data[i+1].parameterValue.indexOf('預報總結')!==-1){break;}}
+		if(final_data[i+1].parameterValue.indexOf('預報總結')!==-1){break;}}
+	 }
 	}
+	if(county!=="基隆市"){
 	//收尾語音輸出的報告
 	if(pre_report.length!==0){output_context=pre_report;}
-
+	if(output_context.length===0&&pre_report.length===0){output_context=temp_report;}
 	//收尾文字輸出的報告格式
 	report_context=reduceSIZE(report_context);
-	
-	if(report_context.indexOf('＝基隆預報現況＝')!==-1){
-		report_context=report_context.split('＝基隆預報現況＝')[1];
-		report_context=replaceString(report_context,'  \n  \n','');	
-    	report_context=replaceString(report_context,'。','  \n  \n');}	
-		
+	}
+	//針對特定地點的客製化輸出
+	if(conv.input.raw.indexOf('阿里山')!==-1){
+		county="阿里山";
+		report_context=final_data[4].parameterValue;
+		output_context=report_context;}
+	else if(conv.input.raw.indexOf('日月潭')!==-1){
+		county="日月潭";
+		report_context="日月潭地區"+output_context.split('日月潭地區')[1];
+		output_context=report_context;}
+	else if(conv.input.raw.indexOf('明德')!==-1||conv.input.raw.indexOf('鯉魚潭')!==-1||conv.input.raw.indexOf('雪霸')!=-1){
+		var temp=final_data[4].parameterValue.split("；");
+		if(conv.input.raw.indexOf("明德")!==-1){county="明德水庫";report_context=temp[0].split('日）')[1];}
+		else if(conv.input.raw.indexOf("鯉魚潭")!==-1){county="鯉魚潭水庫";report_context=temp[1];}
+		else if(conv.input.raw.indexOf("雪霸")!==-1){county="雪霸國家公園觀霧遊憩區";report_context=temp[2];}
+		output_context=report_context;}
+	else if(conv.input.raw.indexOf('參天')!==-1||conv.input.raw.indexOf('梨山')!==-1||conv.input.raw.indexOf('大雪山')!=-1||conv.input.raw.indexOf('臺中港')!=-1||conv.input.raw.indexOf('台中港')!==-1){
+		var temp=final_data[4].parameterValue.split("；");
+		if(conv.input.raw.indexOf('參天')!==-1||conv.input.raw.indexOf('梨山')!==-1){county="參天國家風景區";report_context="參天國家風景區"+temp[0].split(')')[1];}
+		else if(conv.input.raw.indexOf("大雪山")!==-1){county="大雪山國家森林遊樂區";report_context=temp[1];}
+		else if(conv.input.raw.indexOf("臺中港")!==-1||conv.input.raw.indexOf('台中港')!==-1){county="臺中港";report_context=temp[2];}
+		output_context=report_context;}
+	else if(conv.input.raw.indexOf('塔塔加')!==-1||conv.input.raw.indexOf('奧萬大')!==-1||conv.input.raw.indexOf('清境')!=-1||conv.input.raw.indexOf('惠蓀林場')!=-1){
+		county="仁愛信義山區";
+		report_context="仁愛信義山區"+(output_context.split("仁愛信義山區")[1]).split("。")[0];
+		output_context=report_context;
+	}
 
 	conv.ask(new SimpleResponse({               
 			speech: `<speak><p><s>以下是${county}的天氣報告<break time="1s"/>${output_context}</s></p></speak>`,
@@ -232,7 +288,7 @@ app.intent('快速查詢縣市資訊', (conv, {county}) => {
 	conv.ask(new BasicCard({  
 			title:county,
 			subtitle:subtitle,
-			text:report_context,
+			text:report_context+"  \n  \n**發布時間** • "+reporttime,
 			buttons: new Button({title: "前往中央氣象局看詳細報告",url:"https://www.cwb.gov.tw/V8/C/W/County/County.html?CID="+links[county],}),}));
     conv.ask(new Suggestions('如何加入日常安排','查看各個區域','👋 掰掰'));           
     conv.user.storage.station=county;
@@ -241,11 +297,11 @@ app.intent('快速查詢縣市資訊', (conv, {county}) => {
 	conv.close(new BasicCard({  
 			title:county,
 			subtitle:subtitle,
-			text:report_context,
+			text:report_context+"  \n  \n**發布時間** • "+reporttime,
 			buttons: new Button({title: "前往中央氣象局看詳細報告",url:"https://www.cwb.gov.tw/V8/C/W/County/County.html?CID="+links[county],}),}));
 	 }		
    }else{
-	conv.ask(`<speak><p><s>下次有需要時，可以對我說<break time="1s"/>叫天氣小幫手查詢${county}的天氣，下次見</s></p></speak>`);}
+	conv.close(`<speak><p><s>下次有需要時，可以對我說<break time="0.5s"/>叫天氣小幫手查詢${county}的天氣<break time="0.5s"/>下次見</s></p></speak>`);}
 	
 	}else{
 	 var report_time=(final_data.split('發布時間：')[1]).split('分')[0]+"分";
@@ -253,7 +309,6 @@ app.intent('快速查詢縣市資訊', (conv, {county}) => {
 	 if(final_data.indexOf('明天')===-1){ var report_contect="今天"+((final_data.split('今天')[1]).split('根據環保署')[0]).split('日）')[1];}
 			   else{var report_contect="明天"+((final_data.split('明天')[1]).split('根據環保署')[0]).split('日）')[1];}
 	 var subtitle=(final_data.split('【')[1]).split('】')[0];
-	 var report_contect="今天"+((final_data.split('今天')[1]).split('根據環保署')[0]).split('）')[1];
 	 var report_contect="今天"+((final_data.split('今天')[1]).split('根據環保署')[0]).split('日）')[1];
 	 var display_report=replaceString(final_data.split('】。')[1], '；https://airtw.epa.gov.tw/', '');
 		 display_report=reduceSIZE(display_report.split('根據環保署')[0]);

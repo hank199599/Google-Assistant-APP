@@ -145,7 +145,7 @@ app.intent('預設歡迎語句', (conv) => {
               speech: `<speak><p><s>請問你要查詢哪一個站點呢?</s></p></speak>`,
               text: '歡迎回來!'}));}
         else { conv.ask(new SimpleResponse({               
-              speech: `<speak><p><s>歡迎使用紫外線查詢精靈!</s><s>我能提供各縣市的紫外線查詢服務，此外，你能將我加入日常安排快速查詢所需站點。</s></p></speak>`,
+              speech: `<speak><p><s>歡迎使用紫外線精靈!</s><s>我能提供各縣市的紫外線查詢服務，此外，你能將我加入日常安排快速查詢所需站點。</s></p></speak>`,
               text: '歡迎使用!'}));}
 
 	if(hour_now>=6&&hour_now<=17){
@@ -168,7 +168,7 @@ app.intent('預設歡迎語句', (conv) => {
 		word2=county_array[20+parseInt(Math.random()*28)];
 
 	 conv.ask(new SimpleResponse({               
-              speech: `<speak><p><s>歡迎使用紫外線查詢精靈</s></p></speak>`,
+              speech: `<speak><p><s>歡迎使用紫外線精靈</s></p></speak>`,
               text: '歡迎使用'}));
 	  conv.ask(new SimpleResponse({               
               speech: `<speak><p><s>請試著問我要查詢的縣市!</s><s>例如<break time="0.5s"/>幫我查${word1}<break time="0.2s"/>或<break time="0.2s"/>${word2}狀況怎樣?</s></p></speak>`,

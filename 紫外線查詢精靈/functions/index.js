@@ -22,7 +22,7 @@ const findNearestLocation = require('map-nearest-location');
 const app = dialogflow({debug: true});
 const admin = require('firebase-admin');
 
-let serviceAccount = require("./config/b1a2b-krmfch-firebase-adminsdk-1tgdm-dc1903e68b.json");
+let serviceAccount = require("./config/b1a2b-krmfch-firebase-adminsdk-1tgdm-8bfe91e38e.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -42,6 +42,7 @@ var UVI1="";var UVI2="";var UVI3="";var UVI4="";var UVI5="";
 var UVI6="";var UVI7="";var UVI8="";var UVI9="";var UVI10="";
 var station_array=["斗六","日月潭","玉山","成功","朴子","沙鹿","宜蘭","板橋","花蓮","金門","阿里山","南投","屏東","恆春","苗栗","桃園","馬祖","高雄","基隆","淡水","塔塔加","新竹","新屋","新營","嘉義","彰化","臺中","臺北","臺東","臺南","澎湖","鞍部","橋頭","蘭嶼"];
 var origin_station_array=["斗六","日月潭","玉山","成功","朴子","沙鹿","宜蘭","板橋","花蓮","金門","阿里山","南投","屏東","恆春","苗栗","桃園","馬祖","高雄","基隆","淡水","塔塔加","新竹","新屋","新營","嘉義","彰化","臺中","臺北","臺東","臺南","澎湖","鞍部","橋頭","蘭嶼"];
+var county_array=["南投縣","連江縣","馬祖","南投","雲林縣","雲林","金門縣","金門","苗栗縣","苗栗","高雄市","高雄","嘉義市","花蓮縣","花蓮","嘉義縣","台東縣","臺東縣","台東","臺東","嘉義","基隆市","台北市","台南市","臺南市","台南","臺南","臺北市","台北","臺北","基隆","宜蘭縣","台中市","臺中市","台中","澎湖縣","澎湖","桃園市","桃園","新竹縣","新竹市","新竹","新北市","新北","宜蘭","屏東縣","屏東","彰化縣","彰化"];
 var option_array=["Northen","Central","Southen","East","Outlying_island"];
 var locations=[{lng: 120.5449944,lat :23.71185278,Sitename: "斗六"},{lng: 120.9080556,lat :23.88138889,Sitename: "日月潭"},{lng: 120.9594444,lat :23.4875,Sitename: "玉山"},{lng: 121.3733333,lat :23.0975,Sitename: "成功"},{lng: 120.2478111,lat :23.46712222,Sitename: "朴子"},{lng: 120.5687944,lat :24.22562778,Sitename: "沙鹿"},{lng: 121.7566667,lat :24.76388889,Sitename: "宜蘭"},{lng: 121.4586667,lat :25.01297222,Sitename: "板橋"},{lng: 121.6133333,lat :23.975,Sitename: "花蓮"},{lng: 118.2891667,lat :24.40722222,Sitename: "金門"},{lng: 120.8013944,lat :23.50856111,Sitename: "阿里山"},{lng: 120.6853056,lat :23.913,Sitename: "南投"},{lng: 120.4880333,lat :22.67308056,Sitename: "屏東"},{lng: 120.7463889,lat :22.00388889,Sitename: "恆春"},{lng: 120.8202,lat :24.56526944,Sitename: "苗栗"},{lng: 121.3049528,lat :24.99472778,Sitename: "桃園"},{lng: 119.9233333,lat :26.16916667,Sitename: "馬祖"},{lng: 120.3158333,lat :22.56611111,Sitename: "高雄"},{lng: 121.7405556,lat :25.13333333,Sitename: "基隆"},{lng: 121.4492389,lat :25.1645,Sitename: "淡水"},{lng: 120.8805722,lat :23.47060833,Sitename: "塔塔加"},{lng: 121.0141667,lat :24.82777778,Sitename: "新竹"},{lng: 121.0475,lat :25.00666667,Sitename: "新屋"},{lng: 120.31725,lat :23.30563333,Sitename: "新營"},{lng: 120.4327778,lat :23.49583333,Sitename: "嘉義"},{lng: 120.5415194,lat :24.066,Sitename: "彰化"},{lng: 120.6841667,lat :24.14583333,Sitename: "臺中"},{lng: 121.5147222,lat :25.03777778,Sitename: "臺北"},{lng: 121.1547222,lat :22.75222222,Sitename: "臺東"},{lng: 120.2047222,lat :22.99333333,Sitename: "臺南"},{lng: 119.5630556,lat :23.56555556,Sitename: "澎湖"},{lng: 121.5297222,lat :25.1825,Sitename: "鞍部"},{lng: 120.3056889,lat :22.75750556,Sitename: "橋頭"},{lng: 121.5583333,lat :22.03694444,Sitename: "蘭嶼"}];
 var max_uvi_array=[];
@@ -49,21 +50,22 @@ var Status=0;var UVI=0;var Pollutant="";var info="";var info_output="";
 var indexnumber="";
 var choose_station="";
 var report="";
-var report_PublishTime="";var day_count=0;
+var day_count=0;
 var output_title="";
-var PublishTime="";
 var temp="";var UVI_list_update=[];var UVI_list=[];var SiteName_list=[];
-var time=0;var hour_now=0;
+var time=0;var Minutes=0;
 var title=""; var data_get="";
+var word1="";
+var word2="";
 
 function picture_generator(number){
-	if(number==0){return "https://dummyimage.com/232x128/1e9165/ffffff.png&text=%200%20";}	
-	if(number>0&&number<3){return "https://dummyimage.com/232x128/1e9165/ffffff.png&text="+number;}
-	else if(number>=3&&number<6){return "https://dummyimage.com/232x128/fc920b/ffffff.png&text="+number;}
-	else if(number>=6&&number<8){return "https://dummyimage.com/232x128/ef4621/ffffff.png&text="+number;}
-	else if(number>=8&&number<11){return "https://dummyimage.com/232x128/b71411/ffffff.png&text="+number;}
-    else if(number>=11){return "https://dummyimage.com/232x128/4f1770/ffffff.png&text="+number;}
-    else{return "https://dummyimage.com/232x128/232830/ffffff.png&text=NaN";}
+	if(number==0){return "https://dummyimage.com/3504x1933/1e9165/ffffff.png&text=%200%20";}	
+	if(number>0&&number<3){return "https://dummyimage.com/3504x1933/1e9165/ffffff.png&text="+number;}
+	else if(number>=3&&number<6){return "https://dummyimage.com/3504x1933/fc920b/ffffff.png&text="+number;}
+	else if(number>=6&&number<8){return "https://dummyimage.com/3504x1933/ef4621/ffffff.png&text="+number;}
+	else if(number>=8&&number<11){return "https://dummyimage.com/3504x1933/b71411/ffffff.png&text="+number;}
+    else if(number>=11){return "https://dummyimage.com/3504x1933/4f1770/ffffff.png&text="+number;}
+    else{return "https://dummyimage.com/3504x1933/232830/ffffff.png&text=NaN";}
 	}
 function status_generator(number){
 	if(number>=0&&number<3){return "低量級";}
@@ -74,17 +76,35 @@ function status_generator(number){
     else{return "儀器故障或校驗";}
 
 }
+
+function getDay() {
+    var today = new Date();
+    var nowTime = today.getTime()+8*3600*1000;
+    today.setTime(parseInt(nowTime));
+	var oYear=today.getFullYear().toString();
+    var oMoth = (today.getMonth() + 1).toString();
+    var oDay = today.getDate().toString();
+	var oHour= today.getHours().toString();	
+	var oMinutes= today.getMinutes().toString();	
+    if (oMoth.length <= 1) {oMoth = '0' + oMoth;}
+    if (oDay.length <= 1) {oDay = '0' + oDay;}
+    if (oHour.length <= 1) {oHour = '0' + oHour;}
+	
+    return oYear+"/"+oMoth+"/"+oDay+" "+oHour+":00";
+}
+
 const SelectContexts = {
 	  parameter: 'select ',
 	}	
 
-function air_report_set(){
+function uvi_report_set(){
 
    //取得概況報告
 	time = new Date();
-	hour_now= (time.getHours()+8)%24;
+	Minutes= time.getMinutes();
 
 //取得測站更新時間
+	if(Minutes<15){
   data_get=new Promise(function(resolve,reject){
 	getJSON('http://opendata.epa.gov.tw/webapi/Data/UV/?$Select=UVI,SiteName&orderby=SiteName&$skip=0&$top=1000&format=json').then(
 	function(response) {
@@ -95,6 +115,7 @@ function air_report_set(){
      reject(reason)
      });});
 	i=0;UVI_list_update=[]; SiteName_list=[];
+	
    data_get.then(function (origin_data) {
       for(i=0;i<origin_data.length;i++){
 	   UVI_list_update[i]=data[i].UVI;
@@ -107,21 +128,20 @@ function air_report_set(){
    }).catch(function (error) {
 	database.ref('/TWuvi').on('value',e=>{
 		UVI_list=e.val().UVI;
-		PublishTime=e.val().PublishTime;
 		});
    });
+  }
 }
 	 
 app.intent('預設歡迎語句', (conv) => {
 	time = new Date();
-	hour_now= (time.getHours()+8)%24;	
+	var hour_now= (time.getHours()+8)%24;	
 
-  	air_report_set();
-   
-  database.ref('/TWair').on('value',e=>{PublishTime=e.val().PublishTime;});
+  	uvi_report_set();
   
 	if(conv.screen){
-		if (conv.user.last.seen) {  conv.ask(new SimpleResponse({               
+		if (conv.user.last.seen) {
+			conv.ask(new SimpleResponse({               
               speech: `<speak><p><s>請問你要查詢哪一個站點呢?</s></p></speak>`,
               text: '歡迎回來!'}));}
         else { conv.ask(new SimpleResponse({               
@@ -139,16 +159,23 @@ app.intent('預設歡迎語句', (conv) => {
         image: new Image({url:picture,alt:'Pictures',}),
         title:title,
 		subtitle:"請試著說要查詢的縣市，\n或點擊建議卡片來進行操作。",
-		text:"測站資訊發布時間 • "+PublishTime, 
+		text:"測站資訊發布時間 • "+getDay(), 
         buttons: new Button({title: '中央氣象局',url:'https://www.cwb.gov.tw/V8/C/W/MFC_UVI_Map.html',display: 'CROPPED',}),}));
 		conv.ask(new Suggestions('🌎 最近的測站','🔎依區域查詢','語音指令範例','紫外線指數是什麼 ','如何加入日常安排','👋 掰掰'));}
  
- else{conv.ask(new SimpleResponse({               
+ else{
+	 	word1=county_array[parseInt(Math.random()*19)];
+		word2=county_array[20+parseInt(Math.random()*28)];
+
+	 conv.ask(new SimpleResponse({               
               speech: `<speak><p><s>歡迎使用紫外線查詢精靈</s></p></speak>`,
               text: '歡迎使用'}));
 	  conv.ask(new SimpleResponse({               
-              speech: `<speak><p><s>請試著問我要查詢的縣市!</s><s>例如<break time="0.5s"/>幫我查台北市<break time="0.2s"/>或<break time="0.2s"/>南投狀況怎樣?</s></p></speak>`,
+              speech: `<speak><p><s>請試著問我要查詢的縣市!</s><s>例如<break time="0.5s"/>幫我查${word1}<break time="0.2s"/>或<break time="0.2s"/>${word2}狀況怎樣?</s></p></speak>`,
 	  text: '請輕觸下方卡片來選擇查詢區域!'}));
+
+	  conv.noInputs = ["請說出查詢的縣市!、例如、幫我查"+word1,"請說出你要查詢的縣市","抱歉，我想我幫不上忙。"];	   
+
 }
 
 
@@ -156,15 +183,14 @@ app.intent('預設歡迎語句', (conv) => {
 
 app.intent('依區域查詢', (conv) => {
 
-air_report_set()
    conv.contexts.set(SelectContexts.parameter, 1);
 
   if(conv.screen){conv.ask('請輕觸下方卡片來選擇查詢區域');}
   else{conv.ask(new SimpleResponse({               
               speech: `<speak><p><s>請選擇要查詢的區域!</s><s>選項有以下幾個<break time="0.5s"/>北部地區<break time="0.2s"/>中部地區<break time="0.2s"/>南部地區<break time="0.2s"/>東部地區<break time="0.2s"/>離島地區<break time="1s"/>請選擇。</s></p></speak>`,
-	  text: '請輕觸下方卡片來選擇查詢區域!'}));}
+				text: '請輕觸下方卡片來選擇查詢區域!'}));}
   conv.ask(new Carousel({
-	  title: 'Carousel Title',
+	  title: '縣市列表',
 	  items: {
 		'Northen': {
 		  title: '北部地區',
@@ -180,19 +206,21 @@ air_report_set()
 		  description: '宜蘭、花蓮、台東\n',},
 		'Outlying_island': {
 		  title: '離島地區',
-		  description: '澎湖縣、金門縣、\n連江縣',}
+		  description: '澎湖縣、金門縣、\n連江縣',},
 	},}));
  conv.ask(new Suggestions('🌎 最近的測站','語音指令範例','👋 掰掰'));
 
+uvi_report_set()
 });
 
 app.intent('縣市查詢結果', (conv, input, option) => {
 
-  database.ref('/TWuvi').on('value',e=>{
-		UVI_list=e.val().UVI;
-		PublishTime=e.val().PublishTime;
-		station_array=e.val().UVI_Site;
-		});
+return new Promise(
+function(resolve,reject){
+  var temp="";
+  database.ref('/TWuvi').on('value',e=>{temp =e.val();	});
+  resolve(temp)
+  }).then(function (origin_data) {
 
 if(option_array.indexOf(option)!==-1){
    conv.contexts.set(SelectContexts.parameter, 1);
@@ -514,9 +542,6 @@ conv.ask(new Carousel({
 	database.ref('/TWuvi').on('value',e=>{
 		UVI_list=e.val().UVI;
 		});
-	database.ref('/TWair').on('value',e=>{
-		PublishTime=e.val().PublishTime;
-		});
   
     UVI=parseFloat(UVI_list[parseInt(indexnumber)]);
     Status= status_generator(UVI);	
@@ -550,7 +575,7 @@ conv.ask(new Carousel({
 			conv.ask(new BasicCard({  
 					image: new Image({url:picture,alt:'Pictures',}),
 					title:'「'+option+'」的紫外線為'+Status,display: 'CROPPED',
-					text:info_output+'  \n  \n**測站資訊發布時間** • '+PublishTime,})); 
+					text:info_output+'  \n  \n**測站資訊發布時間** • '+getDay(),})); 
 		    conv.ask(new Suggestions('把它加入日常安排'));
 		}else{conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`);}
     
@@ -562,7 +587,7 @@ conv.ask(new Carousel({
 			conv.ask(new BasicCard({  
 					image: new Image({url:"https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN",alt:'Pictures',}),
 					title:'「'+option+'」儀器故障或校驗',
-					text:'設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • '+PublishTime, 
+					text:'設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • '+getDay(), 
 					display: 'CROPPED',
      })); 
 	 	conv.ask(new Suggestions('把它加入日常安排'));
@@ -577,7 +602,7 @@ conv.ask(new Carousel({
 			conv.ask(new BasicCard({  
 					image: new Image({url:"https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN",alt:'Pictures',}),
 					title:'「'+option+'」儀器故障或校驗',
-					text:'設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • '+PublishTime, 
+					text:'設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • '+getDay(), 
 					display: 'CROPPED',
      })); 
 	 	conv.ask(new Suggestions('把它加入日常安排'));
@@ -640,12 +665,27 @@ if(conv.input.type==="VOICE"){ //如果輸入是語音，則顯示錯誤處理�
 	}));
 	conv.ask(new Suggestions(word1+'紫外線指數為何?','幫我查詢'+word2));
 	}
-	else{ conv.ask(`<speak><p><s>或對我說<break time="0.2s"/>區域查詢<break time="0.2s"/>來進行區域查詢</s></p></speak>`);}
+	else{ 
+	  conv.noInputs = [`<speak><p><s>請說出查詢的縣市!</s><s>例如<break time="0.5s"/>幫我查${word1}</s></p></speak>`,"請說出你要查詢的縣市","抱歉，我想我幫不上忙。"];	   }
  }else{
 	 conv.ask('抱歉，我不懂你的意思，\n請點選建議卡片來進行操作。');
  }
 	
 conv.ask(new Suggestions('🌎 最近的測站','🔎依區域查詢','👋 掰掰'));
+ }).catch(function (error) {
+	console.log(error);
+	
+	conv.ask(new SimpleResponse({               
+			speech: `<speak><p><s>糟糕，查詢似乎發生錯誤。請稍後再試。</s></p></speak>`,
+			text: '發生錯誤，請稍後再試一次。'}));
+	conv.ask(new BasicCard({  
+			image: new Image({url:"https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤",alt:'Pictures',}),
+			title:'數據加載發生問題',
+			subtitle:'請過一段時間後再回來查看', display: 'CROPPED',
+	  })); 
+	});
+conv.ask(new Suggestions('🌎 最近的測站','🔎依區域查詢','👋 掰掰'));
+	
 });
 
 app.intent('語音指令範例', (conv) => {
@@ -668,30 +708,31 @@ app.intent('語音指令範例', (conv) => {
 
 app.intent('直接查詢', (conv,{station}) => {
 
-  if(indexnumber=station_array.indexOf(station)===-1){
+return new Promise(
+function(resolve,reject){
+  var temp="";
+  database.ref('/TWuvi').on('value',e=>{temp =e.val();	});
+  resolve(temp)
+  }).then(function (origin_data) {
+	  
+	   UVI_list=origin_data.UVI;
+	   station_array=origin_data.UVI_Site;	
+	
+	indexnumber=station_array.indexOf(station); //取得監測站對應的編號
+	
+  if(indexnumber===-1){
     conv.ask(new SimpleResponse({               
-              speech: `<speak><p><s>抱歉，您所查詢的${station}監測站似乎不存在，我無法提供你最新資訊。</s></p></speak>`,
-	text: '以下為「'+station+'」監測站的詳細資訊'}));
+              speech: `<speak><p><s>抱歉，您所查詢的監測站似乎不存在，我無法提供你最新資訊。</s></p></speak>`,
+			  text: '找不到你指定的站點'}));
    conv.ask(new BasicCard({  
         image: new Image({url:"https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN",alt:'Pictures',}),
         title:'找不到您指定的測站名稱',
-		subtitle:'請透過選單查詢來查找您要的測站', display: 'CROPPED',
+		subtitle:'請透過選單尋找現在可查詢的測站', display: 'CROPPED',
   })); 
 conv.ask(new Suggestions('回主頁面','👋 掰掰'));
 
- }
- else{
-   if((typeof UVI_list[0]==="undefined")!==true){
-	indexnumber=station_array.indexOf(station); //取得監測站對應的編號
-
-	database.ref('/TWuvi').on('value',e=>{
-		UVI_list=e.val().UVI;
-		});
-	database.ref('/TWair').on('value',e=>{
-		PublishTime=e.val().PublishTime;
-		});
-
-    UVI=parseFloat(UVI_list[parseInt(indexnumber)]);
+ } else{
+	UVI=parseFloat(UVI_list[indexnumber]);
     Status= status_generator(UVI);	
 	
 	if(Status!=="儀器故障或校驗"){
@@ -720,7 +761,7 @@ conv.ask(new Suggestions('回主頁面','👋 掰掰'));
    conv.close(new BasicCard({  
         image: new Image({url:picture,alt:'Pictures',}),
         title:'「'+station+'」的紫外線為'+Status, display: 'CROPPED',
-		text:info_output+'  \n  \n**測站資訊發布時間** • '+PublishTime,})); 
+		text:info_output+'  \n  \n**測站資訊發布時間** • '+getDay(),})); 
 	}
 	else{
     conv.ask(new SimpleResponse({               
@@ -730,22 +771,22 @@ conv.ask(new Suggestions('回主頁面','👋 掰掰'));
         image: new Image({url:"https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN",alt:'Pictures',}),
         title:'儀器故障或校驗',
 					title:'「'+station+'」儀器故障或校驗',
-					text:'設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • '+PublishTime, 
+					text:'設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • '+getDay(), 
 				    display: 'CROPPED',})); 
 	}
- }else{
-    conv.ask(new SimpleResponse({               
-              speech: `<speak><p><s>糟糕，查詢似乎發生錯誤。請稍後再試。</s></p></speak>`,
-	text: '發生錯誤，請稍後再試一次。'}));
-		   conv.close(new BasicCard({  
-				image: new Image({url:"https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤",alt:'Pictures',}),
-				title:'數據加載發生問題',
-				subtitle:'請過一段時間後再回來查看', display: 'CROPPED',
-  })); 
- }
-}
- conv.data.UVI_list= UVI_list;
-
+  }
+ }).catch(function (error) {
+	console.log(error);
+	
+	conv.ask(new SimpleResponse({               
+			speech: `<speak><p><s>糟糕，查詢似乎發生錯誤。請稍後再試。</s></p></speak>`,
+			text: '發生錯誤，請稍後再試一次。'}));
+	conv.close(new BasicCard({  
+			image: new Image({url:"https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤",alt:'Pictures',}),
+			title:'數據加載發生問題',
+			subtitle:'請過一段時間後再回來查看', display: 'CROPPED',
+	  })); 
+	});
 });
 app.intent('日常安排教學', (conv) => {
 	
@@ -759,7 +800,7 @@ app.intent('日常安排教學', (conv) => {
     conv.ask(new BasicCard({  
         image: new Image({url:"https://i.imgur.com/82c8u4T.png",alt:'Pictures',}),
         title:'將「'+choose_station+'」加入日常安排', display: 'CROPPED',
-		subtitle:'1.點擊畫面右上方大頭貼 > 點擊[設定]\n2.切換到[Google助理]分頁 > 點擊[日常安排]\n3.點擊[新增日常安排]\n4.「新增指令(必填)」輸入「紫外線指數」\n5.「新增動作」輸入\n「叫紫外線查詢精靈查詢'+choose_station+'站」\n6.輸入完成後點擊「儲存」\n7.現在，你可以透過說出或輸入「紫外線指數」來快速查詢'+choose_station+'的UVI指數!',})); 
+		subtitle:'1.點擊畫面右上方大頭貼 > 點擊[設定]\n2.切換到[Google助理]分頁 > 點擊[日常安排]\n3.點擊[新增日常安排]\n4.「新增指令(必填)」輸入「紫外線指數」\n5.「新增動作」輸入\n「叫紫外線精靈查詢'+choose_station+'站」\n6.輸入完成後點擊「儲存」\n7.現在，你可以透過說出或輸入「紫外線指數」來快速查詢'+choose_station+'的UVI指數!',})); 
 
 		conv.ask(new Suggestions('🌎 最近的測站','🔎依區域查詢','👋 掰掰'));
 
@@ -796,13 +837,15 @@ var sitename="";
 
 app.intent('回傳資訊', (conv, params, permissionGranted)=> {
 
-	database.ref('/TWuvi').on('value',e=>{
-		UVI_list=e.val().UVI;
-		});
-	database.ref('/TWair').on('value',e=>{
-		PublishTime=e.val().PublishTime;
-		});
-
+return new Promise(
+function(resolve,reject){
+  var temp="";
+  database.ref('/TWuvi').on('value',e=>{temp =e.val();	});
+  resolve(temp)
+  }).then(function (origin_data) {
+	  
+	   UVI_list=origin_data.UVI;
+	   station_array=origin_data.UVI_Site;	
     if (permissionGranted) {
         const {
             requestedPermission
@@ -857,7 +900,7 @@ app.intent('回傳資訊', (conv, params, permissionGranted)=> {
 			   conv.ask(new BasicCard({  
 					image: new Image({url:picture,alt:'Pictures',}),
 					title:'「'+sitename+'」的紫外線為'+Status, display: 'CROPPED',
-					text:info_output+'  \n  \n**測站資訊發布時間** • '+PublishTime,})); 
+					text:info_output+'  \n  \n**測站資訊發布時間** • '+getDay(),})); 
 			
 				conv.ask(new Suggestions('把它加入日常安排'));
 				}
@@ -869,7 +912,7 @@ app.intent('回傳資訊', (conv, params, permissionGranted)=> {
 					image: new Image({url:"https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN",alt:'Pictures',}),
 					title:'儀器故障或校驗',
 								title:'「'+sitename+'」儀器故障或校驗',
-								text:'設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • '+PublishTime, 
+								text:'設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • '+getDay(), 
 								display: 'CROPPED',})); 
 				}
 			 }else{
@@ -895,6 +938,19 @@ app.intent('回傳資訊', (conv, params, permissionGranted)=> {
     }
     conv.ask(new Suggestions('🔎依區域查詢','👋 掰掰'));
     conv.user.storage.choose_station=sitename;
+ }).catch(function (error) {
+	console.log(error);
+	
+	conv.ask(new SimpleResponse({               
+			speech: `<speak><p><s>糟糕，查詢似乎發生錯誤。請稍後再試。</s></p></speak>`,
+			text: '發生錯誤，請稍後再試一次。'}));
+	conv.ask(new BasicCard({  
+			image: new Image({url:"https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤",alt:'Pictures',}),
+			title:'數據加載發生問題',
+			subtitle:'請過一段時間後再回來查看', display: 'CROPPED',
+	  })); 
+    conv.ask(new Suggestions('🔎依區域查詢','👋 掰掰'));
+	});
 
 });
 
@@ -1212,9 +1268,6 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
 	database.ref('/TWuvi').on('value',e=>{
 		UVI_list=e.val().UVI;
 		});
-	database.ref('/TWair').on('value',e=>{
-		PublishTime=e.val().PublishTime;
-		});
 
     UVI=parseFloat(UVI_list[parseInt(indexnumber)]);
     Status= status_generator(UVI);	
@@ -1243,12 +1296,13 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
 		conv.ask(new SimpleResponse({               
               speech: `<speak><p><s>根據最新資料顯示，${County}監測站的紫外線指數為${UVI}</s><s>${info}</s></p></speak>`,
 	          text: '以下為該監測站的詳細資訊。'}));
-    
+		conv.noInputs = ["請試著問我其他縣市來查看其他測站","請問你還要查詢其他地方嗎?","抱歉，我想我幫不上忙。"];	   
+  
 		if(conv.screen){
 			conv.ask(new BasicCard({  
 					image: new Image({url:picture,alt:'Pictures',}),
 					title:'「'+County+'」的紫外線為'+Status,display: 'CROPPED',
-					text:info_output+'  \n  \n**測站資訊發布時間** • '+PublishTime,})); 
+					text:info_output+'  \n  \n**測站資訊發布時間** • '+getDay(),})); 
 		    conv.ask(new Suggestions('把它加入日常安排'));
 		}else{conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`);}
     
@@ -1260,7 +1314,7 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
 			conv.ask(new BasicCard({  
 					image: new Image({url:"https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN",alt:'Pictures',}),
 					title:'「'+County+'」儀器故障或校驗',
-					text:'設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • '+PublishTime, 
+					text:'設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • '+getDay(), 
 					display: 'CROPPED',
      })); 
 	 	conv.ask(new Suggestions('把它加入日常安排'));

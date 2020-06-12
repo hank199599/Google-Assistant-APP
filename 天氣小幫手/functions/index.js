@@ -96,8 +96,8 @@ app.intent('今日天氣概況', (conv) => {
   conv.user.storage.station="全臺";
  }
  else{
-	conv.noInputs = ["請試著問我，"+word1+"天氣如何?","請試著問我要查詢的縣市","很抱歉，我幫不上忙"];	   	 
 	word1=county_array[parseInt(Math.random()*11)];word2=county_array[11+parseInt(Math.random()*10)];
+	conv.noInputs = ["請試著問我，"+word1+"天氣如何?","請試著問我要查詢的縣市","很抱歉，我幫不上忙"];	   	 
 	conv.ask(`<speak><p><s>接著，你可以透過詢問查看縣市的天氣</s><s>例如，請試著問我<break time="0.2s"/>${word1}天氣如何?<break time="0.2s"/>或<break time="0.2s"/>幫我查詢${word2}</s></p></speak>`); 
  }
  

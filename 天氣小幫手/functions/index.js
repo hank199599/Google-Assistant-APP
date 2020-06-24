@@ -270,7 +270,7 @@ app.intent('縣市選擇結果', (conv, params, option) => {
 
 	if(county_array.indexOf(option)!==-1){
 
-		getJSON('https://opendata.cwb.gov.tw/fileapi/v1/opendataapi/F-C0032-'+converter[option]+'?Authorization=CWB-D48B64A0-8BCB-497F-96E3-BD5EB63CF502&downloadType=WEB&format=JSON')
+		getJSON('https://opendata.cwb.gov.tw/fileapi/v1/opendataapi/F-C0032-'+converter[option]+'?Authorization=CWB-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX&downloadType=WEB&format=JSON')
 		.then(function(response) {
 		resolve([response.cwbopendata.dataset.parameterSet.parameter,response.cwbopendata.dataset.datasetInfo.issueTime])
 		}).catch(function(error) {
@@ -458,7 +458,7 @@ app.intent('快速查詢縣市資訊', (conv, {county}) => {
 
 	if(county_array.indexOf(county)!==-1){
 
-		getJSON('https://opendata.cwb.gov.tw/fileapi/v1/opendataapi/F-C0032-'+converter[county]+'?Authorization=CWB-D48B64A0-8BCB-497F-96E3-BD5EB63CF502&downloadType=WEB&format=JSON')
+		getJSON('https://opendata.cwb.gov.tw/fileapi/v1/opendataapi/F-C0032-'+converter[county]+'?Authorization=CWB-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX&downloadType=WEB&format=JSON')
 		.then(function(response) {
 		resolve([response.cwbopendata.dataset.parameterSet.parameter,response.cwbopendata.dataset.datasetInfo.issueTime])
 		}).catch(function(error) {

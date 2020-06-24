@@ -331,8 +331,8 @@ app.intent('縣市選擇結果', (conv, params, option) => {
 		
 		if(final_data[i+1]!==undefined){
 			report_context=report_context+"  \n  \n";
-		if(final_data[i+1].parameterValue.indexOf('預報總結')!==-1){break;}}
-	 }
+		}
+	    }
 	}
 	if(option!=="基隆市"){
 	//收尾語音輸出的報告
@@ -526,8 +526,8 @@ app.intent('快速查詢縣市資訊', (conv, {county}) => {
 		
 		if(final_data[i+1]!==undefined){
 			report_context=report_context+"  \n  \n";
-		if(final_data[i+1].parameterValue.indexOf('預報總結')!==-1){break;}}
-	 }
+		}
+	    }
 	}
 	if(county!=="基隆市"){
 	//收尾語音輸出的報告

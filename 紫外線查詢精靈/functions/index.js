@@ -267,22 +267,22 @@ if(option_array.indexOf(option)!==-1){
   UVI7=UVI_list[parseInt(station_array.indexOf('新屋'))];
   UVI8=UVI_list[parseInt(station_array.indexOf('新竹'))];
 
-  picurl1= picture_generator(Math.round(UVI1));
-  picurl2= picture_generator(Math.round(UVI2));
-  picurl3= picture_generator(Math.round(UVI3));
-  picurl4= picture_generator(Math.round(UVI4));
-  picurl5= picture_generator(Math.round(UVI5));
-  picurl6= picture_generator(Math.round(UVI6));
-  picurl7= picture_generator(Math.round(UVI7));
-  picurl8= picture_generator(Math.round(UVI8));
-  status1= status_generator(Math.round(UVI1));
-  status2= status_generator(Math.round(UVI2));
-  status3= status_generator(Math.round(UVI3));
-  status4= status_generator(Math.round(UVI4));
-  status5= status_generator(Math.round(UVI5));
-  status6= status_generator(Math.round(UVI6));
-  status7= status_generator(Math.round(UVI7));
-  status8= status_generator(Math.round(UVI8));
+  picurl1= picture_generator(parseInt(UVI1));
+  picurl2= picture_generator(parseInt(UVI2));
+  picurl3= picture_generator(parseInt(UVI3));
+  picurl4= picture_generator(parseInt(UVI4));
+  picurl5= picture_generator(parseInt(UVI5));
+  picurl6= picture_generator(parseInt(UVI6));
+  picurl7= picture_generator(parseInt(UVI7));
+  picurl8= picture_generator(parseInt(UVI8));
+  status1= status_generator(parseInt(UVI1));
+  status2= status_generator(parseInt(UVI2));
+  status3= status_generator(parseInt(UVI3));
+  status4= status_generator(parseInt(UVI4));
+  status5= status_generator(parseInt(UVI5));
+  status6= status_generator(parseInt(UVI6));
+  status7= status_generator(parseInt(UVI7));
+  status8= status_generator(parseInt(UVI8));
 
 conv.ask(new Carousel({
     items: {
@@ -336,22 +336,22 @@ conv.ask(new Carousel({
   UVI7=UVI_list[parseInt(station_array.indexOf('南投'))];
   UVI8=UVI_list[parseInt(station_array.indexOf('斗六'))];
 
-  picurl1= picture_generator(Math.round(UVI1));
-  picurl2= picture_generator(Math.round(UVI2));
-  picurl3= picture_generator(Math.round(UVI3));
-  picurl4= picture_generator(Math.round(UVI4));
-  picurl5= picture_generator(Math.round(UVI5));
-  picurl6= picture_generator(Math.round(UVI6));
-  picurl7= picture_generator(Math.round(UVI7));
-  picurl8= picture_generator(Math.round(UVI8));
-  status1= status_generator(Math.round(UVI1));
-  status2= status_generator(Math.round(UVI2));
-  status3= status_generator(Math.round(UVI3));
-  status4= status_generator(Math.round(UVI4));
-  status5= status_generator(Math.round(UVI5));
-  status6= status_generator(Math.round(UVI6));
-  status7= status_generator(Math.round(UVI7));
-  status8= status_generator(Math.round(UVI8));
+  picurl1= picture_generator(parseInt(UVI1));
+  picurl2= picture_generator(parseInt(UVI2));
+  picurl3= picture_generator(parseInt(UVI3));
+  picurl4= picture_generator(parseInt(UVI4));
+  picurl5= picture_generator(parseInt(UVI5));
+  picurl6= picture_generator(parseInt(UVI6));
+  picurl7= picture_generator(parseInt(UVI7));
+  picurl8= picture_generator(parseInt(UVI8));
+  status1= status_generator(parseInt(UVI1));
+  status2= status_generator(parseInt(UVI2));
+  status3= status_generator(parseInt(UVI3));
+  status4= status_generator(parseInt(UVI4));
+  status5= status_generator(parseInt(UVI5));
+  status6= status_generator(parseInt(UVI6));
+  status7= status_generator(parseInt(UVI7));
+  status8= status_generator(parseInt(UVI8));
   
   
 conv.ask(new Carousel({
@@ -407,26 +407,26 @@ conv.ask(new Carousel({
   UVI9=UVI_list[parseInt(station_array.indexOf('屏東'))];
   UVI10=UVI_list[parseInt(station_array.indexOf('恆春'))];
 
-  picurl1= picture_generator(Math.round(UVI1));
-  picurl2= picture_generator(Math.round(UVI2));
-  picurl3= picture_generator(Math.round(UVI3));
-  picurl4= picture_generator(Math.round(UVI4));
-  picurl5= picture_generator(Math.round(UVI5));
-  picurl6= picture_generator(Math.round(UVI6));
-  picurl7= picture_generator(Math.round(UVI7));
-  picurl8= picture_generator(Math.round(UVI8));
-  picurl9= picture_generator(Math.round(UVI9));
-  picurl10= picture_generator(Math.round(UVI10));
-  status1= status_generator(Math.round(UVI1));
-  status2= status_generator(Math.round(UVI2));
-  status3= status_generator(Math.round(UVI3));
-  status4= status_generator(Math.round(UVI4));
-  status5= status_generator(Math.round(UVI5));
-  status6= status_generator(Math.round(UVI6));
-  status7= status_generator(Math.round(UVI7));
-  status8= status_generator(Math.round(UVI8));
-  status9= status_generator(Math.round(UVI9));
-  status10= status_generator(Math.round(UVI10));
+  picurl1= picture_generator(parseInt(UVI1));
+  picurl2= picture_generator(parseInt(UVI2));
+  picurl3= picture_generator(parseInt(UVI3));
+  picurl4= picture_generator(parseInt(UVI4));
+  picurl5= picture_generator(parseInt(UVI5));
+  picurl6= picture_generator(parseInt(UVI6));
+  picurl7= picture_generator(parseInt(UVI7));
+  picurl8= picture_generator(parseInt(UVI8));
+  picurl9= picture_generator(parseInt(UVI9));
+  picurl10= picture_generator(parseInt(UVI10));
+  status1= status_generator(parseInt(UVI1));
+  status2= status_generator(parseInt(UVI2));
+  status3= status_generator(parseInt(UVI3));
+  status4= status_generator(parseInt(UVI4));
+  status5= status_generator(parseInt(UVI5));
+  status6= status_generator(parseInt(UVI6));
+  status7= status_generator(parseInt(UVI7));
+  status8= status_generator(parseInt(UVI8));
+  status9= status_generator(parseInt(UVI9));
+  status10= status_generator(parseInt(UVI10));
 	    
   conv.ask(new Carousel({
     items: {
@@ -485,16 +485,16 @@ conv.ask(new Carousel({
   UVI4=UVI_list[parseInt(station_array.indexOf('成功'))];
   UVI5=UVI_list[parseInt(station_array.indexOf('蘭嶼'))];
 
-  picurl1= picture_generator(Math.round(UVI1));
-  picurl2= picture_generator(Math.round(UVI2));
-  picurl3= picture_generator(Math.round(UVI3));
-  picurl4= picture_generator(Math.round(UVI4));
-  picurl5= picture_generator(Math.round(UVI5));
-  status1= status_generator(Math.round(UVI1));
-  status2= status_generator(Math.round(UVI2));
-  status3= status_generator(Math.round(UVI3));
-  status4= status_generator(Math.round(UVI4));
-  status5= status_generator(Math.round(UVI5));
+  picurl1= picture_generator(parseInt(UVI1));
+  picurl2= picture_generator(parseInt(UVI2));
+  picurl3= picture_generator(parseInt(UVI3));
+  picurl4= picture_generator(parseInt(UVI4));
+  picurl5= picture_generator(parseInt(UVI5));
+  status1= status_generator(parseInt(UVI1));
+  status2= status_generator(parseInt(UVI2));
+  status3= status_generator(parseInt(UVI3));
+  status4= status_generator(parseInt(UVI4));
+  status5= status_generator(parseInt(UVI5));
 
   conv.ask(new Carousel({
     items: {
@@ -530,12 +530,12 @@ conv.ask(new Carousel({
   UVI2=UVI_list[parseInt(station_array.indexOf('馬祖'))];
   UVI3=UVI_list[parseInt(station_array.indexOf('澎湖'))];
 
-  picurl1= picture_generator(Math.round(UVI1));
-  picurl2= picture_generator(Math.round(UVI2));
-  picurl3= picture_generator(Math.round(UVI3));
-  status1= status_generator(Math.round(UVI1));
-  status2= status_generator(Math.round(UVI2));
-  status3= status_generator(Math.round(UVI3));
+  picurl1= picture_generator(parseInt(UVI1));
+  picurl2= picture_generator(parseInt(UVI2));
+  picurl3= picture_generator(parseInt(UVI3));
+  status1= status_generator(parseInt(UVI1));
+  status2= status_generator(parseInt(UVI2));
+  status3= status_generator(parseInt(UVI3));
 
   conv.ask(new Carousel({
     items: {
@@ -1022,10 +1022,10 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI1=UVI_list[parseInt(station_array.indexOf('臺北'))];
   UVI2=UVI_list[parseInt(station_array.indexOf('鞍部'))];
 
-  picurl1= picture_generator(Math.round(UVI1));
-  picurl2= picture_generator(Math.round(UVI2));
-  status1= status_generator(Math.round(UVI1));
-  status2= status_generator(Math.round(UVI2));
+  picurl1= picture_generator(parseInt(UVI1));
+  picurl2= picture_generator(parseInt(UVI2));
+  status1= status_generator(parseInt(UVI1));
+  status2= status_generator(parseInt(UVI2));
    
     if(conv.screen){conv.ask('以下是「臺北市」的監測站列表');}
   else{conv.ask(new SimpleResponse({               
@@ -1055,10 +1055,10 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI1=UVI_list[parseInt(station_array.indexOf('板橋'))];
   UVI2=UVI_list[parseInt(station_array.indexOf('淡水'))];
 
-  picurl1= picture_generator(Math.round(UVI1));
-  picurl2= picture_generator(Math.round(UVI2));
-  status1= status_generator(Math.round(UVI1));
-  status2= status_generator(Math.round(UVI2));
+  picurl1= picture_generator(parseInt(UVI1));
+  picurl2= picture_generator(parseInt(UVI2));
+  status1= status_generator(parseInt(UVI1));
+  status2= status_generator(parseInt(UVI2));
    
   conv.ask(new Carousel({
   title: 'Carousel Title',
@@ -1084,10 +1084,10 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI1=UVI_list[parseInt(station_array.indexOf('桃園'))];
   UVI2=UVI_list[parseInt(station_array.indexOf('新屋'))];
 
-  picurl1= picture_generator(Math.round(UVI1));
-  picurl2= picture_generator(Math.round(UVI2));
-  status1= status_generator(Math.round(UVI1));
-  status2= status_generator(Math.round(UVI2));
+  picurl1= picture_generator(parseInt(UVI1));
+  picurl2= picture_generator(parseInt(UVI2));
+  status1= status_generator(parseInt(UVI1));
+  status2= status_generator(parseInt(UVI2));
 			  
   conv.ask(new Carousel({
     items: {
@@ -1111,10 +1111,10 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI1=UVI_list[parseInt(station_array.indexOf('臺中'))];
   UVI2=UVI_list[parseInt(station_array.indexOf('沙鹿'))];
 
-  picurl1= picture_generator(Math.round(UVI1));
-  picurl2= picture_generator(Math.round(UVI2));
-  status1= status_generator(Math.round(UVI1));
-  status2= status_generator(Math.round(UVI2));
+  picurl1= picture_generator(parseInt(UVI1));
+  picurl2= picture_generator(parseInt(UVI2));
+  status1= status_generator(parseInt(UVI1));
+  status2= status_generator(parseInt(UVI2));
 
   conv.ask(new Carousel({
     items: {
@@ -1139,12 +1139,12 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI2=UVI_list[parseInt(station_array.indexOf('玉山'))];
   UVI3=UVI_list[parseInt(station_array.indexOf('南投'))];
 
-  picurl1= picture_generator(Math.round(UVI1));
-  picurl2= picture_generator(Math.round(UVI2));
-  picurl3= picture_generator(Math.round(UVI3));
-  status1= status_generator(Math.round(UVI1));
-  status2= status_generator(Math.round(UVI2));
-  status3= status_generator(Math.round(UVI3));
+  picurl1= picture_generator(parseInt(UVI1));
+  picurl2= picture_generator(parseInt(UVI2));
+  picurl3= picture_generator(parseInt(UVI3));
+  status1= status_generator(parseInt(UVI1));
+  status2= status_generator(parseInt(UVI2));
+  status3= status_generator(parseInt(UVI3));
 
   conv.ask(new Carousel({
     items: {
@@ -1173,12 +1173,12 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI2=UVI_list[parseInt(station_array.indexOf('成功'))];
   UVI3=UVI_list[parseInt(station_array.indexOf('蘭嶼'))];
 
-  picurl1= picture_generator(Math.round(UVI1));
-  picurl2= picture_generator(Math.round(UVI2));
-  picurl3= picture_generator(Math.round(UVI3));
-  status1= status_generator(Math.round(UVI1));
-  status2= status_generator(Math.round(UVI2));
-  status3= status_generator(Math.round(UVI3));
+  picurl1= picture_generator(parseInt(UVI1));
+  picurl2= picture_generator(parseInt(UVI2));
+  picurl3= picture_generator(parseInt(UVI3));
+  status1= status_generator(parseInt(UVI1));
+  status2= status_generator(parseInt(UVI2));
+  status3= status_generator(parseInt(UVI3));
 
   conv.ask(new Carousel({
     items: {
@@ -1207,14 +1207,14 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI3=UVI_list[parseInt(station_array.indexOf('阿里山'))];
   UVI4=UVI_list[parseInt(station_array.indexOf('塔塔加'))];
 
-  picurl1= picture_generator(Math.round(UVI1));
-  picurl2= picture_generator(Math.round(UVI2));
-  picurl3= picture_generator(Math.round(UVI3));
-  picurl4= picture_generator(Math.round(UVI4));
-  status1= status_generator(Math.round(UVI1));
-  status2= status_generator(Math.round(UVI2));
-  status3= status_generator(Math.round(UVI3));
-  status4= status_generator(Math.round(UVI4));
+  picurl1= picture_generator(parseInt(UVI1));
+  picurl2= picture_generator(parseInt(UVI2));
+  picurl3= picture_generator(parseInt(UVI3));
+  picurl4= picture_generator(parseInt(UVI4));
+  status1= status_generator(parseInt(UVI1));
+  status2= status_generator(parseInt(UVI2));
+  status3= status_generator(parseInt(UVI3));
+  status4= status_generator(parseInt(UVI4));
 
   conv.ask(new Carousel({
     items: {
@@ -1247,10 +1247,10 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
 	UVI2=UVI_list[parseInt(station_array.indexOf('新營'))];
 
 	  
-	picurl1= picture_generator(Math.round(UVI1));
-	picurl2= picture_generator(Math.round(UVI2));
-	status1= status_generator(Math.round(UVI1));
-	status2= status_generator(Math.round(UVI2));
+	picurl1= picture_generator(parseInt(UVI1));
+	picurl2= picture_generator(parseInt(UVI2));
+	status1= status_generator(parseInt(UVI1));
+	status2= status_generator(parseInt(UVI2));
   
   conv.ask(new Carousel({
     items: {
@@ -1274,10 +1274,10 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI1=UVI_list[parseInt(station_array.indexOf('高雄'))];
   UVI2=UVI_list[parseInt(station_array.indexOf('橋頭'))];
 
-  picurl1= picture_generator(Math.round(UVI1));
-  picurl2= picture_generator(Math.round(UVI2));
-  status1= status_generator(Math.round(UVI1));
-  status2= status_generator(Math.round(UVI2));
+  picurl1= picture_generator(parseInt(UVI1));
+  picurl2= picture_generator(parseInt(UVI2));
+  status1= status_generator(parseInt(UVI1));
+  status2= status_generator(parseInt(UVI2));
 
   conv.ask(new Carousel({
   title: 'Carousel Title',
@@ -1302,10 +1302,10 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI1=UVI_list[parseInt(station_array.indexOf('屏東'))];
   UVI2=UVI_list[parseInt(station_array.indexOf('恆春'))];
 
-  picurl1= picture_generator(Math.round(UVI1));
-  picurl2= picture_generator(Math.round(UVI2));
-  status1= status_generator(Math.round(UVI1));
-  status2= status_generator(Math.round(UVI2));
+  picurl1= picture_generator(parseInt(UVI1));
+  picurl2= picture_generator(parseInt(UVI2));
+  status1= status_generator(parseInt(UVI1));
+  status2= status_generator(parseInt(UVI2));
 
   conv.ask(new Carousel({
   title: 'Carousel Title',

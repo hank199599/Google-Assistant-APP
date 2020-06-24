@@ -9,20 +9,17 @@ const {
   Button,
   Image,
   BasicCard,Carousel,
-  LinkOutSuggestion,
-  BrowseCarousel,BrowseCarouselItem,items,Table
 } = require('actions-on-google');
 
 // Import the firebase-functions package for deployment.
 const functions = require('firebase-functions');
 var getJSON = require('get-json')
 const replaceString = require('replace-string');
-const parseJson = require('parse-json');
 const findNearestLocation = require('map-nearest-location');
 const app = dialogflow({debug: true});
 const admin = require('firebase-admin');
 
-let serviceAccount = require("./config/b1a2b-krmfch-firebase-adminsdk-1tgdm-8bfe91e38e.json");
+let serviceAccount = require("./config/b1a2b-krmfch-firebase-adminsdk-1tgdm-1b1e1b99db.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -30,9 +27,6 @@ admin.initializeApp({
 });
 
 const database = admin.database();
-let db = admin.firestore();
-var data=[];
-var number=0; //函數用變數
 var picture="";var i=0;
 var picurl1="";var picurl2="";var picurl3="";var picurl4="";var picurl5=""
 var picurl6="";var picurl7="";var picurl8="";var picurl9="";var picurl10="";
@@ -45,14 +39,10 @@ var origin_station_array=["斗六","日月潭","玉山","成功","朴子","沙�
 var county_array=["南投縣","連江縣","馬祖","南投","雲林縣","雲林","金門縣","金門","苗栗縣","苗栗","高雄市","高雄","嘉義市","花蓮縣","花蓮","嘉義縣","台東縣","臺東縣","台東","臺東","嘉義","基隆市","台北市","台南市","臺南市","台南","臺南","臺北市","台北","臺北","基隆","宜蘭縣","台中市","臺中市","台中","澎湖縣","澎湖","桃園市","桃園","新竹縣","新竹市","新竹","新北市","新北","宜蘭","屏東縣","屏東","彰化縣","彰化"];
 var option_array=["Northen","Central","Southen","East","Outlying_island"];
 var locations=[{lng: 120.5449944,lat :23.71185278,Sitename: "斗六"},{lng: 120.9080556,lat :23.88138889,Sitename: "日月潭"},{lng: 120.9594444,lat :23.4875,Sitename: "玉山"},{lng: 121.3733333,lat :23.0975,Sitename: "成功"},{lng: 120.2478111,lat :23.46712222,Sitename: "朴子"},{lng: 120.5687944,lat :24.22562778,Sitename: "沙鹿"},{lng: 121.7566667,lat :24.76388889,Sitename: "宜蘭"},{lng: 121.4586667,lat :25.01297222,Sitename: "板橋"},{lng: 121.6133333,lat :23.975,Sitename: "花蓮"},{lng: 118.2891667,lat :24.40722222,Sitename: "金門"},{lng: 120.8013944,lat :23.50856111,Sitename: "阿里山"},{lng: 120.6853056,lat :23.913,Sitename: "南投"},{lng: 120.4880333,lat :22.67308056,Sitename: "屏東"},{lng: 120.7463889,lat :22.00388889,Sitename: "恆春"},{lng: 120.8202,lat :24.56526944,Sitename: "苗栗"},{lng: 121.3049528,lat :24.99472778,Sitename: "桃園"},{lng: 119.9233333,lat :26.16916667,Sitename: "馬祖"},{lng: 120.3158333,lat :22.56611111,Sitename: "高雄"},{lng: 121.7405556,lat :25.13333333,Sitename: "基隆"},{lng: 121.4492389,lat :25.1645,Sitename: "淡水"},{lng: 120.8805722,lat :23.47060833,Sitename: "塔塔加"},{lng: 121.0141667,lat :24.82777778,Sitename: "新竹"},{lng: 121.0475,lat :25.00666667,Sitename: "新屋"},{lng: 120.31725,lat :23.30563333,Sitename: "新營"},{lng: 120.4327778,lat :23.49583333,Sitename: "嘉義"},{lng: 120.5415194,lat :24.066,Sitename: "彰化"},{lng: 120.6841667,lat :24.14583333,Sitename: "臺中"},{lng: 121.5147222,lat :25.03777778,Sitename: "臺北"},{lng: 121.1547222,lat :22.75222222,Sitename: "臺東"},{lng: 120.2047222,lat :22.99333333,Sitename: "臺南"},{lng: 119.5630556,lat :23.56555556,Sitename: "澎湖"},{lng: 121.5297222,lat :25.1825,Sitename: "鞍部"},{lng: 120.3056889,lat :22.75750556,Sitename: "橋頭"},{lng: 121.5583333,lat :22.03694444,Sitename: "蘭嶼"}];
-var max_uvi_array=[];
 var Status=0;var UVI=0;var Pollutant="";var info="";var info_output="";
 var indexnumber="";
 var choose_station="";
-var report="";
-var day_count=0;
-var output_title="";
-var temp="";var UVI_list_update=[];var UVI_list=[];var SiteName_list=[];
+var UVI_list_update=[];var UVI_list=[];var SiteName_list=[];
 var time=0;var Minutes=0;
 var title=""; var data_get="";
 var word1="";
@@ -104,12 +94,11 @@ function uvi_report_set(){
 	Minutes= time.getMinutes();
 
 //取得測站更新時間
-	if(Minutes<15){
+	if(Minutes<59){
   data_get=new Promise(function(resolve,reject){
 	getJSON('http://opendata.epa.gov.tw/webapi/Data/UV/?$Select=UVI,SiteName&orderby=SiteName&$skip=0&$top=1000&format=json').then(
-	function(response) {
-	 data=response;
-	 resolve(data)
+	function(response,reject) {
+	 resolve(response)
     }).catch(function(error) {
 	 var reason=new Error('資料獲取失敗');
      reject(reason)
@@ -118,27 +107,57 @@ function uvi_report_set(){
 	
    data_get.then(function (origin_data) {
       for(i=0;i<origin_data.length;i++){
-	   UVI_list_update[i]=data[i].UVI;
-	   SiteName_list[i]=data[i].SiteName;
+	   UVI_list_update[i]=origin_data[i].UVI;
+	   SiteName_list[i]=origin_data[i].SiteName;
 	   }
 	database.ref('/TWuvi').update({UVI:UVI_list_update});
 	database.ref('/TWuvi').update({UVI_Site:SiteName_list});
     UVI_list=UVI_list_update;
-	SiteName_list=station_array;
+	station_array=SiteName_list;
    }).catch(function (error) {
 	database.ref('/TWuvi').on('value',e=>{
 		UVI_list=e.val().UVI;
+		station_array=e.val().UVI_Site;
 		});
    });
-  }
+ }
 }
+
 	 
 app.intent('預設歡迎語句', (conv) => {
-	time = new Date();
-	var hour_now= (time.getHours()+8)%24;	
 
-  	uvi_report_set();
-  
+	time = new Date();
+	Minutes= time.getMinutes();
+	var hour_now= (time.getHours()+8)%24;	
+	
+ return new Promise(
+ 
+  function(resolve,reject){
+
+	if(conv.input.raw==="紫外線精靈"){
+	getJSON('http://opendata.epa.gov.tw/webapi/Data/UV/?$Select=UVI,SiteName&orderby=SiteName&$skip=0&$top=1000&format=json')
+	.then(function(response) {resolve(response)})
+	.catch(function(error) {reject("資料獲取錯誤")});
+	}
+	else{
+	database.ref('/TWuvi').on('value',e=>{resolve(e.val());});		
+	}
+ }).then(function (origin_data) {
+	
+	if(conv.input.raw==="紫外線精靈"){ 
+      for(i=0;i<origin_data.length;i++){
+	   UVI_list_update[i]=origin_data[i].UVI;
+	   SiteName_list[i]=origin_data[i].SiteName;}
+	database.ref('/TWuvi').update({UVI:UVI_list_update});
+	database.ref('/TWuvi').update({UVI_Site:SiteName_list});
+    UVI_list=UVI_list_update;
+	station_array=station_array;
+	}
+	else{
+    UVI_list=origin_data.UVI;
+	station_array=origin_data.UVI_Site;
+	}
+	
 	if(conv.screen){
 		if (conv.user.last.seen) {
 			conv.ask(new SimpleResponse({               
@@ -155,13 +174,14 @@ app.intent('預設歡迎語句', (conv) => {
 		picture="https://i.imgur.com/ejlSjF3.png";
 		title="明月，明月，胡笳一聲愁絕";}
 		
-	    conv.ask(new BasicCard({  
+	conv.ask(new BasicCard({  
         image: new Image({url:picture,alt:'Pictures',}),
-        title:title,
+        title:title,display: 'CROPPED',
 		subtitle:"請試著說要查詢的縣市，\n或點擊建議卡片來進行操作。",
 		text:"測站資訊發布時間 • "+getDay(), 
-        buttons: new Button({title: '中央氣象局',url:'https://www.cwb.gov.tw/V8/C/W/MFC_UVI_Map.html',display: 'CROPPED',}),}));
-		conv.ask(new Suggestions('🌎 最近的測站','🔎依區域查詢','語音指令範例','紫外線指數是什麼 ','如何加入日常安排','👋 掰掰'));}
+        buttons: new Button({title: '中央氣象局',url:'https://www.cwb.gov.tw/V8/C/W/MFC_UVI_Map.html',}),}));
+	conv.ask(new Suggestions('🌎 最近的測站','🔎依區域查詢','語音指令範例','紫外線指數是什麼 ','如何加入日常安排','👋 掰掰'));
+	}
  
  else{
 	 	word1=county_array[parseInt(Math.random()*19)];
@@ -178,6 +198,9 @@ app.intent('預設歡迎語句', (conv) => {
 
 }
 
+   }).catch(function (error) {
+	console.log(error)
+   });
 
 });
 
@@ -193,20 +216,25 @@ app.intent('依區域查詢', (conv) => {
 	  title: '縣市列表',
 	  items: {
 		'Northen': {
+          synonyms: ['台北','新北','桃園','新竹'],
 		  title: '北部地區',
 		description: '北北基、桃園市\n新竹縣市',},
 		'Central': {
+          synonyms: ['苗栗','台中','雲林','彰化','南投'],
 		  title: '中部地區',
 		description: '苗栗縣、臺中市\n雲林、彰化、南投',},
 		'Southen': {
+          synonyms: ['嘉義','台南','高雄','屏東'],
 		  title: '南部地區',
 		  description: '嘉義縣市、台南市、\n高雄市、屏東縣',},
 		'East': {
+          synonyms: ['宜蘭','花蓮','台東'],
 		  title: '東部地區',
 		  description: '宜蘭、花蓮、台東\n',},
 		'Outlying_island': {
+          synonyms: ['澎湖','金門','連江','媽祖','馬祖'],
 		  title: '離島地區',
-		  description: '澎湖縣、金門縣、\n連江縣',},
+		  description: '澎湖縣、金門縣、\n連江縣',}
 	},}));
  conv.ask(new Suggestions('🌎 最近的測站','語音指令範例','👋 掰掰'));
 
@@ -217,10 +245,10 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 
 return new Promise(
 function(resolve,reject){
-  var temp="";
-  database.ref('/TWuvi').on('value',e=>{temp =e.val();	});
-  resolve(temp)
+  database.ref('/TWuvi').on('value',e=>{resolve(e.val())});
   }).then(function (origin_data) {
+    UVI_list=origin_data.UVI;
+	station_array=origin_data.UVI_Site;
 
 if(option_array.indexOf(option)!==-1){
    conv.contexts.set(SelectContexts.parameter, 1);
@@ -239,22 +267,22 @@ if(option_array.indexOf(option)!==-1){
   UVI7=UVI_list[parseInt(station_array.indexOf('新屋'))];
   UVI8=UVI_list[parseInt(station_array.indexOf('新竹'))];
 
-  picurl1= picture_generator(parseInt(UVI1));
-  picurl2= picture_generator(parseInt(UVI2));
-  picurl3= picture_generator(parseInt(UVI3));
-  picurl4= picture_generator(parseInt(UVI4));
-  picurl5= picture_generator(parseInt(UVI5));
-  picurl6= picture_generator(parseInt(UVI6));
-  picurl7= picture_generator(parseInt(UVI7));
-  picurl8= picture_generator(parseInt(UVI8));
-  status1= status_generator(parseInt(UVI1));
-  status2= status_generator(parseInt(UVI2));
-  status3= status_generator(parseInt(UVI3));
-  status4= status_generator(parseInt(UVI4));
-  status5= status_generator(parseInt(UVI5));
-  status6= status_generator(parseInt(UVI6));
-  status7= status_generator(parseInt(UVI7));
-  status8= status_generator(parseInt(UVI8));
+  picurl1= picture_generator(Math.round(UVI1));
+  picurl2= picture_generator(Math.round(UVI2));
+  picurl3= picture_generator(Math.round(UVI3));
+  picurl4= picture_generator(Math.round(UVI4));
+  picurl5= picture_generator(Math.round(UVI5));
+  picurl6= picture_generator(Math.round(UVI6));
+  picurl7= picture_generator(Math.round(UVI7));
+  picurl8= picture_generator(Math.round(UVI8));
+  status1= status_generator(Math.round(UVI1));
+  status2= status_generator(Math.round(UVI2));
+  status3= status_generator(Math.round(UVI3));
+  status4= status_generator(Math.round(UVI4));
+  status5= status_generator(Math.round(UVI5));
+  status6= status_generator(Math.round(UVI6));
+  status7= status_generator(Math.round(UVI7));
+  status8= status_generator(Math.round(UVI8));
 
 conv.ask(new Carousel({
     items: {
@@ -308,22 +336,22 @@ conv.ask(new Carousel({
   UVI7=UVI_list[parseInt(station_array.indexOf('南投'))];
   UVI8=UVI_list[parseInt(station_array.indexOf('斗六'))];
 
-  picurl1= picture_generator(parseInt(UVI1));
-  picurl2= picture_generator(parseInt(UVI2));
-  picurl3= picture_generator(parseInt(UVI3));
-  picurl4= picture_generator(parseInt(UVI4));
-  picurl5= picture_generator(parseInt(UVI5));
-  picurl6= picture_generator(parseInt(UVI6));
-  picurl7= picture_generator(parseInt(UVI7));
-  picurl8= picture_generator(parseInt(UVI8));
-  status1= status_generator(parseInt(UVI1));
-  status2= status_generator(parseInt(UVI2));
-  status3= status_generator(parseInt(UVI3));
-  status4= status_generator(parseInt(UVI4));
-  status5= status_generator(parseInt(UVI5));
-  status6= status_generator(parseInt(UVI6));
-  status7= status_generator(parseInt(UVI7));
-  status8= status_generator(parseInt(UVI8));
+  picurl1= picture_generator(Math.round(UVI1));
+  picurl2= picture_generator(Math.round(UVI2));
+  picurl3= picture_generator(Math.round(UVI3));
+  picurl4= picture_generator(Math.round(UVI4));
+  picurl5= picture_generator(Math.round(UVI5));
+  picurl6= picture_generator(Math.round(UVI6));
+  picurl7= picture_generator(Math.round(UVI7));
+  picurl8= picture_generator(Math.round(UVI8));
+  status1= status_generator(Math.round(UVI1));
+  status2= status_generator(Math.round(UVI2));
+  status3= status_generator(Math.round(UVI3));
+  status4= status_generator(Math.round(UVI4));
+  status5= status_generator(Math.round(UVI5));
+  status6= status_generator(Math.round(UVI6));
+  status7= status_generator(Math.round(UVI7));
+  status8= status_generator(Math.round(UVI8));
   
   
 conv.ask(new Carousel({
@@ -379,26 +407,26 @@ conv.ask(new Carousel({
   UVI9=UVI_list[parseInt(station_array.indexOf('屏東'))];
   UVI10=UVI_list[parseInt(station_array.indexOf('恆春'))];
 
-  picurl1= picture_generator(parseInt(UVI1));
-  picurl2= picture_generator(parseInt(UVI2));
-  picurl3= picture_generator(parseInt(UVI3));
-  picurl4= picture_generator(parseInt(UVI4));
-  picurl5= picture_generator(parseInt(UVI5));
-  picurl6= picture_generator(parseInt(UVI6));
-  picurl7= picture_generator(parseInt(UVI7));
-  picurl8= picture_generator(parseInt(UVI8));
-  picurl9= picture_generator(parseInt(UVI9));
-  picurl10= picture_generator(parseInt(UVI10));
-  status1= status_generator(parseInt(UVI1));
-  status2= status_generator(parseInt(UVI2));
-  status3= status_generator(parseInt(UVI3));
-  status4= status_generator(parseInt(UVI4));
-  status5= status_generator(parseInt(UVI5));
-  status6= status_generator(parseInt(UVI6));
-  status7= status_generator(parseInt(UVI7));
-  status8= status_generator(parseInt(UVI8));
-  status9= status_generator(parseInt(UVI9));
-  status10= status_generator(parseInt(UVI10));
+  picurl1= picture_generator(Math.round(UVI1));
+  picurl2= picture_generator(Math.round(UVI2));
+  picurl3= picture_generator(Math.round(UVI3));
+  picurl4= picture_generator(Math.round(UVI4));
+  picurl5= picture_generator(Math.round(UVI5));
+  picurl6= picture_generator(Math.round(UVI6));
+  picurl7= picture_generator(Math.round(UVI7));
+  picurl8= picture_generator(Math.round(UVI8));
+  picurl9= picture_generator(Math.round(UVI9));
+  picurl10= picture_generator(Math.round(UVI10));
+  status1= status_generator(Math.round(UVI1));
+  status2= status_generator(Math.round(UVI2));
+  status3= status_generator(Math.round(UVI3));
+  status4= status_generator(Math.round(UVI4));
+  status5= status_generator(Math.round(UVI5));
+  status6= status_generator(Math.round(UVI6));
+  status7= status_generator(Math.round(UVI7));
+  status8= status_generator(Math.round(UVI8));
+  status9= status_generator(Math.round(UVI9));
+  status10= status_generator(Math.round(UVI10));
 	    
   conv.ask(new Carousel({
     items: {
@@ -457,16 +485,16 @@ conv.ask(new Carousel({
   UVI4=UVI_list[parseInt(station_array.indexOf('成功'))];
   UVI5=UVI_list[parseInt(station_array.indexOf('蘭嶼'))];
 
-  picurl1= picture_generator(parseInt(UVI1));
-  picurl2= picture_generator(parseInt(UVI2));
-  picurl3= picture_generator(parseInt(UVI3));
-  picurl4= picture_generator(parseInt(UVI4));
-  picurl5= picture_generator(parseInt(UVI5));
-  status1= status_generator(parseInt(UVI1));
-  status2= status_generator(parseInt(UVI2));
-  status3= status_generator(parseInt(UVI3));
-  status4= status_generator(parseInt(UVI4));
-  status5= status_generator(parseInt(UVI5));
+  picurl1= picture_generator(Math.round(UVI1));
+  picurl2= picture_generator(Math.round(UVI2));
+  picurl3= picture_generator(Math.round(UVI3));
+  picurl4= picture_generator(Math.round(UVI4));
+  picurl5= picture_generator(Math.round(UVI5));
+  status1= status_generator(Math.round(UVI1));
+  status2= status_generator(Math.round(UVI2));
+  status3= status_generator(Math.round(UVI3));
+  status4= status_generator(Math.round(UVI4));
+  status5= status_generator(Math.round(UVI5));
 
   conv.ask(new Carousel({
     items: {
@@ -502,12 +530,12 @@ conv.ask(new Carousel({
   UVI2=UVI_list[parseInt(station_array.indexOf('馬祖'))];
   UVI3=UVI_list[parseInt(station_array.indexOf('澎湖'))];
 
-  picurl1= picture_generator(parseInt(UVI1));
-  picurl2= picture_generator(parseInt(UVI2));
-  picurl3= picture_generator(parseInt(UVI3));
-  status1= status_generator(parseInt(UVI1));
-  status2= status_generator(parseInt(UVI2));
-  status3= status_generator(parseInt(UVI3));
+  picurl1= picture_generator(Math.round(UVI1));
+  picurl2= picture_generator(Math.round(UVI2));
+  picurl3= picture_generator(Math.round(UVI3));
+  status1= status_generator(Math.round(UVI1));
+  status2= status_generator(Math.round(UVI2));
+  status3= status_generator(Math.round(UVI3));
 
   conv.ask(new Carousel({
     items: {
@@ -538,10 +566,6 @@ conv.ask(new Carousel({
 }else if(station_array.indexOf(option)!==-1){
 	
 	indexnumber=station_array.indexOf(option); //取得監測站對應的編號
-
-	database.ref('/TWuvi').on('value',e=>{
-		UVI_list=e.val().UVI;
-		});
   
     UVI=parseFloat(UVI_list[parseInt(indexnumber)]);
     Status= status_generator(UVI);	
@@ -573,8 +597,9 @@ conv.ask(new Carousel({
     
 		if(conv.screen){
 			conv.ask(new BasicCard({  
-					image: new Image({url:picture,alt:'Pictures',}),
-					title:'「'+option+'」的紫外線為'+Status,display: 'CROPPED',
+					image: new Image({url:picture,alt:'Pictures',}),display: 'CROPPED',
+					title:option,
+					subtitle:Status,
 					text:info_output+'  \n  \n**測站資訊發布時間** • '+getDay(),})); 
 		    conv.ask(new Suggestions('把它加入日常安排'));
 		}else{conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`);}
@@ -637,12 +662,40 @@ conv.ask(new Carousel({
 conv.ask(new Suggestions('🌎 最近的測站','語音指令範例'));
  }
  if(conv.screen){
-	 
 	 if(option!=="undefined"){conv.ask(new Suggestions('🌎 最近的測站','回主頁面'));}
 	 conv.ask(new Suggestions('👋 掰掰'));
      conv.user.storage.choose_station=option;}
 
-	 conv.data.UVI_list= UVI_list;
+   }).catch(function (error) {
+	console.log(error)
+   option="undefined";
+   conv.contexts.set(SelectContexts.parameter, 1);
+  if(conv.screen){conv.ask('請輕觸下方卡片來選擇查詢區域');}
+  else{conv.ask(new SimpleResponse({               
+              speech: `<speak><p><s>抱歉，查詢過程發生一點小狀況</s></p></speak>`,
+	  text: '查詢過程發生一點小狀況，\n請輕觸下方卡片來重新查詢!'}));}
+
+  conv.ask(new Carousel({
+  title: 'Carousel Title',
+  items: {
+    'Northen': {
+      title: '北部地區',
+	description: '北北基、桃園市\n新竹縣市',},
+    'Central': {
+      title: '中部地區',
+	description: '苗栗縣、臺中市\n雲林、彰化、南投',},
+    'Southen': {
+      title: '南部地區',
+	  description: '嘉義縣市、台南市、\n高雄市、屏東縣',},
+	'East': {
+      title: '東部地區',
+	  description: '宜蘭、花蓮、台東\n',},
+		'Outlying_island': {
+      title: '離島地區',
+	  description: '澎湖縣、金門縣、\n連江縣',}},}));
+	  
+	conv.ask(new Suggestions('🌎 最近的測站','語音指令範例'));
+   });
 	 
 });
 
@@ -650,6 +703,10 @@ var county_array=["南投縣","連江縣","馬祖","南投","雲林縣","雲林"
 var word1="";var word2="";var word3="";
 
 app.intent('Default Fallback Intent', (conv) => {
+	return new Promise(
+	function(resolve,reject){
+	  database.ref('/TWuvi').on('value',e=>{resolve(e.val())});
+	  }).then(function (origin_data) {
 	word1=county_array[parseInt(Math.random()*19)];
 	word2=county_array[20+parseInt(Math.random()*28)];
 	
@@ -681,10 +738,9 @@ conv.ask(new Suggestions('🌎 最近的測站','🔎依區域查詢','👋 掰�
 	conv.ask(new BasicCard({  
 			image: new Image({url:"https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤",alt:'Pictures',}),
 			title:'數據加載發生問題',
-			subtitle:'請過一段時間後再回來查看', display: 'CROPPED',
-	  })); 
+			subtitle:'請過一段時間後再回來查看', display: 'CROPPED',})); 
+    conv.ask(new Suggestions('🌎 最近的測站','🔎依區域查詢','👋 掰掰'));
 	});
-conv.ask(new Suggestions('🌎 最近的測站','🔎依區域查詢','👋 掰掰'));
 	
 });
 
@@ -710,9 +766,7 @@ app.intent('直接查詢', (conv,{station}) => {
 
 return new Promise(
 function(resolve,reject){
-  var temp="";
-  database.ref('/TWuvi').on('value',e=>{temp =e.val();	});
-  resolve(temp)
+  database.ref('/TWuvi').on('value',e=>{resolve(e.val())});
   }).then(function (origin_data) {
 	  
 	   UVI_list=origin_data.UVI;
@@ -723,13 +777,12 @@ function(resolve,reject){
   if(indexnumber===-1){
     conv.ask(new SimpleResponse({               
               speech: `<speak><p><s>抱歉，您所查詢的監測站似乎不存在，我無法提供你最新資訊。</s></p></speak>`,
-			  text: '找不到你指定的站點'}));
-   conv.ask(new BasicCard({  
+			  text: '抱歉，我無法提供協助'}));
+   conv.close(new BasicCard({  
         image: new Image({url:"https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN",alt:'Pictures',}),
         title:'找不到您指定的測站名稱',
-		subtitle:'請透過選單尋找現在可查詢的測站', display: 'CROPPED',
+		subtitle:'請確認輸入的測站名稱是否有誤', display: 'CROPPED',
   })); 
-conv.ask(new Suggestions('回主頁面','👋 掰掰'));
 
  } else{
 	UVI=parseFloat(UVI_list[indexnumber]);
@@ -759,15 +812,16 @@ conv.ask(new Suggestions('回主頁面','👋 掰掰'));
               speech: `<speak><p><s>根據最新資料顯示，${station}監測站的紫外線指數為${UVI}</s><s>${info}</s></p></speak>`,
 	text: '以下為該監測站的詳細資訊'}));
    conv.close(new BasicCard({  
-        image: new Image({url:picture,alt:'Pictures',}),
-        title:'「'+station+'」的紫外線為'+Status, display: 'CROPPED',
+		image: new Image({url:picture,alt:'Pictures',}),display: 'CROPPED',
+		title:station,
+		subtitle:Status,
 		text:info_output+'  \n  \n**測站資訊發布時間** • '+getDay(),})); 
 	}
 	else{
     conv.ask(new SimpleResponse({               
               speech: `<speak><p><s>由於${station}監測站數據不足或處於維修狀態，我無法提供你最新資訊。</s></p></speak>`,
-	text: '以下為該監測站的詳細資訊'}));
-		   conv.close(new BasicCard({  
+				text: '以下為該監測站的詳細資訊'}));
+	conv.close(new BasicCard({  
         image: new Image({url:"https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN",alt:'Pictures',}),
         title:'儀器故障或校驗',
 					title:'「'+station+'」儀器故障或校驗',
@@ -784,8 +838,7 @@ conv.ask(new Suggestions('回主頁面','👋 掰掰'));
 	conv.close(new BasicCard({  
 			image: new Image({url:"https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤",alt:'Pictures',}),
 			title:'數據加載發生問題',
-			subtitle:'請過一段時間後再回來查看', display: 'CROPPED',
-	  })); 
+			subtitle:'請過一段時間後再回來查看', display: 'CROPPED',})); 
 	});
 });
 app.intent('日常安排教學', (conv) => {
@@ -839,13 +892,12 @@ app.intent('回傳資訊', (conv, params, permissionGranted)=> {
 
 return new Promise(
 function(resolve,reject){
-  var temp="";
-  database.ref('/TWuvi').on('value',e=>{temp =e.val();	});
-  resolve(temp)
+  database.ref('/TWuvi').on('value',e=>{resolve(e.val())});
   }).then(function (origin_data) {
 	  
 	   UVI_list=origin_data.UVI;
 	   station_array=origin_data.UVI_Site;	
+	   
     if (permissionGranted) {
         const {
             requestedPermission
@@ -872,7 +924,6 @@ function(resolve,reject){
 
 				UVI=parseFloat(UVI_list[parseInt(indexnumber)]);
 				Status= status_generator(UVI);	
-				console.log(Status);
 				if(Status!=="儀器故障或校驗"){
 					
 				if(UVI===0){picture= "https://dummyimage.com/1037x539/1e9165/ffffff.png&text=%200%20";}	
@@ -898,8 +949,9 @@ function(resolve,reject){
 						  speech: `<speak><p><s>根據最新資料顯示，${sitename}監測站的紫外線指數為${UVI}</s><s>${info}</s></p></speak>`,
 				text: '以下為該監測站的詳細資訊'}));
 			   conv.ask(new BasicCard({  
-					image: new Image({url:picture,alt:'Pictures',}),
-					title:'「'+sitename+'」的紫外線為'+Status, display: 'CROPPED',
+					image: new Image({url:picture,alt:'Pictures',}),display: 'CROPPED',
+					title:sitename,
+					subtitle:Status,
 					text:info_output+'  \n  \n**測站資訊發布時間** • '+getDay(),})); 
 			
 				conv.ask(new Suggestions('把它加入日常安排'));
@@ -947,14 +999,20 @@ function(resolve,reject){
 	conv.ask(new BasicCard({  
 			image: new Image({url:"https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤",alt:'Pictures',}),
 			title:'數據加載發生問題',
-			subtitle:'請過一段時間後再回來查看', display: 'CROPPED',
-	  })); 
+			subtitle:'請過一段時間後再回來查看', display: 'CROPPED',})); 
     conv.ask(new Suggestions('🔎依區域查詢','👋 掰掰'));
 	});
 
 });
 
 app.intent('直接查詢縣市選單', (conv, {County}) => {
+
+return new Promise(
+function(resolve,reject){
+  database.ref('/TWuvi').on('value',e=>{resolve(e.val())});
+  }).then(function (origin_data) {
+    UVI_list=origin_data.UVI;
+	station_array=origin_data.UVI_Site;
 
 if(conv.input.raw.indexOf('新北')!==-1){County="新北市";}
 if(conv.input.raw==='嘉義'){County="嘉義";}
@@ -964,10 +1022,10 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI1=UVI_list[parseInt(station_array.indexOf('臺北'))];
   UVI2=UVI_list[parseInt(station_array.indexOf('鞍部'))];
 
-  picurl1= picture_generator(parseInt(UVI1));
-  picurl2= picture_generator(parseInt(UVI2));
-  status1= status_generator(parseInt(UVI1));
-  status2= status_generator(parseInt(UVI2));
+  picurl1= picture_generator(Math.round(UVI1));
+  picurl2= picture_generator(Math.round(UVI2));
+  status1= status_generator(Math.round(UVI1));
+  status2= status_generator(Math.round(UVI2));
    
     if(conv.screen){conv.ask('以下是「臺北市」的監測站列表');}
   else{conv.ask(new SimpleResponse({               
@@ -997,10 +1055,10 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI1=UVI_list[parseInt(station_array.indexOf('板橋'))];
   UVI2=UVI_list[parseInt(station_array.indexOf('淡水'))];
 
-  picurl1= picture_generator(parseInt(UVI1));
-  picurl2= picture_generator(parseInt(UVI2));
-  status1= status_generator(parseInt(UVI1));
-  status2= status_generator(parseInt(UVI2));
+  picurl1= picture_generator(Math.round(UVI1));
+  picurl2= picture_generator(Math.round(UVI2));
+  status1= status_generator(Math.round(UVI1));
+  status2= status_generator(Math.round(UVI2));
    
   conv.ask(new Carousel({
   title: 'Carousel Title',
@@ -1026,10 +1084,10 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI1=UVI_list[parseInt(station_array.indexOf('桃園'))];
   UVI2=UVI_list[parseInt(station_array.indexOf('新屋'))];
 
-  picurl1= picture_generator(parseInt(UVI1));
-  picurl2= picture_generator(parseInt(UVI2));
-  status1= status_generator(parseInt(UVI1));
-  status2= status_generator(parseInt(UVI2));
+  picurl1= picture_generator(Math.round(UVI1));
+  picurl2= picture_generator(Math.round(UVI2));
+  status1= status_generator(Math.round(UVI1));
+  status2= status_generator(Math.round(UVI2));
 			  
   conv.ask(new Carousel({
     items: {
@@ -1053,10 +1111,10 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI1=UVI_list[parseInt(station_array.indexOf('臺中'))];
   UVI2=UVI_list[parseInt(station_array.indexOf('沙鹿'))];
 
-  picurl1= picture_generator(parseInt(UVI1));
-  picurl2= picture_generator(parseInt(UVI2));
-  status1= status_generator(parseInt(UVI1));
-  status2= status_generator(parseInt(UVI2));
+  picurl1= picture_generator(Math.round(UVI1));
+  picurl2= picture_generator(Math.round(UVI2));
+  status1= status_generator(Math.round(UVI1));
+  status2= status_generator(Math.round(UVI2));
 
   conv.ask(new Carousel({
     items: {
@@ -1081,12 +1139,12 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI2=UVI_list[parseInt(station_array.indexOf('玉山'))];
   UVI3=UVI_list[parseInt(station_array.indexOf('南投'))];
 
-  picurl1= picture_generator(parseInt(UVI1));
-  picurl2= picture_generator(parseInt(UVI2));
-  picurl3= picture_generator(parseInt(UVI3));
-  status1= status_generator(parseInt(UVI1));
-  status2= status_generator(parseInt(UVI2));
-  status3= status_generator(parseInt(UVI3));
+  picurl1= picture_generator(Math.round(UVI1));
+  picurl2= picture_generator(Math.round(UVI2));
+  picurl3= picture_generator(Math.round(UVI3));
+  status1= status_generator(Math.round(UVI1));
+  status2= status_generator(Math.round(UVI2));
+  status3= status_generator(Math.round(UVI3));
 
   conv.ask(new Carousel({
     items: {
@@ -1115,12 +1173,12 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI2=UVI_list[parseInt(station_array.indexOf('成功'))];
   UVI3=UVI_list[parseInt(station_array.indexOf('蘭嶼'))];
 
-  picurl1= picture_generator(parseInt(UVI1));
-  picurl2= picture_generator(parseInt(UVI2));
-  picurl3= picture_generator(parseInt(UVI3));
-  status1= status_generator(parseInt(UVI1));
-  status2= status_generator(parseInt(UVI2));
-  status3= status_generator(parseInt(UVI3));
+  picurl1= picture_generator(Math.round(UVI1));
+  picurl2= picture_generator(Math.round(UVI2));
+  picurl3= picture_generator(Math.round(UVI3));
+  status1= status_generator(Math.round(UVI1));
+  status2= status_generator(Math.round(UVI2));
+  status3= status_generator(Math.round(UVI3));
 
   conv.ask(new Carousel({
     items: {
@@ -1149,14 +1207,14 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI3=UVI_list[parseInt(station_array.indexOf('阿里山'))];
   UVI4=UVI_list[parseInt(station_array.indexOf('塔塔加'))];
 
-  picurl1= picture_generator(parseInt(UVI1));
-  picurl2= picture_generator(parseInt(UVI2));
-  picurl3= picture_generator(parseInt(UVI3));
-  picurl4= picture_generator(parseInt(UVI4));
-  status1= status_generator(parseInt(UVI1));
-  status2= status_generator(parseInt(UVI2));
-  status3= status_generator(parseInt(UVI3));
-  status4= status_generator(parseInt(UVI4));
+  picurl1= picture_generator(Math.round(UVI1));
+  picurl2= picture_generator(Math.round(UVI2));
+  picurl3= picture_generator(Math.round(UVI3));
+  picurl4= picture_generator(Math.round(UVI4));
+  status1= status_generator(Math.round(UVI1));
+  status2= status_generator(Math.round(UVI2));
+  status3= status_generator(Math.round(UVI3));
+  status4= status_generator(Math.round(UVI4));
 
   conv.ask(new Carousel({
     items: {
@@ -1189,10 +1247,10 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
 	UVI2=UVI_list[parseInt(station_array.indexOf('新營'))];
 
 	  
-	picurl1= picture_generator(parseInt(UVI1));
-	picurl2= picture_generator(parseInt(UVI2));
-	status1= status_generator(parseInt(UVI1));
-	status2= status_generator(parseInt(UVI2));
+	picurl1= picture_generator(Math.round(UVI1));
+	picurl2= picture_generator(Math.round(UVI2));
+	status1= status_generator(Math.round(UVI1));
+	status2= status_generator(Math.round(UVI2));
   
   conv.ask(new Carousel({
     items: {
@@ -1216,10 +1274,10 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI1=UVI_list[parseInt(station_array.indexOf('高雄'))];
   UVI2=UVI_list[parseInt(station_array.indexOf('橋頭'))];
 
-  picurl1= picture_generator(parseInt(UVI1));
-  picurl2= picture_generator(parseInt(UVI2));
-  status1= status_generator(parseInt(UVI1));
-  status2= status_generator(parseInt(UVI2));
+  picurl1= picture_generator(Math.round(UVI1));
+  picurl2= picture_generator(Math.round(UVI2));
+  status1= status_generator(Math.round(UVI1));
+  status2= status_generator(Math.round(UVI2));
 
   conv.ask(new Carousel({
   title: 'Carousel Title',
@@ -1244,10 +1302,10 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   UVI1=UVI_list[parseInt(station_array.indexOf('屏東'))];
   UVI2=UVI_list[parseInt(station_array.indexOf('恆春'))];
 
-  picurl1= picture_generator(parseInt(UVI1));
-  picurl2= picture_generator(parseInt(UVI2));
-  status1= status_generator(parseInt(UVI1));
-  status2= status_generator(parseInt(UVI2));
+  picurl1= picture_generator(Math.round(UVI1));
+  picurl2= picture_generator(Math.round(UVI2));
+  status1= status_generator(Math.round(UVI1));
+  status2= status_generator(Math.round(UVI2));
 
   conv.ask(new Carousel({
   title: 'Carousel Title',
@@ -1295,13 +1353,14 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
 
 		conv.ask(new SimpleResponse({               
               speech: `<speak><p><s>根據最新資料顯示，${County}監測站的紫外線指數為${UVI}</s><s>${info}</s></p></speak>`,
-	          text: '以下為該監測站的詳細資訊。'}));
+	          text: '以下為該監測站的詳細資訊'}));
 		conv.noInputs = ["請試著問我其他縣市來查看其他測站","請問你還要查詢其他地方嗎?","抱歉，我想我幫不上忙。"];	   
   
 		if(conv.screen){
 			conv.ask(new BasicCard({  
-					image: new Image({url:picture,alt:'Pictures',}),
-					title:'「'+County+'」的紫外線為'+Status,display: 'CROPPED',
+					image: new Image({url:picture,alt:'Pictures',}),display: 'CROPPED',
+					title:County,
+					subtitle:Status,
 					text:info_output+'  \n  \n**測站資訊發布時間** • '+getDay(),})); 
 		    conv.ask(new Suggestions('把它加入日常安排'));
 		}else{conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`);}
@@ -1309,7 +1368,7 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   }else{
     conv.ask(new SimpleResponse({               
               speech: `<speak><p><s>由於${County}監測站正處於維修狀態或數據不足。我無法提供你最新資訊。</s></p></speak>`,
-	text: '以下為該監測站的詳細資訊。'}));
+	text: '以下為該監測站的詳細資訊'}));
 		if(conv.screen){
 			conv.ask(new BasicCard({  
 					image: new Image({url:"https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN",alt:'Pictures',}),
@@ -1332,21 +1391,26 @@ if(conv.input.raw==='嘉義'){County="嘉義";}
   conv.ask(new Carousel({
   title: 'Carousel Title',
   items: {
-    'Northen': {
-      title: '北部地區',
-	description: '北北基、桃園市\n新竹縣市',},
-    'Central': {
-      title: '中部地區',
-	description: '苗栗縣、臺中市\n雲林、彰化、南投',},
-    'Southen': {
-      title: '南部地區',
-	  description: '嘉義縣市、台南市、\n高雄市、屏東縣',},
-	'East': {
-      title: '東部地區',
-	  description: '宜蘭、花蓮、台東\n',},
+		'Northen': {
+          synonyms: ['台北','新北','桃園','新竹'],
+		  title: '北部地區',
+		description: '北北基、桃園市\n新竹縣市',},
+		'Central': {
+          synonyms: ['苗栗','台中','雲林','彰化','南投'],
+		  title: '中部地區',
+		description: '苗栗縣、臺中市\n雲林、彰化、南投',},
+		'Southen': {
+          synonyms: ['嘉義','台南','高雄','屏東'],
+		  title: '南部地區',
+		  description: '嘉義縣市、台南市、\n高雄市、屏東縣',},
+		'East': {
+          synonyms: ['宜蘭','花蓮','台東'],
+		  title: '東部地區',
+		  description: '宜蘭、花蓮、台東\n',},
 		'Outlying_island': {
-      title: '離島地區',
-	  description: '澎湖縣、金門縣、\n連江縣',}
+          synonyms: ['澎湖','金門','連江','媽祖','馬祖'],
+		  title: '離島地區',
+		  description: '澎湖縣、金門縣、\n連江縣',}
 },}));
 conv.ask(new Suggestions('🌎 最近的測站','語音指令範例'));
  }
@@ -1354,6 +1418,17 @@ conv.ask(new Suggestions('🌎 最近的測站','語音指令範例'));
 	 if(County!=="undefined"){conv.ask(new Suggestions('🌎 最近的測站','回主頁面'));}
 	 conv.ask(new Suggestions('👋 掰掰'));
      conv.user.storage.choose_station=County;}
+ }).catch(function (error) {
+	console.log(error);
+	
+	conv.ask(new SimpleResponse({               
+			speech: `<speak><p><s>糟糕，查詢似乎發生錯誤。請稍後再試。</s></p></speak>`,
+			text: '發生錯誤，請稍後再試一次。'}));
+	conv.close(new BasicCard({  
+			image: new Image({url:"https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤",alt:'Pictures',}),
+			title:'數據加載發生問題',
+			subtitle:'請過一段時間後再回來查看', display: 'CROPPED',})); 
+	});
 
 });
 

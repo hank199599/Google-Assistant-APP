@@ -18,8 +18,9 @@ const findNearestLocation = require('map-nearest-location');
 const admin = require('firebase-admin');
 const replaceString = require('replace-string');
 const getCSV = require('get-csv');
+var option_list=require("./option.json");
 
-let serviceAccount = require("./config/b1a2b-krmfch-firebase-adminsdk-1tgdm-5565b4a3f5.json");
+let serviceAccount = require("./config/b1a2b-krmfch-firebase-adminsdk-1tgdm-135c5737d0.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -36,7 +37,7 @@ var SVC_list=[];
 var PublishTime="2020-02-14 01:10";
 var nuclear_array=["核一廠","核二廠","核三廠","龍門核能電廠"];
 var station_array=["磺潭","彭佳嶼","石門水庫","清華大學","石門","三芝","石崩山","茂林","金山","野柳","大鵬","陽明山","大坪","萬里","台北","宜蘭","龍潭","台中","台東","綠島","高雄","恆春","龍泉","大光","墾丁","後壁湖","澳底","貢寮","阿里山","金門氣象站","榮湖淨水廠","椰油","台南","龍門","雙溪","三港","新竹","花蓮","澎湖","七美","東引","馬祖","滿州","板橋","屏東市","小琉球","基隆","頭城","竹北","苗栗","合歡山","南投","彰化","雲林","嘉義","貯存場大門口","蘭嶼氣象站"];
-var local=["Northen","Central","Southen","East","Outlying_island"];
+var local=["北部地區","中部地區","南部地區","東部地區","離島地區"];
 var County_option=["臺北市","新北市","新北市第一部分","新北市第二部分","宜蘭縣","基隆市","嘉義縣市","桃園市","新竹市","南投縣","屏東縣","臺東縣","澎湖縣","金門縣","連江縣","新竹縣市","核一廠","核二廠","核三廠","龍門核能電廠"];
 var county_array=["南投縣","連江縣","馬祖","南投","雲林縣","雲林","金門縣","金門","苗栗縣","苗栗","高雄市","高雄","嘉義市","花蓮縣","花蓮","嘉義縣","台東縣","臺東縣","台東","臺東","嘉義","基隆市","台北市","台南市","臺南市","台南","臺南","臺北市","台北","臺北","基隆","宜蘭縣","台中市","臺中市","台中","澎湖縣","澎湖","桃園市","桃園","新竹縣","新竹市","新竹","新北市","新北","宜蘭","屏東縣","屏東","彰化縣","彰化","南海島","釣魚臺","南海諸島"];
 var option_array=["臺北市","新北市第一部分","新北市第二部分","基隆市","宜蘭縣","桃園市","新竹市","南投縣","屏東縣","臺東縣","澎湖縣","金門縣","連江縣"];
@@ -78,10 +79,12 @@ function radiation_data(){
 }
 
 function picture_generator(number){
-	if(number<0.2){return "https://dummyimage.com/232x128/1e9165/ffffff.png&text="+number;}	
-	else if(number>=0.2&&number<20){return "https://dummyimage.com/232x128/fc920b/ffffff.png&text="+number;}
-	else if(number>=20){return "https://dummyimage.com/232x128/b71411/ffffff.png&text="+number;}
-    else{return "https://dummyimage.com/232x128/232830/ffffff.png&text=NaN";}
+	var pic="";
+	if(number<0.2){pic= "https://dummyimage.com/3504x1933/1e9165/ffffff.png&text="+number;}	
+	else if(number>=0.2&&number<20){pic= "https://dummyimage.com/3504x1933/fc920b/ffffff.png&text="+number;}
+	else if(number>=20){pic= "https://dummyimage.com/3504x1933/b71411/ffffff.png&text="+number;}
+    else{pic= "https://dummyimage.com/3504x1933/232830/ffffff.png&text=NaN";}
+	return pic
 	}
 function status_generator(number){
 	if(number<0.2){return "一般背景輻射";}
@@ -93,8 +96,16 @@ function status_generator(number){
 
 app.intent('預設歡迎語句', (conv) => {
    
-  database.ref('/TWradiation').on('value',e=>{PublishTime=e.val().PublishTime[0];});
-  
+   return new Promise(
+   function(resolve,reject){ 
+  database.ref('/TWradiation').on('value',e=>{resolve(e.val())});
+
+    }).then(function (final_data) {
+		
+	PublishTime=final_data.PublishTime[0];
+	SVC_list=final_data.data;
+	return_time=final_data.PublishTime;
+
 	if(conv.screen){
 		if (conv.user.last.seen) {  conv.ask(new SimpleResponse({               
               speech: `<speak><p><s>歡迎回來，請問你要查詢哪一個站點呢?</s></p></speak>`,
@@ -121,8 +132,15 @@ app.intent('預設歡迎語句', (conv) => {
 
   radiation_data();
 
-  database.ref('/TWradiation').on('value',e=>{SVC_list=e.val().data;return_time=e.val().PublishTime;});
-
+}).catch(function (error) {
+    conv.ask(new SimpleResponse({ 
+			 speech: `<speak><p><s>獲取資料發生錯誤，請稍後再試。</s></p></speak>`,
+			   text: '獲取資訊發生未知錯誤',}));
+	console.log(error)
+	conv.close(new BasicCard({  
+		image: new Image({url:'https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤',alt:'Pictures',}),
+		title:"發生錯誤，請稍後再試",display: 'CROPPED',}));	
+	});
 });
 
 app.intent('預設頁面', (conv) => {
@@ -143,14 +161,13 @@ radiation_data()
 		  description: '查看核電廠周遭的測站',},
 	},}));
  conv.ask(new Suggestions('🌎 最近的測站','語音指令範例','微西弗是什麼','👋 掰掰'));
-  database.ref('/TWradiation').on('value',e=>{SVC_list=e.val().data;return_time=e.val().PublishTime;});
 
 });
 
 
 app.intent('依區域查詢', (conv) => {
 
-radiation_data()
+	radiation_data()
  	conv.contexts.set(SelectContexts.parameter, 1);
 
   if(conv.screen){conv.ask('請輕觸下方卡片來選擇查詢區域');}
@@ -160,30 +177,33 @@ radiation_data()
   conv.ask(new Carousel({
 	  title: 'Carousel Title',
 	  items: {
-		'Northen': {
+		'北部地區': {
+          synonyms: ['台北','新北','桃園','新竹'],
 		  title: '北部地區',
 		description: '北北基、桃園市\n新竹縣市',},
-		'Central': {
+		'中部地區': {
+          synonyms: ['苗栗','台中','雲林','彰化','南投'],
 		  title: '中部地區',
 		description: '苗栗縣、臺中市\n雲林、彰化、南投',},
-		'Southen': {
+		'南部地區': {
+          synonyms: ['嘉義','台南','高雄','屏東'],
 		  title: '南部地區',
 		  description: '嘉義縣市、台南市、\n高雄市、屏東縣',},
-		'East': {
+		'東部地區': {
+          synonyms: ['宜蘭','花蓮','台東'],
 		  title: '東部地區',
 		  description: '宜蘭、花蓮、台東\n',},
-		'Outlying_island': {
+		'離島地區': {
+          synonyms: ['澎湖','金門','連江','媽祖','馬祖'],
 		  title: '離島地區',
-		  description: '澎湖縣、金門縣、\n連江縣',}
-	},}));
+		  description: '澎湖縣、金門縣、\n連江縣',}	},}));
  conv.ask(new Suggestions('🌎 最近的測站','依據核電廠查詢','語音指令範例','👋 掰掰'));
-  database.ref('/TWradiation').on('value',e=>{SVC_list=e.val().data;});
 
 });
 
 app.intent('依核電廠查詢', (conv) => {
 
-radiation_data()
+	radiation_data()
  	conv.contexts.set(SelectContexts.parameter, 1);
 
   if(conv.screen){conv.ask('請輕觸下方卡片來選擇核電廠');}
@@ -203,6 +223,7 @@ radiation_data()
 		  title: '核三廠',
 		  description: '屏東縣恆春鎮',},
 		'龍門核能電廠': {
+          synonyms: ['核四'],
 		  title: '龍門核能電廠',
 		  description: '新北市貢寮區',},
 	},}));
@@ -214,44 +235,59 @@ radiation_data()
 
 app.intent('縣市查詢結果', (conv, input, option) => {
 
+   return new Promise(
+   function(resolve,reject){ 
+  database.ref('/TWradiation').on('value',e=>{resolve(e.val())});
+
+    }).then(function (final_data) {
+		
+	PublishTime=final_data.PublishTime[0];
+	SVC_list=final_data.data;
+	return_time=final_data.PublishTime;
+
 if(local.indexOf(option)!==-1){
-	conv.ask('請選擇要查詢的縣市。');
+	if(conv.screen){conv.ask(new SimpleResponse({               
+							speech: `<speak><p><s>以下是${option}的監測站列表!<break time="0.5s"/>請查看</s></p></speak>`,
+							text: '以下是「'+option+'」的測站列表'}));}
+	  else{conv.ask(new SimpleResponse(`<speak><p><s>以下是${option}的監測站列表</s><s>選項有以下幾個<break time="0.5s"/>${option_list[option]}<break time="1s"/>請選擇。</s></p></speak>`));}
 	conv.contexts.set(SelectContexts.parameter, 1);
 
-  if (option === "Northen") {
-conv.ask(new Carousel({
-    items: {
-    '臺北市': {
-      title: '臺北市',
-      description: 'Taipei City',
-    },
-    '基隆市': {
-      title: '基隆市',
-  description: 'Kelling City',
-    },
-    '新北市第一部分': {
-      title: '新北市(一)',
-      description: 'New Taipei City  \nPart 1',
-    },
-    '新北市第二部分': {
-      title: '新北市(二)',
-     description: 'New Taipei City  \nPart 2',
-    },
-	'桃園市': {
-      title: '桃園市',
-      description: 'Taoyuan City',
-    },
-	'竹北': {
-      title: '新竹縣',
-      description: 'Hsinchu County',
-    },
-	'新竹市': {
-      title: '新竹市',
-      description: 'Hsinchu City',
-    }
-  },
-}));  } 
-  else if (option === "Central") {
+  if (option === "北部地區") {
+	conv.ask(new Carousel({
+		items: {
+		'臺北市': {
+		  title: '臺北市',
+		  description: 'Taipei City',
+		},
+		'基隆市': {
+		  title: '基隆市',
+	  description: 'Kelling City',
+		},
+		'新北市(一)': {
+		  synonyms: ['第一'],
+		  title: '新北市(一)',
+		  description: 'New Taipei City  \nPart 1',
+		},
+		'新北市(二)': {
+		  synonyms: ['第二'],
+		 title: '新北市(二)',
+		 description: 'New Taipei City  \nPart 2',
+		},
+		'桃園市': {
+		  title: '桃園市',
+		  description: 'Taoyuan City',
+		},
+		'竹北': {
+		  title: '新竹縣',
+		  description: 'Hsinchu County',
+		},
+		'新竹市': {
+		  title: '新竹市',
+		  description: 'Hsinchu City',
+		}
+	  },
+	}));  } 
+  else if (option === "中部地區") {
 conv.ask(new Carousel({
     items: {
     '苗栗': {
@@ -276,7 +312,7 @@ conv.ask(new Carousel({
     }
   },
 }));  }
-  else if (option === "Southen") {
+  else if (option === "南部地區") {
   conv.ask(new Carousel({
     items: {
     '阿里山': {
@@ -301,7 +337,7 @@ conv.ask(new Carousel({
     }
   },
 }));  }
-  else if (option === "East") {
+  else if (option === "東部地區") {
   conv.ask(new Carousel({
     items: {
     '宜蘭縣': {
@@ -318,7 +354,7 @@ conv.ask(new Carousel({
     }
   },
 }));  }
-  else if (option === "Outlying_island") {
+  else if (option === "離島地區") {
   conv.ask(new Carousel({
     items: {
     '澎湖縣': {
@@ -338,587 +374,57 @@ conv.ask(new Carousel({
   conv.ask(new Suggestions('查詢其他縣市','👋 掰掰'));
 }
   else if(option_array.indexOf(option)!==-1){
- 	conv.contexts.set(SelectContexts.parameter, 1);
-    conv.ask(new SimpleResponse({speech:`<speak><p><s>以下是${option}的監測站列表，請查看。</s></p></speak>`,text:'以下是「'+option+'」的監測站列表。'}));                 
-if (option === "臺北市") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('陽明山'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('台北'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
+ 	conv.contexts.set(SelectContexts.parameter, 5);
+		if(conv.screen){conv.ask('以下是「'+option+'」對應的選項');}
+	    else{conv.ask(new SimpleResponse(`<speak><p><s>請選擇您在${option}要查詢的測站!</s><s>選項有以下幾個<break time="0.5s"/>${option_list[option]}<break time="1s"/>請選擇。</s></p></speak>`));}
 
-  conv.ask(new Carousel({
-    items: {
-    '陽明山': {
-      title: '陽明山',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '台北': {
-      title: '台北',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (option === "新北市第一部分") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('磺潭'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('石門'))]
-	SVC3=SVC_list[parseInt(station_array.indexOf('三芝'))]
-	SVC4=SVC_list[parseInt(station_array.indexOf('石崩山'))]
-	SVC5=SVC_list[parseInt(station_array.indexOf('茂林'))]
-	SVC6=SVC_list[parseInt(station_array.indexOf('金山'))]
-	SVC7=SVC_list[parseInt(station_array.indexOf('野柳'))]
-	SVC8=SVC_list[parseInt(station_array.indexOf('大鵬'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	picurl3=picture_generator(SVC3);
-	picurl4=picture_generator(SVC4);
-	picurl5=picture_generator(SVC5);
-	picurl6=picture_generator(SVC6);
-	picurl7=picture_generator(SVC7);
-	picurl8=picture_generator(SVC8);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	status3=status_generator(SVC3);
-	status4=status_generator(SVC4);
-	status5=status_generator(SVC5);
-	status6=status_generator(SVC6);
-	status7=status_generator(SVC7);
-	status8=status_generator(SVC8);
-   conv.ask(new Carousel({
-    items: {
-    '磺潭': {
-      title: '磺潭',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '石門': {
-      title: '石門',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-    '三芝': {
-      title: '三芝',
-      description: status3,
-      image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-    '石崩山': {
-      title: '石崩山',
-      description: status4,
-      image: new Image({url: picurl4,alt: 'Image alternate text',}),},
-    '茂林': {
-      title: '茂林',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},
-    '金山': {
-      title: '金山',
-      description: status6,
-      image: new Image({url: picurl6,alt: 'Image alternate text',}),},
-    '野柳': {
-      title: '野柳',
-      description: status7,
-      image: new Image({url: picurl7,alt: 'Image alternate text',}),},
-    '大鵬': {
-      title: '大鵬',
-      description: status8,
-      image: new Image({url: picurl8,alt: 'Image alternate text',}),},
-  },
-}));
-conv.ask(new Suggestions('查看第二部分'));
-}
-  else if (option === "新北市第二部分") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('大坪'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('萬里'))]
-	SVC3=SVC_list[parseInt(station_array.indexOf('澳底'))]
-	SVC4=SVC_list[parseInt(station_array.indexOf('貢寮'))]
-	SVC5=SVC_list[parseInt(station_array.indexOf('龍門'))]
-	SVC6=SVC_list[parseInt(station_array.indexOf('雙溪'))]
-	SVC7=SVC_list[parseInt(station_array.indexOf('三港'))]
-	SVC8=SVC_list[parseInt(station_array.indexOf('板橋'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	picurl3=picture_generator(SVC3);
-	picurl4=picture_generator(SVC4);
-	picurl5=picture_generator(SVC5);
-	picurl6=picture_generator(SVC6);
-	picurl7=picture_generator(SVC7);
-	picurl8=picture_generator(SVC8);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	status3=status_generator(SVC3);
-	status4=status_generator(SVC4);
-	status5=status_generator(SVC5);
-	status6=status_generator(SVC6);
-	status7=status_generator(SVC7);
-	status8=status_generator(SVC8);
-     conv.ask(new Carousel({
-    items: {
-    '大坪': {
-      title: '大坪',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '萬里': {
-      title: '萬里',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-    '澳底': {
-      title: '澳底',
-      description: status3,
-      image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-    '貢寮': {
-      title: '貢寮',
-      description: status4,
-      image: new Image({url: picurl4,alt: 'Image alternate text',}),},
-    '龍門': {
-      title: '龍門',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},
-    '雙溪': {
-      title: '雙溪',
-      description: status6,
-      image: new Image({url: picurl6,alt: 'Image alternate text',}),},
-    '三港': {
-      title: '三港',
-      description: status7,
-      image: new Image({url: picurl7,alt: 'Image alternate text',}),},
-    '板橋': {
-      title: '板橋',
-      description: status8,
-      image: new Image({url: picurl8,alt: 'Image alternate text',}),},
-  },}));
-  conv.ask(new Suggestions('查看第一部分'));
-  }
-  else if (option === "基隆市") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('基隆'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('彭佳嶼'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-   conv.ask(new Carousel({
-    items: {
-    '基隆': {
-      title: '基隆',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '彭佳嶼': {
-      title: '彭佳嶼',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }  else if (option === "宜蘭縣") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('宜蘭'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('頭城'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-   conv.ask(new Carousel({
-    items: {
-    '宜蘭': {
-      title: '宜蘭',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '頭城': {
-      title: '頭城',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (option === "桃園市") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('石門水庫'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('龍潭'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-  conv.ask(new Carousel({
-    items: {
-    '石門水庫': {
-      title: '石門水庫',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '龍潭': {
-      title: '龍潭',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (option === "新竹市") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('清華大學'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('新竹'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-  conv.ask(new Carousel({
-    items: {
-    '清華大學': {
-      title: '清華大學',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '新竹': {
-      title: '新竹',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (option === "南投縣") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('合歡山'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('南投'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-  conv.ask(new Carousel({
-    items: {
-    '合歡山': {
-      title: '合歡山',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '南投': {
-      title: '南投',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (option === "屏東縣") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('恆春'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('龍泉'))]
-	SVC3=SVC_list[parseInt(station_array.indexOf('大光'))]
-	SVC4=SVC_list[parseInt(station_array.indexOf('墾丁'))]
-	SVC5=SVC_list[parseInt(station_array.indexOf('後壁湖'))]
-	SVC6=SVC_list[parseInt(station_array.indexOf('滿州'))]
-	SVC7=SVC_list[parseInt(station_array.indexOf('屏東市'))]
-	SVC8=SVC_list[parseInt(station_array.indexOf('小琉球'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	picurl3=picture_generator(SVC3);
-	picurl4=picture_generator(SVC4);
-	picurl5=picture_generator(SVC5);
-	picurl6=picture_generator(SVC6);
-	picurl7=picture_generator(SVC7);
-	picurl8=picture_generator(SVC8);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	status3=status_generator(SVC3);
-	status4=status_generator(SVC4);
-	status5=status_generator(SVC5);
-	status6=status_generator(SVC6);
-	status7=status_generator(SVC7);
-	status8=status_generator(SVC8);  conv.ask(new Carousel({
-    items: {
-    '恆春': {
-      title: '恆春',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '龍泉': {
-      title: '龍泉',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-    '大光': {
-      title: '大光',
-      description: status3,
-      image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-    '墾丁': {
-      title: '墾丁',
-      description: status4,
-      image: new Image({url: picurl4,alt: 'Image alternate text',}),},
-    '後壁湖': {
-      title: '後壁湖',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},
-    '滿州': {
-      title: '滿州',
-      description: status6,
-      image: new Image({url: picurl6,alt: 'Image alternate text',}),},
-    '屏東市': {
-      title: '屏東市',
-      description: status7,
-      image: new Image({url: picurl7,alt: 'Image alternate text',}),},
-    '小琉球': {
-      title: '小琉球',
-      description: status8,
-      image: new Image({url: picurl8,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (option === "臺東縣") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('台東'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('綠島'))]
-	SVC3=SVC_list[parseInt(station_array.indexOf('椰油'))]
-	SVC4=SVC_list[parseInt(station_array.indexOf('貯存場大門口'))]
-	SVC5=SVC_list[parseInt(station_array.indexOf('蘭嶼氣象站'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	picurl3=picture_generator(SVC3);
-	picurl4=picture_generator(SVC4);
-	picurl5=picture_generator(SVC5);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	status3=status_generator(SVC3);
-	status4=status_generator(SVC4);
-	status5=status_generator(SVC5);
-  conv.ask(new Carousel({
-    items: {
-    '台東': {
-      title: '台東',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '綠島': {
-      title: '綠島',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-    '椰油': {
-      title: '椰油',
-      description: status3,
-      image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-    '貯存場大門口': {
-      title: '貯存場大門口',
-      description: status4,
-      image: new Image({url: picurl4,alt: 'Image alternate text',}),},
-    '蘭嶼氣象站': {
-      title: '蘭嶼氣象站',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},      },
-  }));  }
-  else if (option === "澎湖縣") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('澎湖'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('七美'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-  conv.ask(new Carousel({
-    items: {
-    '澎湖': {
-      title: '澎湖',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '七美': {
-      title: '七美',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (option === "金門縣") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('金門氣象站'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('榮湖淨水廠'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-  conv.ask(new Carousel({
-    items: {
-    '金門氣象站': {
-      title: '金門氣象站',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '榮湖淨水廠': {
-      title: '榮湖淨水廠',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (option === "連江縣") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('東引'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('馬祖'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
+  	var the_array=option_list[option].split('、');
+	var county_list={};
 	
-  conv.ask(new Carousel({
-    items: {
-    '東引': {
-      title: '東引',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '馬祖': {
-      title: '馬祖',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }
+    for(i=0;i<the_array.length;i++)
+	  {	
+		var num=station_array.indexOf(the_array[i]);
+			var svc_temp=SVC_list[parseInt(num)];
+			var pic_url=picture_generator(svc_temp);
+			var status_temp=status_generator(svc_temp);
+			
+			county_list[the_array[i]]={ title: the_array[i],
+										   description: status_temp,
+										   image: new Image({url: pic_url,alt: 'Image alternate text',}),}
+	  }
+	  conv.ask(new Carousel({
+		  title: 'Carousel Title',
+		  items: county_list,
+	}));
+
   conv.ask(new Suggestions('查詢其他縣市'));
 }
   else if(nuclear_array.indexOf(option)!==-1){
-   conv.contexts.set(SelectContexts.parameter, 1);
-   conv.ask(new SimpleResponse({speech:`<speak><p><s>以下是${option}周遭的監測站列表，請查看。</s></p></speak>`,text:'「'+option+'」周遭的監測站如下。'}));                 
-	if (option === "核一廠") {
-    SVC1=SVC_list[parseInt(station_array.indexOf('石門'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('三芝'))]
-	SVC3=SVC_list[parseInt(station_array.indexOf('石崩山'))]
-	SVC4=SVC_list[parseInt(station_array.indexOf('茂林'))]
-	SVC5=SVC_list[parseInt(station_array.indexOf('陽明山'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	picurl3=picture_generator(SVC3);
-	picurl4=picture_generator(SVC4);
-	picurl5=picture_generator(SVC5);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	status3=status_generator(SVC3);
-	status4=status_generator(SVC4);
-	status5=status_generator(SVC5);
+ 	conv.contexts.set(SelectContexts.parameter, 5);
+	if(conv.screen){conv.ask(new SimpleResponse({               
+							speech: `<speak><p><s>以下是${option}的監測站列表!<break time="0.5s"/>請查看</s></p></speak>`,
+							text: '以下是「'+option+'」的測站列表'}));}
+	  else{conv.ask(new SimpleResponse(`<speak><p><s>以下是${option}的監測站列表</s><s>選項有以下幾個<break time="0.5s"/>${option_list[option]}<break time="1s"/>請選擇。</s></p></speak>`));}
 
-   conv.ask(new Carousel({
-    items: {
-    '石門': {
-      title: '石門',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '三芝': {
-      title: '三芝',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-    '石崩山': {
-      title: '石崩山',
-      description: status3,
-      image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-    '茂林': {
-      title: '茂林',
-      description: status4,
-      image: new Image({url: picurl4,alt: 'Image alternate text',}),},
-    '陽明山': {
-      title: '陽明山',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},
-  },
-	}));}
-    else if (option === "核二廠") {
-    SVC1=SVC_list[parseInt(station_array.indexOf('磺潭'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('金山'))]
-	SVC3=SVC_list[parseInt(station_array.indexOf('野柳'))]
-	SVC4=SVC_list[parseInt(station_array.indexOf('大鵬'))]
-	SVC5=SVC_list[parseInt(station_array.indexOf('大坪'))]
-	SVC6=SVC_list[parseInt(station_array.indexOf('萬里'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	picurl3=picture_generator(SVC3);
-	picurl4=picture_generator(SVC4);
-	picurl5=picture_generator(SVC5);
-	picurl6=picture_generator(SVC6);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	status3=status_generator(SVC3);
-	status4=status_generator(SVC4);
-	status5=status_generator(SVC5);
-	status6=status_generator(SVC6);
+	var the_array=option_list[option].split('、');
+	var county_list={};
+	
+    for(i=0;i<the_array.length;i++)
+	  {	
+		var num=station_array.indexOf(the_array[i]);
+			var svc_temp=SVC_list[parseInt(num)];
+			var pic_url=picture_generator(svc_temp);
+			var status_temp=status_generator(svc_temp);
+			
+			county_list[the_array[i]]={ title: the_array[i],
+										   description: status_temp,
+										   image: new Image({url: pic_url,alt: 'Image alternate text',}),}
+	  }
+	  conv.ask(new Carousel({
+		  title: 'Carousel Title',
+		  items: county_list,
+	}));
 
-   conv.ask(new Carousel({
-    items: {
-    '磺潭': {
-      title: '磺潭',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '金山': {
-      title: '金山',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-    '野柳': {
-      title: '野柳',
-      description: status3,
-      image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-    '大鵬': {
-      title: '大鵬',
-      description: status4,
-      image: new Image({url: picurl4,alt: 'Image alternate text',}),},
-    '大坪': {
-      title: '大坪',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},
-    '萬里': {
-      title: '萬里',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},
-  },
-	}));}
-    else if (option === "核三廠") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('恆春'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('龍泉'))]
-	SVC3=SVC_list[parseInt(station_array.indexOf('大光'))]
-	SVC4=SVC_list[parseInt(station_array.indexOf('墾丁'))]
-	SVC5=SVC_list[parseInt(station_array.indexOf('後壁湖'))]
-	SVC6=SVC_list[parseInt(station_array.indexOf('滿州'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	picurl3=picture_generator(SVC3);
-	picurl4=picture_generator(SVC4);
-	picurl5=picture_generator(SVC5);
-	picurl6=picture_generator(SVC6);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	status3=status_generator(SVC3);
-	status4=status_generator(SVC4);
-	status5=status_generator(SVC5);
-	status6=status_generator(SVC6);
-
-   conv.ask(new Carousel({
-    items: {
-    '恆春': {
-      title: '恆春',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '龍泉': {
-      title: '龍泉',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-    '大光': {
-      title: '大光',
-      description: status3,
-      image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-    '墾丁': {
-      title: '墾丁',
-      description: status4,
-      image: new Image({url: picurl4,alt: 'Image alternate text',}),},
-    '後壁湖': {
-      title: '後壁湖',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},
-    '滿州': {
-      title: '滿州',
-      description: status6,
-      image: new Image({url: picurl6,alt: 'Image alternate text',}),},
-  },
-	}));}
-	else if (option === "龍門核能電廠") {
-    SVC1=SVC_list[parseInt(station_array.indexOf('澳底'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('貢寮'))]
-	SVC3=SVC_list[parseInt(station_array.indexOf('龍門'))]
-	SVC4=SVC_list[parseInt(station_array.indexOf('雙溪'))]
-	SVC5=SVC_list[parseInt(station_array.indexOf('三港'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	picurl3=picture_generator(SVC3);
-	picurl4=picture_generator(SVC4);
-	picurl5=picture_generator(SVC5);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	status3=status_generator(SVC3);
-	status4=status_generator(SVC4);
-	status5=status_generator(SVC5);
-
-   conv.ask(new Carousel({
-    items: {
-    '澳底': {
-      title: '澳底',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '貢寮': {
-      title: '貢寮',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-    '龍門': {
-      title: '龍門',
-      description: status3,
-      image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-    '雙溪': {
-      title: '雙溪',
-      description: status4,
-      image: new Image({url: picurl4,alt: 'Image alternate text',}),},
-    '三港': {
-      title: '三港',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},
-  },
-	}));}
   conv.ask(new Suggestions('查看其他核電廠','👋 掰掰'));
 
 }
@@ -931,22 +437,27 @@ conv.ask(new Suggestions('查看第二部分'));
   conv.ask(new Carousel({
 	  title: 'Carousel Title',
 	  items: {
-		'Northen': {
+		'北部地區': {
+          synonyms: ['台北','新北','桃園','新竹'],
 		  title: '北部地區',
 		description: '北北基、桃園市\n新竹縣市',},
-		'Central': {
+		'中部地區': {
+          synonyms: ['苗栗','台中','雲林','彰化','南投'],
 		  title: '中部地區',
 		description: '苗栗縣、臺中市\n雲林、彰化、南投',},
-		'Southen': {
+		'南部地區': {
+          synonyms: ['嘉義','台南','高雄','屏東'],
 		  title: '南部地區',
 		  description: '嘉義縣市、台南市、\n高雄市、屏東縣',},
-		'East': {
+		'東部地區': {
+          synonyms: ['宜蘭','花蓮','台東'],
 		  title: '東部地區',
 		  description: '宜蘭、花蓮、台東\n',},
-		'Outlying_island': {
+		'離島地區': {
+          synonyms: ['澎湖','金門','連江','媽祖','馬祖'],
 		  title: '離島地區',
-		  description: '澎湖縣、金門縣、\n連江縣',}
-	},}));
+		  description: '澎湖縣、金門縣、\n連江縣',}	},}));
+
  conv.ask(new Suggestions('🌎 最近的測站','依據核電廠查詢','語音指令範例','👋 掰掰'));
 	  
   }
@@ -969,6 +480,7 @@ conv.ask(new Suggestions('查看第二部分'));
 		  title: '核三廠',
 		  description: '屏東縣恆春鎮',},
 		'龍門核能電廠': {
+          synonyms: ['核四'],
 		  title: '龍門核能電廠',
 		  description: '新北市貢寮區',},
 	},}));
@@ -1023,7 +535,7 @@ conv.ask(new Suggestions('查看第二部分'));
 
     conv.ask(new SimpleResponse({               
 			  speech: `<speak><p><s>根據最新資料顯示，${option}監測站的環境輻射為每小時${number}微西弗</s><s>相當於${info}</s></p></speak>`,
-			  text: '以下為該監測站的詳細資訊。'}));
+			  text: '以下為該監測站的詳細資訊'}));
 	 
 	conv.ask(new BasicCard({  
 	image: new Image({url:picture,alt:'Pictures',}),
@@ -1047,7 +559,7 @@ conv.ask(new Suggestions('查看第二部分'));
    conv.contexts.set(SelectContexts.parameter, 1);
    conv.ask(new SimpleResponse({               
               speech: `<speak><p><s>抱歉，查詢過程中發生錯誤。請重新查詢。</s></p></speak>`,
-              text: '查詢過程發生錯誤，\n請重新選擇。'}));
+              text: '查詢過程發生錯誤，\n請重新選擇'}));
 
   conv.ask(new Carousel({
 	  title: 'Carousel Title',
@@ -1063,6 +575,15 @@ conv.ask(new Suggestions('查看第二部分'));
  conv.ask(new Suggestions('🌎 最近的測站','語音指令範例','👋 掰掰'));
   
   }
+}).catch(function (error) {
+    conv.ask(new SimpleResponse({ 
+			 speech: `<speak><p><s>獲取資料發生錯誤，請稍後再試。</s></p></speak>`,
+			   text: '獲取資訊發生未知錯誤',}));
+	console.log(error)
+	conv.close(new BasicCard({  
+		image: new Image({url:'https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤',alt:'Pictures',}),
+		title:"發生錯誤，請稍後再試",display: 'CROPPED',}));	
+	});
 
 });
 
@@ -1082,7 +603,7 @@ app.intent('預設罐頭回覆', (conv) => {
 	conv.ask(new Suggestions(word1+'輻射強度為何?','幫我查詢'+word2));}
 	else{ conv.ask(`<speak><p><s>或對我說<break time="0.2s"/>區域查詢<break time="0.2s"/>來進行區域查詢</s></p></speak>`);}
 	 }else{
-	 conv.ask('抱歉，我不懂你的意思，\n請點選建議卡片來進行操作。');
+	 conv.ask('抱歉，我不懂你的意思，\n請點選建議卡片來進行操作');
      conv.contexts.set(SelectContexts.parameter, 1);
      conv.ask(new Carousel({
 	   title: 'Carousel Title',
@@ -1122,7 +643,7 @@ app.intent('語音指令範例', (conv) => {
 app.intent('微西弗是甚麼', (conv) => {
 	conv.ask(new SimpleResponse({ 
 					speech: `<speak><p><s>西弗</s><s>是一個用來衡量輻射劑量對生物組織的影響程度的國際單位制導出單位，為受輻射等效生物當量的單位。。</s></p></speak>`,
-					text: '說明如下。'}));
+					text: '說明如下'}));
 	conv.ask(new Table({
 			   title: '西弗(Sv)',
 			   columns: [{header: "以下是來自維基百科的資訊",align: 'LEADING',},],
@@ -1133,29 +654,32 @@ app.intent('微西弗是甚麼', (conv) => {
 });
 
 app.intent('直接查詢', (conv,{station}) => {
-  database.ref('/TWradiation').on('value',e=>{SVC_list=e.val().data;return_time=e.val().PublishTime;});
-
-  if(indexnumber=station_array.indexOf(station)===-1){
+	
+  if(station_array.indexOf(station)===-1){
     conv.ask(new SimpleResponse({               
-              speech: `<speak><p><s>抱歉，您所查詢的${station}監測站似乎不存在，我無法提供你最新資訊。</s></p></speak>`,
-	text: '以下為「'+station+'」監測站的詳細資訊'}));
+              speech: `<speak><p><s>抱歉，您所查詢的監測站似乎不存在，我無法提供你最新資訊。</s></p></speak>`,
+	text: '找不到你指定的站點'}));
    conv.close(new BasicCard({  
         image: new Image({url:"https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN",alt:'Pictures',}),
         title:'找不到您指定的測站名稱',
-		subtitle:'請透過選單查詢來查找您要的測站', display: 'CROPPED',
+		subtitle:'請透過選單尋找現在可查詢的測站', display: 'CROPPED',
   })); 
 conv.ask(new Suggestions('回主頁面','👋 掰掰'));
 
- }
- else{
-   if((typeof SVC_list[0]==="undefined")!==true){
+ }else{
+	return new Promise(
+	function(resolve,reject){
+
+	getCSV('https://www.aec.gov.tw/dataopen/index.php?id=2').then(function(response) {
+	  resolve(response)}).catch(function(error) {
+	 var reason=new Error('資料獲取失敗');
+     reject(reason)});
+    }).then(function (origin_data) {
+	  
 	indexnumber=station_array.indexOf(station); //取得監測站對應的編號
-
-
-	indexnumber=station_array.indexOf(station); //取得監測站對應的編號
-	number=SVC_list[parseInt(indexnumber)];
-	PublishTime=return_time[parseInt(indexnumber)];
-
+	number=origin_data[indexnumber]['�ʴ���(�L�襱/��)'];
+	PublishTime=origin_data[indexnumber]['�ɶ�'];
+      
 	Status= status_generator(number);
 	
 	if(Status!=="儀器故障或校驗"){
@@ -1198,7 +722,7 @@ conv.ask(new Suggestions('回主頁面','👋 掰掰'));
 
     conv.ask(new SimpleResponse({               
 			  speech: `<speak><p><s>根據最新資料顯示，${station}監測站的環境輻射為每小時${number}微西弗</s><s>相當於${info}</s></p></speak>`,
-			  text: '以下為該監測站的詳細資訊。'}));
+			  text: '以下為該監測站的詳細資訊'}));
 	 
 	conv.close(new BasicCard({  
 	image: new Image({url:picture,alt:'Pictures',}),
@@ -1218,19 +742,17 @@ conv.ask(new Suggestions('回主頁面','👋 掰掰'));
 					text:'設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • '+replaceString(PublishTime, '-', '/TWuvi'), 
 				    display: 'CROPPED',})); 
 	}
- }else{
-    conv.ask(new SimpleResponse({               
-              speech: `<speak><p><s>糟糕，查詢似乎發生錯誤。請稍後再試。</s></p></speak>`,
-	text: '發生錯誤，請稍後再試一次。'}));
-		   conv.close(new BasicCard({  
-				image: new Image({url:"https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤",alt:'Pictures',}),
-				title:'數據加載發生問題',
-				subtitle:'請過一段時間後再回來查看', display: 'CROPPED',
-  })); 
- }
-}
-
-
+  }).catch(function (error) {
+	conv.ask(new SimpleResponse({               
+			speech: `<speak><p><s>糟糕，查詢似乎發生錯誤。請稍後再試。</s></p></speak>`,
+			text: '發生錯誤，請稍後再試一次'}));
+	conv.close(new BasicCard({  
+			image: new Image({url:"https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤",alt:'Pictures',}),
+			title:'數據加載發生問題',
+			subtitle:'請過一段時間後再回來查看', display: 'CROPPED',
+	  })); 
+	});
+  }
 });
 
 app.intent('日常安排教學', (conv,{station}) => {
@@ -1240,12 +762,12 @@ app.intent('日常安排教學', (conv,{station}) => {
 	if(station_array.indexOf(choose_station)===-1){choose_station=station_array[parseInt(Math.random()*56)];}
 		conv.ask(new SimpleResponse({               
 				  speech: `<speak><p><s>透過加入日常安排，你可以快速存取要查詢的站點。</s><s>舉例來說，如果你把${choose_station}加入日常安排。你即可隨時呼叫我查詢該站點的最新環境輻射數值!</s><s>以下為詳細說明</s></p></speak>`,
-	text: '以下為詳細說明。'}));
+	text: '以下為詳細說明'}));
 
 		conv.ask(new BasicCard({  
 			image: new Image({url:"https://i.imgur.com/rug48NK.png",alt:'Pictures',}),
 			title:'將「'+choose_station+'」加入日常安排', display: 'CROPPED',
-	subtitle:'1.點擊畫面右上方大頭貼 > 點擊[設定]\n2.切換到[Google助理]分頁 > 點擊[日常安排]\n3.點擊[新增日常安排]\n4.「新增指令(必填)」輸入「周遭輻射」\n5.「新增動作」輸入\n「叫輻射查詢精靈查詢'+choose_station+'站」\n6.輸入完成後點擊「儲存」\n7.現在，你可以透過說出或輸入「周遭輻射」來快速查詢'+choose_station+'的環境輻射數值!',})); 
+	subtitle:'1.點擊畫面右上方大頭貼 > 點擊[設定]\n2.切換到[Google助理]分頁 > 點擊[日常安排]\n3.點擊[新增日常安排]\n4.「新增指令(必填)」輸入「周遭輻射」\n5.「新增動作」輸入\n「叫輻射精靈查詢'+choose_station+'站」\n6.輸入完成後點擊「儲存」\n7.現在，你可以透過說出或輸入「周遭輻射」來快速查詢'+choose_station+'的環境輻射數值!',})); 
 
 	conv.ask(new Suggestions('🌎最近的測站','回主頁面','👋 掰掰'));
 
@@ -1333,7 +855,7 @@ app.intent('回傳資訊', (conv, params, permissionGranted)=> {
 
 				conv.ask(new SimpleResponse({               
 						  speech: `<speak><p><s>根據最新資料顯示，${Sitename}監測站的環境輻射為每小時${number}微西弗</s><s>相當於${info}</s></p></speak>`,
-						  text: '以下為該監測站的詳細資訊。'}));
+						  text: '以下為該監測站的詳細資訊'}));
 				 
 				conv.close(new BasicCard({  
 				image: new Image({url:picture,alt:'Pictures',}),
@@ -1357,7 +879,7 @@ app.intent('回傳資訊', (conv, params, permissionGranted)=> {
 		 }else{
 				conv.ask(new SimpleResponse({               
 						  speech: `<speak><p><s>糟糕，查詢似乎發生錯誤。</s><s>請稍後再試。</s></p></speak>`,
-				text: '發生錯誤，請稍後再試一次。'}));
+				text: '發生錯誤，請稍後再試一次'}));
 					   conv.ask(new BasicCard({  
 							image: new Image({url:"https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤",alt:'Pictures',}),
 							title:'數據加載發生問題',
@@ -1387,641 +909,34 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 
  if(County_option.indexOf(County)!==-1){
  	conv.contexts.set(SelectContexts.parameter, 1);
-    if (County === "新北市") {conv.ask(new SimpleResponse({speech: `<speak><p><s>由於「新北市」的測站數目較多，分為兩部份顯示，請選擇</s></p></speak>`,text: '「新北市」監測站數量較多，\n分為兩部份顯示。'}));}                 
-	else{conv.ask(new SimpleResponse({speech:`<speak><p><s>以下是${County}的監測站列表，請查看。</s></p></speak>`,text:'以下是「'+County+'」的監測站列表。'}));}
+    if (County === "新北市") {conv.ask(new SimpleResponse({speech: `<speak><p><s>由於「新北市」的測站數目較多，分為兩部份顯示，請選擇</s></p></speak>`,text: '「新北市」監測站數量較多，\n分為兩部份顯示'}));}                 
+	else{
+	if(conv.screen){conv.ask(new SimpleResponse({               
+							speech: `<speak><p><s>以下是${County}的監測站列表!<break time="0.5s"/>請查看</s></p></speak>`,
+							text: '以下是「'+County+'」的測站列表'}));}
+	  else{conv.ask(new SimpleResponse(`<speak><p><s>以下是${County}的監測站列表</s><s>選項有以下幾個<break time="0.5s"/>${option_list[County]}<break time="1s"/>請選擇。</s></p></speak>`));}
+		}
+		
+	var the_array=option_list[County].split('、');
+	var county_list={};
 	
-  if (County === "臺北市") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('陽明山'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('台北'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
+    for(i=0;i<the_array.length;i++)
+	  {	
+		var num=station_array.indexOf(the_array[i]);
+			var svc_temp=SVC_list[parseInt(num)];
+			var pic_url=picture_generator(svc_temp);
+			var status_temp=status_generator(svc_temp);
+			
+			county_list[the_array[i]]={ title: the_array[i],
+										   description: status_temp,
+										   image: new Image({url: pic_url,alt: 'Image alternate text',}),}
+	  }
+	  conv.ask(new Carousel({
+		  title: 'Carousel Title',
+		  items: county_list,
+	}));
 
-  conv.ask(new Carousel({
-    items: {
-    '陽明山': {
-      title: '陽明山',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '台北': {
-      title: '台北',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (County === "新北市") {
-
-   conv.ask(new Carousel({
-    items: {
-    '新北市第一部分': {
-      title: '新北市(一)',
-      description: 'New Taipei City  \nPart 1',
-    },
-    '新北市第二部分': {
-      title: '新北市(二)',
-     description: 'New Taipei City  \nPart 2',
-    }, },})); 
-	}
-  else if (County === "新北市第一部分") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('磺潭'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('石門'))]
-	SVC3=SVC_list[parseInt(station_array.indexOf('三芝'))]
-	SVC4=SVC_list[parseInt(station_array.indexOf('石崩山'))]
-	SVC5=SVC_list[parseInt(station_array.indexOf('茂林'))]
-	SVC6=SVC_list[parseInt(station_array.indexOf('金山'))]
-	SVC7=SVC_list[parseInt(station_array.indexOf('野柳'))]
-	SVC8=SVC_list[parseInt(station_array.indexOf('大鵬'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	picurl3=picture_generator(SVC3);
-	picurl4=picture_generator(SVC4);
-	picurl5=picture_generator(SVC5);
-	picurl6=picture_generator(SVC6);
-	picurl7=picture_generator(SVC7);
-	picurl8=picture_generator(SVC8);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	status3=status_generator(SVC3);
-	status4=status_generator(SVC4);
-	status5=status_generator(SVC5);
-	status6=status_generator(SVC6);
-	status7=status_generator(SVC7);
-	status8=status_generator(SVC8);
-   conv.ask(new Carousel({
-    items: {
-    '磺潭': {
-      title: '磺潭',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '石門': {
-      title: '石門',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-    '三芝': {
-      title: '三芝',
-      description: status3,
-      image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-    '石崩山': {
-      title: '石崩山',
-      description: status4,
-      image: new Image({url: picurl4,alt: 'Image alternate text',}),},
-    '茂林': {
-      title: '茂林',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},
-    '金山': {
-      title: '金山',
-      description: status6,
-      image: new Image({url: picurl6,alt: 'Image alternate text',}),},
-    '野柳': {
-      title: '野柳',
-      description: status7,
-      image: new Image({url: picurl7,alt: 'Image alternate text',}),},
-    '大鵬': {
-      title: '大鵬',
-      description: status8,
-      image: new Image({url: picurl8,alt: 'Image alternate text',}),},
-  },}));
-conv.ask(new Suggestions('查看第二部分'));
   }
-  else if (County === "新北市第二部分") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('大坪'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('萬里'))]
-	SVC3=SVC_list[parseInt(station_array.indexOf('澳底'))]
-	SVC4=SVC_list[parseInt(station_array.indexOf('貢寮'))]
-	SVC5=SVC_list[parseInt(station_array.indexOf('龍門'))]
-	SVC6=SVC_list[parseInt(station_array.indexOf('雙溪'))]
-	SVC7=SVC_list[parseInt(station_array.indexOf('三港'))]
-	SVC8=SVC_list[parseInt(station_array.indexOf('板橋'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	picurl3=picture_generator(SVC3);
-	picurl4=picture_generator(SVC4);
-	picurl5=picture_generator(SVC5);
-	picurl6=picture_generator(SVC6);
-	picurl7=picture_generator(SVC7);
-	picurl8=picture_generator(SVC8);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	status3=status_generator(SVC3);
-	status4=status_generator(SVC4);
-	status5=status_generator(SVC5);
-	status6=status_generator(SVC6);
-	status7=status_generator(SVC7);
-	status8=status_generator(SVC8);
-     conv.ask(new Carousel({
-    items: {
-    '大坪': {
-      title: '大坪',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '萬里': {
-      title: '萬里',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-    '澳底': {
-      title: '澳底',
-      description: status3,
-      image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-    '貢寮': {
-      title: '貢寮',
-      description: status4,
-      image: new Image({url: picurl4,alt: 'Image alternate text',}),},
-    '龍門': {
-      title: '龍門',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},
-    '雙溪': {
-      title: '雙溪',
-      description: status6,
-      image: new Image({url: picurl6,alt: 'Image alternate text',}),},
-    '三港': {
-      title: '三港',
-      description: status7,
-      image: new Image({url: picurl7,alt: 'Image alternate text',}),},
-    '板橋': {
-      title: '板橋',
-      description: status8,
-      image: new Image({url: picurl8,alt: 'Image alternate text',}),},
-  },}));
-conv.ask(new Suggestions('查看第一部分'));
-  }
-  else if (County === "基隆市") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('基隆'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('彭佳嶼'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-   conv.ask(new Carousel({
-    items: {
-    '基隆': {
-      title: '基隆',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '彭佳嶼': {
-      title: '彭佳嶼',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (County === "宜蘭縣") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('宜蘭'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('頭城'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-   conv.ask(new Carousel({
-    items: {
-    '宜蘭': {
-      title: '宜蘭',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '頭城': {
-      title: '頭城',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (County === "嘉義縣市") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('嘉義'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('阿里山'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-   conv.ask(new Carousel({
-    items: {
-    '嘉義': {
-      title: '嘉義',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '阿里山': {
-      title: '阿里山',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }  
-  else if (County === "新竹縣市") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('清華大學'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('新竹'))]
-	SVC3=SVC_list[parseInt(station_array.indexOf('竹北'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	picurl3=picture_generator(SVC3);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	status3=status_generator(SVC3);
-   conv.ask(new Carousel({
-    items: {
-    '清華大學': {
-      title: '清華大學',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '新竹': {
-      title: '新竹',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-    '竹北': {
-      title: '竹北',
-      description: status3,
-      image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (County === "桃園市") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('石門水庫'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('龍潭'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-  conv.ask(new Carousel({
-    items: {
-    '石門水庫': {
-      title: '石門水庫',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '龍潭': {
-      title: '龍潭',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (County === "新竹市") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('清華大學'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('新竹'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-  conv.ask(new Carousel({
-    items: {
-    '清華大學': {
-      title: '清華大學',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '新竹': {
-      title: '新竹',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (County === "南投縣") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('合歡山'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('南投'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-  conv.ask(new Carousel({
-    items: {
-    '合歡山': {
-      title: '合歡山',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '南投': {
-      title: '南投',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (County === "屏東縣") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('恆春'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('龍泉'))]
-	SVC3=SVC_list[parseInt(station_array.indexOf('大光'))]
-	SVC4=SVC_list[parseInt(station_array.indexOf('墾丁'))]
-	SVC5=SVC_list[parseInt(station_array.indexOf('後壁湖'))]
-	SVC6=SVC_list[parseInt(station_array.indexOf('滿州'))]
-	SVC7=SVC_list[parseInt(station_array.indexOf('屏東市'))]
-	SVC8=SVC_list[parseInt(station_array.indexOf('小琉球'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	picurl3=picture_generator(SVC3);
-	picurl4=picture_generator(SVC4);
-	picurl5=picture_generator(SVC5);
-	picurl6=picture_generator(SVC6);
-	picurl7=picture_generator(SVC7);
-	picurl8=picture_generator(SVC8);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	status3=status_generator(SVC3);
-	status4=status_generator(SVC4);
-	status5=status_generator(SVC5);
-	status6=status_generator(SVC6);
-	status7=status_generator(SVC7);
-	status8=status_generator(SVC8);  conv.ask(new Carousel({
-    items: {
-    '恆春': {
-      title: '恆春',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '龍泉': {
-      title: '龍泉',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-    '大光': {
-      title: '大光',
-      description: status3,
-      image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-    '墾丁': {
-      title: '墾丁',
-      description: status4,
-      image: new Image({url: picurl4,alt: 'Image alternate text',}),},
-    '後壁湖': {
-      title: '後壁湖',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},
-    '滿州': {
-      title: '滿州',
-      description: status6,
-      image: new Image({url: picurl6,alt: 'Image alternate text',}),},
-    '屏東市': {
-      title: '屏東市',
-      description: status7,
-      image: new Image({url: picurl7,alt: 'Image alternate text',}),},
-    '小琉球': {
-      title: '小琉球',
-      description: status8,
-      image: new Image({url: picurl8,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (County === "臺東縣") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('台東'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('綠島'))]
-	SVC3=SVC_list[parseInt(station_array.indexOf('椰油'))]
-	SVC4=SVC_list[parseInt(station_array.indexOf('貯存場大門口'))]
-	SVC5=SVC_list[parseInt(station_array.indexOf('蘭嶼氣象站'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	picurl3=picture_generator(SVC3);
-	picurl4=picture_generator(SVC4);
-	picurl5=picture_generator(SVC5);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	status3=status_generator(SVC3);
-	status4=status_generator(SVC4);
-	status5=status_generator(SVC5);
-  conv.ask(new Carousel({
-    items: {
-    '台東': {
-      title: '台東',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '綠島': {
-      title: '綠島',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-    '椰油': {
-      title: '椰油',
-      description: status3,
-      image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-    '貯存場大門口': {
-      title: '貯存場大門口',
-      description: status4,
-      image: new Image({url: picurl4,alt: 'Image alternate text',}),},
-    '蘭嶼氣象站': {
-      title: '蘭嶼氣象站',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},      },
-  }));  }
-  else if (County === "澎湖縣") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('澎湖'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('七美'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-  conv.ask(new Carousel({
-    items: {
-    '澎湖': {
-      title: '澎湖',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '七美': {
-      title: '七美',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (County === "金門縣") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('金門氣象站'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('榮湖淨水廠'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-  conv.ask(new Carousel({
-    items: {
-    '金門氣象站': {
-      title: '金門氣象站',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '榮湖淨水廠': {
-      title: '榮湖淨水廠',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (County === "連江縣") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('東引'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('馬祖'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	
-  conv.ask(new Carousel({
-    items: {
-    '東引': {
-      title: '東引',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '馬祖': {
-      title: '馬祖',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-      },
-  }));  }
-  else if (County === "核一廠") {
-    SVC1=SVC_list[parseInt(station_array.indexOf('石門'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('三芝'))]
-	SVC3=SVC_list[parseInt(station_array.indexOf('石崩山'))]
-	SVC4=SVC_list[parseInt(station_array.indexOf('茂林'))]
-	SVC5=SVC_list[parseInt(station_array.indexOf('陽明山'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	picurl3=picture_generator(SVC3);
-	picurl4=picture_generator(SVC4);
-	picurl5=picture_generator(SVC5);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	status3=status_generator(SVC3);
-	status4=status_generator(SVC4);
-	status5=status_generator(SVC5);
-
-   conv.ask(new Carousel({
-    items: {
-    '石門': {
-      title: '石門',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '三芝': {
-      title: '三芝',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-    '石崩山': {
-      title: '石崩山',
-      description: status3,
-      image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-    '茂林': {
-      title: '茂林',
-      description: status4,
-      image: new Image({url: picurl4,alt: 'Image alternate text',}),},
-    '陽明山': {
-      title: '陽明山',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},
-  },
-	}));}
-  else if (County === "核二廠") {
-    SVC1=SVC_list[parseInt(station_array.indexOf('磺潭'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('金山'))]
-	SVC3=SVC_list[parseInt(station_array.indexOf('野柳'))]
-	SVC4=SVC_list[parseInt(station_array.indexOf('大鵬'))]
-	SVC5=SVC_list[parseInt(station_array.indexOf('大坪'))]
-	SVC6=SVC_list[parseInt(station_array.indexOf('萬里'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	picurl3=picture_generator(SVC3);
-	picurl4=picture_generator(SVC4);
-	picurl5=picture_generator(SVC5);
-	picurl6=picture_generator(SVC6);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	status3=status_generator(SVC3);
-	status4=status_generator(SVC4);
-	status5=status_generator(SVC5);
-	status6=status_generator(SVC6);
-
-   conv.ask(new Carousel({
-    items: {
-    '磺潭': {
-      title: '磺潭',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '金山': {
-      title: '金山',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-    '野柳': {
-      title: '野柳',
-      description: status3,
-      image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-    '大鵬': {
-      title: '大鵬',
-      description: status4,
-      image: new Image({url: picurl4,alt: 'Image alternate text',}),},
-    '大坪': {
-      title: '大坪',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},
-    '萬里': {
-      title: '萬里',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},
-  },
-	}));}
-  else if (County === "核三廠") {
-	SVC1=SVC_list[parseInt(station_array.indexOf('恆春'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('龍泉'))]
-	SVC3=SVC_list[parseInt(station_array.indexOf('大光'))]
-	SVC4=SVC_list[parseInt(station_array.indexOf('墾丁'))]
-	SVC5=SVC_list[parseInt(station_array.indexOf('後壁湖'))]
-	SVC6=SVC_list[parseInt(station_array.indexOf('滿州'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	picurl3=picture_generator(SVC3);
-	picurl4=picture_generator(SVC4);
-	picurl5=picture_generator(SVC5);
-	picurl6=picture_generator(SVC6);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	status3=status_generator(SVC3);
-	status4=status_generator(SVC4);
-	status5=status_generator(SVC5);
-	status6=status_generator(SVC6);
-
-   conv.ask(new Carousel({
-    items: {
-    '恆春': {
-      title: '恆春',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '龍泉': {
-      title: '龍泉',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-    '大光': {
-      title: '大光',
-      description: status3,
-      image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-    '墾丁': {
-      title: '墾丁',
-      description: status4,
-      image: new Image({url: picurl4,alt: 'Image alternate text',}),},
-    '後壁湖': {
-      title: '後壁湖',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},
-    '滿州': {
-      title: '滿州',
-      description: status6,
-      image: new Image({url: picurl6,alt: 'Image alternate text',}),},
-  },
-	}));}
-  else if (County === "龍門核能電廠") {
-    SVC1=SVC_list[parseInt(station_array.indexOf('澳底'))]
-	SVC2=SVC_list[parseInt(station_array.indexOf('貢寮'))]
-	SVC3=SVC_list[parseInt(station_array.indexOf('龍門'))]
-	SVC4=SVC_list[parseInt(station_array.indexOf('雙溪'))]
-	SVC5=SVC_list[parseInt(station_array.indexOf('三港'))]
-	picurl1=picture_generator(SVC1);
-	picurl2=picture_generator(SVC2);
-	picurl3=picture_generator(SVC3);
-	picurl4=picture_generator(SVC4);
-	picurl5=picture_generator(SVC5);
-	status1=status_generator(SVC1);
-	status2=status_generator(SVC2);
-	status3=status_generator(SVC3);
-	status4=status_generator(SVC4);
-	status5=status_generator(SVC5);
-
-   conv.ask(new Carousel({
-    items: {
-    '澳底': {
-      title: '澳底',
-      description: status1,
-      image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-    '貢寮': {
-      title: '貢寮',
-      description: status2,
-      image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-    '龍門': {
-      title: '龍門',
-      description: status3,
-      image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-    '雙溪': {
-      title: '雙溪',
-      description: status4,
-      image: new Image({url: picurl4,alt: 'Image alternate text',}),},
-    '三港': {
-      title: '三港',
-      description: status5,
-      image: new Image({url: picurl5,alt: 'Image alternate text',}),},
-  },
-	}));}}
   else if(station_array.indexOf(County)!==-1){
 
 	indexnumber=station_array.indexOf(County); //取得監測站對應的編號
@@ -2071,7 +986,7 @@ conv.ask(new Suggestions('查看第一部分'));
 
     conv.ask(new SimpleResponse({               
 			  speech: `<speak><p><s>根據最新資料顯示，${County}監測站的環境輻射為每小時${number}微西弗</s><s>相當於${info}</s></p></speak>`,
-			  text: '以下為該監測站的詳細資訊。'}));
+			  text: '以下為該監測站的詳細資訊'}));
 	 
 	conv.ask(new BasicCard({  
 	image: new Image({url:picture,alt:'Pictures',}),
@@ -2093,7 +1008,7 @@ conv.ask(new Suggestions('查看第一部分'));
  else{
   County="undefined";
    conv.contexts.set(SelectContexts.parameter, 1);
-  if(conv.screen){conv.ask('我不懂你的意思，\n請輕觸下方卡片選擇查詢方式。');}
+  if(conv.screen){conv.ask('我不懂你的意思，\n請輕觸下方卡片選擇查詢方式');}
   else{conv.ask(`<speak><p><s>我不懂你的意思，請試著選擇查詢方式!</s><s>選項有以下幾個<break time="0.5s"/>區域查詢<break time="0.2s"/>核電廠查詢<break time="1s"/>請選擇。</s></p></speak>`);}
 
   conv.ask(new Carousel({

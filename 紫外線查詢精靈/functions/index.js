@@ -106,7 +106,7 @@ function uvi_report_set(){
 
 //取得測站更新時間
   data_get=new Promise(function(resolve,reject){
-	getJSON('https://data.epa.gov.tw/api/v1/uv_s_01?format=json&limit=34&api_key=e44e7dd6-8d7a-433d-9fe6-8327b8dcfcad').then(
+	getJSON('https://data.epa.gov.tw/api/v1/uv_s_01?format=json&limit=34&api_key=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx').then(
 	function(response,reject) {resolve(response.records)
     }).catch(function(error) {reject(new Error('資料獲取失敗'))});
 	});
@@ -274,8 +274,8 @@ if(option_array.indexOf(option)!==-1){
 			var status_temp=status_generator(parseInt(uvi_temp));
 			
 			county_list[the_array[i]]={ title: the_array[i],
-										   description: status_temp,
-										   image: new Image({url: pic_url,alt: 'Image alternate text',}),}
+						    description: status_temp,
+					            image: new Image({url: pic_url,alt: 'Image alternate text',}),}
 	  }
 	  conv.ask(new Carousel({
 		  title: 'Carousel Title',
@@ -761,8 +761,8 @@ if(["臺北市","新北市","桃園市","臺中市","南投縣","臺東縣","嘉
 			var status_temp=status_generator(parseInt(uvi_temp));
 			
 			county_list[the_array[i]]={ title: the_array[i],
-										   description: status_temp,
-										   image: new Image({url: pic_url,alt: 'Image alternate text',}),}
+						    description: status_temp,
+						    image: new Image({url: pic_url,alt: 'Image alternate text',}),}
 	  }
 	  conv.ask(new Carousel({
 		  title: 'Carousel Title',

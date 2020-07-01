@@ -582,8 +582,8 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 			var status_temp=status_generator(parseInt(aqi_temp));
 			
 			mobile_list[mobile_array[i]]={ title: mobile_array[i],
-										   description: status_temp,
-										   image: new Image({url: pic_url,alt: 'Image alternate text',}),}
+						       description: status_temp,
+						       image: new Image({url: pic_url,alt: 'Image alternate text',}),}
 		}  
 	  }
 	  conv.ask(new Carousel({
@@ -1282,8 +1282,8 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 			var status_temp=status_generator(parseInt(aqi_temp));
 			
 			county_list[the_array[i]]={ title: the_array[i],
-										   description: status_temp,
-										   image: new Image({url: pic_url,alt: 'Image alternate text',}),}
+						    description: status_temp,
+						    image: new Image({url: pic_url,alt: 'Image alternate text',}),}
 	  }
 	  conv.ask(new Carousel({
 		  title: 'Carousel Title',

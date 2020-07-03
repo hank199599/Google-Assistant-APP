@@ -1444,8 +1444,8 @@ app.intent('空氣品質預報', (conv,{day_select}) => {
 	var array=["北部","竹苗","中部","雲嘉南","高屏","宜蘭","花東"];
 	for(i=0;i<array.length;i++)
 	{
-		if(final_data[i].AQI<=50){report_array.push({cells: [array[i],final_data[0].AQI,"──"],dividerAfter: false,})}
-		 else{report_array.push({cells: [array[i],final_data[0].AQI,final_data[0].Pollutant],dividerAfter: false,})}
+		if(final_data[i].AQI<=50){report_array.push({cells: [array[i],final_data[i].AQI,"──"],dividerAfter: false,})}
+		 else{report_array.push({cells: [array[i],final_data[i].AQI,final_data[i].Pollutant],dividerAfter: false,})}
 	}
 	
 	

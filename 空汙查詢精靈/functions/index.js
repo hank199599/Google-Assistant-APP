@@ -39,7 +39,7 @@ var station_array=["二林","三重","三義","土城","士林","大同","大里
 var station_explain=["二林","三重","三義","土城","士林","大同","大里","大園","大寮","小港","中山","中壢","仁武","斗六","冬山","古亭","左營","平鎮","永和","安南","朴子","汐止","竹山","竹東","西屯","沙鹿","宜蘭","忠明","松山","板橋","林口","林園","花蓮","金門","前金","前鎮","南投","屏東","琉球","恆春","美濃","苗栗","埔里","桃園","觀音工業區","馬公","馬祖","基隆","崙背","淡水","麥寮","善化","富貴角","復興","湖口","菜寮","陽明","新竹","新店","新莊","新港","新營","楠梓","萬里","萬華","嘉義","彰化","大城","臺西","臺東","臺南","麻豆","鳳山","潮州","線西","橋頭","頭份","龍潭","豐原","關山","觀音"];
 var origin_station_array=["二林","三重","三義","土城","士林","大同","大里","大園","大寮","小港","中山","中壢","仁武","斗六","冬山","古亭","左營","平鎮","永和","安南","朴子","汐止","竹山","竹東","西屯","沙鹿","宜蘭","忠明","松山","板橋","林口","林園","花蓮","金門","前金","前鎮","南投","屏東","屏東(琉球)","恆春","美濃","苗栗","埔里","桃園","桃園(觀音工業區)","馬公","馬祖","高雄(左營)","高雄(楠梓)","基隆","崙背","淡水","麥寮","善化","富貴角","復興","湖口","菜寮","陽明","新北(樹林)","新竹","新店","新莊","新港","新營","楠梓","楠梓加工出口區","萬里","萬華","嘉義","彰化","彰化(大城)","臺西","臺東","臺南","臺南(麻豆)","鳳山","潮州","線西","橋頭","頭份","龍潭","豐原","關山","觀音","新竹(香山)"];
 var request_array=["宜蘭縣","臺東縣","臺北市","新北市第一部分","新北市第二部分","桃園市","新竹縣市","苗栗縣","臺中市","彰化縣","南投縣","雲林縣","嘉義縣市","臺南市","北高雄","南高雄","屏東縣"];
-var input_array=["臺北市","新北市(一)","新北市(二)","桃園市","新竹市","新竹縣","苗栗縣","臺中市","彰化縣","南投縣","雲林縣","嘉義縣市","台南市","北高雄市","南高雄市","屏東縣"];
+var input_array=["臺北市","新北市第一部分","新北市第二部分","桃園市","新竹市","新竹縣","苗栗縣","臺中市","彰化縣","南投縣","雲林縣","嘉義縣市","台南市","北高雄","南高雄","屏東縣"];
 var option_array=["北部地區","中部地區","南部地區","東部地區","離島地區","行動測站"];
 var county_array=["南投縣","連江縣","馬祖","南投","雲林縣","雲林","金門縣","金門","苗栗縣","苗栗","高雄市","高雄","嘉義市","花蓮縣","花蓮","嘉義縣","台東縣","臺東縣","台東","臺東","嘉義","基隆市","台北市","台南市","臺南市","台南","臺南","臺北市","台北","臺北","基隆","宜蘭縣","台中市","臺中市","台中","澎湖縣","澎湖","桃園市","桃園","新竹縣","新竹市","新竹","新北市","新北","宜蘭","屏東縣","屏東","彰化縣","彰化"];
 var word1="";var word2="";var word3="";
@@ -408,12 +408,12 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 		  title: '基隆市',
 	      description: '基隆\n',
 		},
-		'新北市(一)': {
+		'新北市第一部分': {
 		  title: '新北市(一)',
         synonyms: ['新北','三重','土城','永和','汐止','板橋','林口'],
 		  description: '三重、土城、永和  \n汐止、板橋、林口',
 		},
-		'新北市(二)': {
+		'新北市第二部分': {
         synonyms: ['新北','淡水','富貴角','菜寮','新店','新莊','萬里'],
 		  title: '新北市(二)',
 		  description: '淡水、富貴角、菜寮  \n新店、新莊、萬里',
@@ -474,12 +474,12 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 		  title: '台南市',
 		  description: '安南、善化、新營  \n臺南',
 		},
-		'北高雄市': {
+		'北高雄': {
         synonyms: ['北高雄','美濃','橋頭','楠梓','仁武','左營','前金',],
 		  title: '北高雄市',
 		  description: '美濃、橋頭、楠梓  \n仁武、左營、前金',
 		},
-		'南高雄市': {
+		'南高雄': {
         synonyms: ['南高雄','鳳山','復興','前鎮','小港','大寮','林園',],
 		  title: '南高雄市',
 		  description: '鳳山、復興、前鎮  \n小港、大寮、林園',
@@ -599,6 +599,10 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 		  title: 'Carousel Title',
 		  items: county_list,
 	}));
+  if(option==="新北市第一部分"){conv.ask(new Suggestions('查看第二部分'));}
+  else if(option==="新北市第二部分"){conv.ask(new Suggestions('查看第一部分'));}
+  else if(option==="北高雄"){conv.ask(new Suggestions('查看南高雄'));}
+  else if(option==="南高雄"){conv.ask(new Suggestions('查看北高雄'));}
 
 	}
 	else if(station_array.indexOf(option)!==-1){
@@ -1218,11 +1222,11 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 	  conv.ask(new Carousel({
 	  title: 'Carousel Title',
 	  items: {
-		'新北市(一)': {
+		'新北市第一部分': {
 		  title: '新北市(一)',
 		  description: '三重、土城、永和  \n汐止、板橋、林口',
 		},
-		'新北市(二)': {
+		'新北市第二部分': {
 		  title: '新北市(二)',
 		  description: '淡水、富貴角、菜寮  \n新店、新莊、萬里',
 		},  },}));  
@@ -1231,12 +1235,12 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 	  conv.ask(new Carousel({
 	  title: 'Carousel Title',
 	  items: {
-		'北高雄市': {
-		  title: '北高雄市',
+		'北高雄': {
+		  title: '北高雄',
 		  description: '美濃、橋頭、楠梓  \n仁武、左營、前金',
 		},
-		'南高雄市': {
-		  title: '南高雄市',
+		'南高雄': {
+		  title: '南高雄',
 		  description: '鳳山、復興、前鎮  \n小港、大寮、林園',
 		},  },}));  
 	  }
@@ -1268,7 +1272,12 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 		  title: 'Carousel Title',
 		  items: county_list,
 	}));
-	  
+	
+  if(County==="新北市第一部分"){conv.ask(new Suggestions('查看第二部分'));}
+  else if(County==="新北市第二部分"){conv.ask(new Suggestions('查看第一部分'));}
+  else if(County==="北高雄"){conv.ask(new Suggestions('查看南高雄'));}
+  else if(County==="南高雄"){conv.ask(new Suggestions('查看北高雄'));}	  
+	
 	}	 
 	else if(station_array.indexOf(County)!==-1){
 	indexnumber=station_array.indexOf(County); //取得監測站對應的編號
@@ -1431,19 +1440,22 @@ app.intent('空氣品質預報', (conv,{day_select}) => {
 	
 	for(i=0;i<day_array.length;i++){if(day_array[i]!==day_select){conv.ask(new Suggestions(day_array[i]+'呢?'));}}
 	
+	var report_array=[];
+	var array=["北部","竹苗","中部","雲嘉南","高屏","宜蘭","花東"];
+	for(i=0;i<array.length;i++)
+	{
+		if(final_data[i].AQI<=50){report_array.push({cells: [array[i],final_data[0].AQI,"──"],dividerAfter: false,})}
+		 else{report_array.push({cells: [array[i],final_data[0].AQI,final_data[0].Pollutant],dividerAfter: false,})}
+	}
+	
+	
     conv.ask(new SimpleResponse({ 
 			 speech: `<speak><p><s>根據環保署，${day_select}各地的預報資訊如下<break time="0.5s"/>${report_content}</s></p></speak>`,
 			   text: "台灣"+day_select+"各地的預報如下",}));
 	conv.ask(new Table({
 		title: day_title,
 		columns: [{header: '空品區',align: 'CENTER',},{header: 'AQI預報值',align: 'CENTER',},{header: '指標污染物',align: 'CENTER',},],
-		rows: [{cells: ["北部",final_data[0].AQI,final_data[0].Pollutant],dividerAfter: false,},
-				{cells: ["竹苗",final_data[1].AQI,final_data[1].Pollutant],dividerAfter: false,},
-				{cells: ["中部",final_data[2].AQI,final_data[2].Pollutant],dividerAfter: false,},
-				{cells: ["雲嘉南",final_data[3].AQI,final_data[3].Pollutant],dividerAfter: false,},
-				{cells: ["高屏",final_data[4].AQI,final_data[4].Pollutant],dividerAfter: false,},
-				{cells: ["宜蘭",final_data[5].AQI,final_data[5].Pollutant],dividerAfter: false,},
-				{cells: ["花東",final_data[6].AQI,final_data[6].Pollutant],dividerAfter: false,}],
+		rows: report_array,
 		buttons: new Button({
 			title: '三天空品區預報',
 			url: 'https://airtw.epa.gov.tw/CHT/Forecast/Forecast_3days.aspx', }),		

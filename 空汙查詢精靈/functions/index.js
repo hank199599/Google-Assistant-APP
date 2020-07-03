@@ -493,47 +493,26 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 	}));  }
 	  else if (option === "東部地區") {
 	  
-	  AQI1=AQI_list[parseInt(station_array.indexOf('冬山'))];
-	  AQI2=AQI_list[parseInt(station_array.indexOf('宜蘭'))];
-	  AQI3=AQI_list[parseInt(station_array.indexOf('花蓮'))];
-	  AQI4=AQI_list[parseInt(station_array.indexOf('臺東'))];
-	  AQI5=AQI_list[parseInt(station_array.indexOf('關山'))];
-
-	  picurl1= picture_generator(parseInt(AQI1));
-	  picurl2= picture_generator(parseInt(AQI2));
-	  picurl3= picture_generator(parseInt(AQI3));
-	  picurl4= picture_generator(parseInt(AQI4));
-	  picurl5= picture_generator(parseInt(AQI5));
-	  status1= status_generator(parseInt(AQI1));
-	  status2= status_generator(parseInt(AQI2));
-	  status3= status_generator(parseInt(AQI3));
-	  status4= status_generator(parseInt(AQI4));
-	  status5= status_generator(parseInt(AQI5));
-
+	var the_array=option_list[option].split('、');
+	var county_list={};
+	
+    for(i=0;i<the_array.length;i++)
+	  {	
+		var num=station_array.indexOf(the_array[i]);
+			var aqi_temp=AQI_list[parseInt(num)];
+			var pic_url=picture_generator(parseInt(aqi_temp));
+			var status_temp=status_generator(parseInt(aqi_temp));
+			
+			county_list[the_array[i]]={ title: the_array[i],
+										   description: status_temp,
+										   image: new Image({url: pic_url,alt: 'Image alternate text',}),}
+	  }
 	  conv.ask(new Carousel({
-		items: {
-		'冬山': {
-		  title: '冬山',
-		  description: status1,
-		  image: new Image({url: picurl1,alt: 'Image alternate text',}),},
-		'宜蘭': {
-		  title: '宜蘭',
-		  description: status2,
-		  image: new Image({url: picurl2,alt: 'Image alternate text',}),},
-		'花蓮': {
-		  title: '花蓮',
-		  description: status3,
-		  image: new Image({url: picurl3,alt: 'Image alternate text',}),},
-		'臺東': {
-		  title: '臺東',
-		  description: status4,
-		  image: new Image({url: picurl4,alt: 'Image alternate text',}),},
-		'關山': {
-		  title: '關山',
-		  description: status5,
-		  image: new Image({url: picurl5,alt: 'Image alternate text',}),},
-	  },
-	}));  }
+		  title: 'Carousel Title',
+		  items: county_list,
+	}));
+
+	}
 	  else if (option === "離島地區") {
 
 	  AQI1=AQI_list[parseInt(station_array.indexOf('金門'))];

@@ -18,6 +18,8 @@ var request = require('request'),
  cheerio = require('cheerio');
 var option_list=require("./option.json");
 var keyword_list=require("./keywords.json");
+var mobile_display=require("./mobile.json");
+var suggest_list=require("./suggest.json");
 let serviceAccount = require("./config/b1a2b-krmfch-firebase-adminsdk-1tgdm-7347f3fed7.json");
 
 	admin.initializeApp({
@@ -39,9 +41,10 @@ var station_array=["二林","三重","三義","土城","士林","大同","大里
 var station_explain=["二林","三重","三義","土城","士林","大同","大里","大園","大寮","小港","中山","中壢","仁武","斗六","冬山","古亭","左營","平鎮","永和","安南","朴子","汐止","竹山","竹東","西屯","沙鹿","宜蘭","忠明","松山","板橋","林口","林園","花蓮","金門","前金","前鎮","南投","屏東","琉球","恆春","美濃","苗栗","埔里","桃園","觀音工業區","馬公","馬祖","基隆","崙背","淡水","麥寮","善化","富貴角","復興","湖口","菜寮","陽明","新竹","新店","新莊","新港","新營","楠梓","萬里","萬華","嘉義","彰化","大城","臺西","臺東","臺南","麻豆","鳳山","潮州","線西","橋頭","頭份","龍潭","豐原","關山","觀音"];
 var origin_station_array=["二林","三重","三義","土城","士林","大同","大里","大園","大寮","小港","中山","中壢","仁武","斗六","冬山","古亭","左營","平鎮","永和","安南","朴子","汐止","竹山","竹東","西屯","沙鹿","宜蘭","忠明","松山","板橋","林口","林園","花蓮","金門","前金","前鎮","南投","屏東","屏東(琉球)","恆春","美濃","苗栗","埔里","桃園","桃園(觀音工業區)","馬公","馬祖","高雄(左營)","高雄(楠梓)","基隆","崙背","淡水","麥寮","善化","富貴角","復興","湖口","菜寮","陽明","新北(樹林)","新竹","新店","新莊","新港","新營","楠梓","楠梓加工出口區","萬里","萬華","嘉義","彰化","彰化(大城)","臺西","臺東","臺南","臺南(麻豆)","鳳山","潮州","線西","橋頭","頭份","龍潭","豐原","關山","觀音","新竹(香山)"];
 var request_array=["宜蘭縣","臺東縣","臺北市","新北市第一部分","新北市第二部分","桃園市","新竹縣市","苗栗縣","臺中市","彰化縣","南投縣","雲林縣","嘉義縣市","臺南市","北高雄","南高雄","屏東縣"];
-var input_array=["臺北市","新北市第一部分","新北市第二部分","桃園市","新竹市","新竹縣","苗栗縣","臺中市","彰化縣","南投縣","雲林縣","嘉義縣市","台南市","北高雄","南高雄","屏東縣"];
+var input_array=["臺北市","新北市第一部分","新北市第二部分","桃園市","新竹縣市","苗栗縣","臺中市","彰化縣","南投縣","雲林縣","嘉義縣市","臺南市","北高雄","南高雄","屏東縣"];
 var option_array=["北部地區","中部地區","南部地區","東部地區","離島地區","行動測站"];
 var county_array=["南投縣","連江縣","馬祖","南投","雲林縣","雲林","金門縣","金門","苗栗縣","苗栗","高雄市","高雄","嘉義市","花蓮縣","花蓮","嘉義縣","台東縣","臺東縣","台東","臺東","嘉義","基隆市","台北市","台南市","臺南市","台南","臺南","臺北市","台北","臺北","基隆","宜蘭縣","台中市","臺中市","台中","澎湖縣","澎湖","桃園市","桃園","新竹縣","新竹市","新竹","新北市","新北","宜蘭","屏東縣","屏東","彰化縣","彰化"];
+var mobile_array=["新北(樹林)","桃園(觀音工業區)","新竹(香山)","彰化(大城)","彰化(田尾)","臺南(麻豆)","臺南(北門)","高雄(楠梓)","高雄(左營)","屏東(琉球)"];
 var word1="";var word2="";var word3="";
 var locations= [{lng: 120.409653,lat: 23.925175,Sitename:"二林"},{lng: 121.493806,lat: 25.072611,Sitename:"三重"},{lng: 120.758833,lat: 24.382942,Sitename:"三義"},{lng: 121.451861,lat: 24.982528,Sitename:"土城"},{lng: 121.515389,lat: 25.105417,Sitename:"士林"},{lng: 121.513311,lat: 25.0632,Sitename:"大同"},{lng: 120.677689,lat: 24.099611,Sitename:"大里"},{lng: 121.201811,lat: 25.060344,Sitename:"大園"},{lng: 120.425081,lat: 22.565747,Sitename:"大寮"},{lng: 120.337736,lat: 22.565833,Sitename:"小港"},{lng: 121.526528,lat: 25.062361,Sitename:"中山"},{lng: 121.221667,lat: 24.953278,Sitename:"中壢"},{lng: 120.332631,lat: 22.689056,Sitename:"仁武"},{lng: 120.544994,lat: 23.711853,Sitename:"斗六"},{lng: 121.792928,lat: 24.632203,Sitename:"冬山"},{lng: 121.529556,lat: 25.020608,Sitename:"古亭"},{lng: 120.292917,lat: 22.674861,Sitename:"左營"},{lng: 121.203986,lat: 24.952786,Sitename:"平鎮"},{lng: 121.516306,lat: 25.017,Sitename:"永和"},{lng: 120.2175,lat: 23.048197,Sitename:"安南"},{lng: 120.24781,lat: 23.467123,Sitename:"朴子"},{lng: 121.6423,lat: 25.067131,Sitename:"汐止"},{lng: 120.677306,lat: 23.756389,Sitename:"竹山"},{lng: 121.088903,lat: 24.740644,Sitename:"竹東"},{lng: 120.616917,lat: 24.162197,Sitename:"西屯"},{lng: 120.568794,lat: 24.225628,Sitename:"沙鹿"},{lng: 121.746394,lat: 24.747917,Sitename:"宜蘭"},{lng: 120.641092,lat: 24.151958,Sitename:"忠明"},{lng: 121.578611,lat: 25.05,Sitename:"松山"},{lng: 121.458667,lat: 25.012972,Sitename:"板橋"},{lng: 121.376869,lat: 25.077197,Sitename:"林口"},{lng: 120.41175,lat: 22.4795,Sitename:"林園"},{lng: 121.599769,lat: 23.971306,Sitename:"花蓮"},{lng: 118.312256,lat: 24.432133,Sitename:"金門"},{lng: 120.288086,lat: 22.632567,Sitename:"前金"},{lng: 120.307564,lat: 22.605386,Sitename:"前鎮"},{lng: 120.685306,lat: 23.913,Sitename:"南投"},{lng: 120.488033,lat: 22.673081,Sitename:"屏東"},{lng: 120.788928,lat: 21.958069,Sitename:"恆春"},{lng: 120.530542,lat: 22.883583,Sitename:"美濃"},{lng: 120.8202,lat: 24.565269,Sitename:"苗栗"},{lng: 120.967903,lat: 23.968842,Sitename:"埔里"},{lng: 121.304383,lat: 24.995368,Sitename:"桃園"},{lng: 119.566158,lat: 23.569031,Sitename:"馬公"},{lng: 119.949875,lat: 26.160469,Sitename:"馬祖"},{lng: 121.760056,lat: 25.129167,Sitename:"基隆"},{lng: 120.348742,lat: 23.757547,Sitename:"崙背"},{lng: 121.449239,lat: 25.1645,Sitename:"淡水"},{lng: 120.251825,lat: 23.753506,Sitename:"麥寮"},{lng: 120.297142,lat: 23.115097,Sitename:"善化"},{lng: 121.536763,lat: 25.298562,Sitename:"富貴角"},{lng: 120.312017,lat: 22.608711,Sitename:"復興"},{lng: 121.038653,lat: 24.900142,Sitename:"湖口"},{lng: 121.481028,lat: 25.06895,Sitename:"菜寮"},{lng: 121.529583,lat: 25.182722,Sitename:"陽明"},{lng: 120.972075,lat: 24.805619,Sitename:"新竹"},{lng: 121.537778,lat: 24.977222,Sitename:"新店"},{lng: 121.4325,lat: 25.037972,Sitename:"新莊"},{lng: 120.345531,lat: 23.554839,Sitename:"新港"},{lng: 120.31725,lat: 23.305633,Sitename:"新營"},{lng: 120.328289,lat: 22.733667,Sitename:"楠梓"},{lng: 121.689881,lat: 25.179667,Sitename:"萬里"},{lng: 121.507972,lat: 25.046503,Sitename:"萬華"},{lng: 120.440833,lat: 23.462778,Sitename:"嘉義"},{lng: 120.541519,lat: 24.066,Sitename:"彰化"},{lng: 120.273117,lat: 23.843139,Sitename:"大城"},{lng: 120.202842,lat: 23.717533,Sitename:"臺西"},{lng: 121.15045,lat: 22.755358,Sitename:"臺東"},{lng: 120.202617,lat: 22.984581,Sitename:"臺南"},{lng: 120.358083,lat: 22.627392,Sitename:"鳳山"},{lng: 120.561175,lat: 22.523108,Sitename:"潮州"},{lng: 120.469061,lat: 24.131672,Sitename:"線西"},{lng: 120.305689,lat: 22.757506,Sitename:"橋頭"},{lng: 120.898572,lat: 24.696969,Sitename:"頭份"},{lng: 121.21635,lat: 24.863869,Sitename:"龍潭"},{lng: 120.741711,lat: 24.256586,Sitename:"豐原"},{lng: 121.161933,lat: 23.045083,Sitename:"關山"},{lng: 121.082761,lat: 25.035503,Sitename:"觀音"}];
 var Status=0;var AQI=0;var Pollutant="";var info="";var info_output="";
@@ -122,7 +125,7 @@ function air_report_set(){
 
 //Promise B:取得測站資料
   data_get=new Promise(function(resolve,reject){
-	getJSON('https://data.epa.gov.tw/api/v1/aqx_p_432?format=json&limit=100&api_key=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx').then(function(response) {
+	getJSON('https://data.epa.gov.tw/api/v1/aqx_p_432?format=json&limit=100&api_key=e44e7dd6-8d7a-433d-9fe6-8327b8dcfcad').then(function(response) {
 		resolve(response.records)
        }).catch(function(error) {reject(new Error('資料獲取失敗'))});
 	});
@@ -287,7 +290,6 @@ app.intent('預設歡迎語句', (conv) => {
 	
 	air_report_set();
 
-	conv.user.storage.mobile_van=false;		
   }).catch(function (error) {
   if(conv.screen){
 	conv.ask(new SimpleResponse({               
@@ -318,7 +320,6 @@ app.intent('預設歡迎語句', (conv) => {
 		day2_report=e.val().tomorrow;
 		day3_report=e.val().aftertomorrow;
 		});
-	conv.user.storage.mobile_van=false;		
   });
 
 });
@@ -360,7 +361,6 @@ app.intent('依區域查詢', (conv) => {
 	 conv.ask(new Suggestions(eicon[parseInt(Math.random()*2)]+'最近的測站','語音查詢範例','今天的數值預報','風向對空污的影響','污染物影響要素','👋 掰掰'));
 
 	air_report_set();
-	conv.user.storage.mobile_van=false;
 });
 
 
@@ -390,7 +390,7 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 		if(conv.screen){conv.ask(new SimpleResponse({               
 							speech: `<speak><p><s>以下是${option}的對應選項<break time="0.5s"/>請查看</s></p></speak>`,
 							text: '以下是「'+option+'」對應的選項'}));}
-	    else{conv.ask(new SimpleResponse(`<speak><p><s>請選擇您在${option}要查詢的縣市!</s><s>選項有以下幾個<break time="0.5s"/>${option_list[option]}<break time="1s"/>請選擇。</s></p></speak>`));}
+	    else{conv.ask(new SimpleResponse(`<speak><p><s>請選擇${option}對應的選項!</s><s>選項有以下幾個<break time="0.5s"/>${option_list[option]}<break time="1s"/>請選擇。</s></p></speak>`));}
 	}
 	
 	conv.contexts.set(SelectContexts.parameter, 5);
@@ -476,12 +476,12 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 		},
 		'北高雄': {
         synonyms: ['北高雄','美濃','橋頭','楠梓','仁武','左營','前金',],
-		  title: '北高雄市',
+		  title: '北高雄',
 		  description: '美濃、橋頭、楠梓  \n仁武、左營、前金',
 		},
 		'南高雄': {
         synonyms: ['南高雄','鳳山','復興','前鎮','小港','大寮','林園',],
-		  title: '南高雄市',
+		  title: '南高雄',
 		  description: '鳳山、復興、前鎮  \n小港、大寮、林園',
 		},
 		'屏東縣': {
@@ -549,9 +549,8 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 	  if(conv.screen){conv.ask('以下是「行動測站」列表，\n實際資訊供應可能隨時間變化。');}
 	  else{conv.ask(`<speak><p><s>抱歉，在目前對話的裝置上不支援搜尋「行動測站」</s><s>請試著提問來查詢縣市列表</s></p></speak>`);}
 		 
-		var mobile_array=['新北(樹林)','桃園(觀音工業區)','新竹(香山)','彰化(大城)','臺南(麻豆)','臺南(北門)','高雄(楠梓)','高雄(左營)','屏東(琉球)']  
 		var mobile_list={};
-		
+		console.log("mobile_array"+mobile_array)
 	 for(i=0;i<mobile_array.length;i++)
 	  {	
 		var num=station_array.indexOf(mobile_array[i]);
@@ -569,16 +568,15 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 		  title: 'Carousel Title',
 		  items: mobile_list,
 	}));
-	 conv.user.storage.mobile_van=true;
 
 	}
   }
-   else if (input_array.indexOf(option)!==-1) {
+    else if (input_array.indexOf(option)!==-1) {
 
 	if(conv.screen){conv.ask(new SimpleResponse({               
 							speech: `<speak><p><s>以下是${option}的監測站列表!<break time="0.5s"/>請查看</s></p></speak>`,
 							text: '以下是「'+option+'」的測站列表'}));}
-	  else{conv.ask(new SimpleResponse(`<speak><p><s>以下是${option}的監測站列表</s><s>選項有以下幾個<break time="0.5s"/>${option_list[option]}<break time="1s"/>請選擇。</s></p></speak>`));}
+	  else{conv.ask(new SimpleResponse(`<speak><p><s>以下是${option}的監測站列表</s><s>選項有以下幾個<break time="0.5s"/>${replaceString(option_list[option], ',', '<break time="0.25s"/>')}<break time="1s"/>請選擇。</s></p></speak>`));}
 	 
 	
 	var the_array=option_list[option].split('、');
@@ -591,18 +589,39 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 			var pic_url=picture_generator(parseInt(aqi_temp));
 			var status_temp=status_generator(parseInt(aqi_temp));
 			
-			county_list[the_array[i]]={ title: the_array[i],
+			county_list[the_array[i]]={    title: the_array[i],
 										   description: status_temp,
 										   image: new Image({url: pic_url,alt: 'Image alternate text',}),}
 	  }
+	  
+	if(mobile_display[option]!==undefined){
+		
+		the_array=mobile_display[option];
+		console.log(the_array)
+		for(i=0;i<the_array.length;i++)
+		  {	
+			    var num=station_array.indexOf(the_array[i]);
+				if(num!==-1){
+					var aqi_temp=AQI_list[parseInt(num)];
+					var pic_url=picture_generator(parseInt(aqi_temp));
+					var status_temp=status_generator(parseInt(aqi_temp));					
+					var select_title=the_array[i];
+						select_title=select_title.split('(')[1];
+						select_title=replaceString(select_title, ')', '');
+
+					county_list[the_array[i]]={ title:select_title+" (行動站)" ,
+												   description: status_temp,
+												   image: new Image({url: pic_url,alt: 'Image alternate text',}),}
+				}
+		  }
+	}
+	  
 	  conv.ask(new Carousel({
 		  title: 'Carousel Title',
 		  items: county_list,
 	}));
-  if(option==="新北市第一部分"){conv.ask(new Suggestions('查看第二部分'));}
-  else if(option==="新北市第二部分"){conv.ask(new Suggestions('查看第一部分'));}
-  else if(option==="北高雄"){conv.ask(new Suggestions('查看南高雄'));}
-  else if(option==="南高雄"){conv.ask(new Suggestions('查看北高雄'));}
+
+	if(suggest_list[option]!==undefined){conv.ask(new Suggestions('查看'+suggest_list[option]));}
 
 	}
 	else if(station_array.indexOf(option)!==-1){
@@ -637,9 +656,11 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 	else if(AQI>=200&&AQI<=300){info_output= "1.一般民眾應減少戶外活動。  \n2.學生應立即停止戶外活動，並將課程調整於室內進行。  \n3.有心臟、呼吸道及心血管疾病患者、孩童及老年人應留在室內並減少體力消耗活動，外出應配戴口罩。  \n4.具有氣喘的人應增加使用吸入劑的頻率。";}
 	else if(AQI>301){info_output= "1.一般民眾應避免戶外活動，室內應緊閉門窗，必要外出應配戴口罩等防護用具。  \n2.學生應立即停止戶外活動，並將課程調整於室內進行。  \n3.有心臟、呼吸道及心血管疾病患者、孩童及老年人應留在室內並避免體力消耗活動，外出應配戴口罩。  \n4.具有氣喘的人應增加使用吸入劑的頻率。";}
 
+	if(mobile_array.indexOf(option)===-1){conv.ask(new Suggestions('把它加入日常安排'));}
+
     if(option.indexOf('(')!==-1){
-	option=option.split('(')[1];
-	option=replaceString(option, ')', '');
+		option=option.split('(')[1];
+		option=replaceString(option, ')', '');
 	}
 	if(AQI>=0&&AQI<=50){
 	conv.ask(new SimpleResponse({               
@@ -665,8 +686,6 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 	subtitle:output_title,
 	text:info_output+'  \n  \nPM₁₀ '+PM10+'(μg/m³) • PM₂.₅ '+PM25+'(μg/m³) • 臭氧 '+O3+'(ppb)  \n**測站資訊發布時間** • '+FormatTime(),})); 
     
-	if(conv.user.storage.mobile_van===true){conv.user.storage.mobile_van=false;}	
-	else{conv.ask(new Suggestions('把它加入日常安排'));}
 	}else{conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`);}
   }else{
 		conv.ask(new SimpleResponse({               
@@ -705,19 +724,21 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 	}
 	 else{
 	word1=county_array[parseInt(Math.random()*19)];word2=county_array[20+parseInt(Math.random()*28)];
-	option="undefined";if(conv.input.type==="VOICE"){ //如果輸入是語音，則顯示錯誤處理方法
-	conv.ask(new SimpleResponse({               
-	  speech: `<speak><p><s>抱歉，我不懂你的意思</s><s>請試著問我<break time="0.2s"/>${word1}空氣品質如何?<break time="0.2s"/>或<break time="0.2s"/>幫我查詢${word2}</s></p></speak>`,
-	  text: '試著提問來快速存取縣市列表，\n或點選建議卡片來進行操作!'}));
+	option="undefined";
+	
+	if(conv.input.type==="VOICE"){ //如果輸入是語音，則顯示錯誤處理方法
+		conv.ask(new SimpleResponse({               
+		  speech: `<speak><p><s>抱歉，我不懂你的意思</s><s>請試著問我<break time="0.2s"/>${word1}空氣品質如何?<break time="0.2s"/>或<break time="0.2s"/>幫我查詢${word2}</s></p></speak>`,
+		  text: '試著提問來快速存取縣市列表，\n或點選建議卡片來進行操作!'}));
 	  if(conv.screen){
-	 conv.ask(new BasicCard({  
-			title:"語音查詢範例",
-			subtitle:"以下是你可以嘗試的指令",
-			text:" • *「"+word1+"空氣品質如何?」*  \n • *「幫我查詢"+word2+"」*  \n • *「我想知道"+county_array[parseInt(Math.random()*48)]+"狀況怎樣」*  \n • *「幫我找"+county_array[parseInt(Math.random()*48)]+"」*  \n • *「我想看"+county_array[parseInt(Math.random()*48)]+"」*  \n • *「"+county_array[parseInt(Math.random()*48)]+"空氣好嗎?」*  \n • *「我要查"+county_array[parseInt(Math.random()*48)]+"」*", 
-			}));
-	 conv.ask(new Suggestions(word1+"空氣品質如何?","幫我查詢"+word2));
-	}
-	else{ conv.ask(`<speak><p><s>或對我說<break time="0.2s"/>區域查詢<break time="0.2s"/>來進行操作</s></p></speak>`);}
+		 conv.ask(new BasicCard({  
+				title:"語音查詢範例",
+				subtitle:"以下是你可以嘗試的指令",
+				text:" • *「"+word1+"空氣品質如何?」*  \n • *「幫我查詢"+word2+"」*  \n • *「我想知道"+county_array[parseInt(Math.random()*48)]+"狀況怎樣」*  \n • *「幫我找"+county_array[parseInt(Math.random()*48)]+"」*  \n • *「我想看"+county_array[parseInt(Math.random()*48)]+"」*  \n • *「"+county_array[parseInt(Math.random()*48)]+"空氣好嗎?」*  \n • *「我要查"+county_array[parseInt(Math.random()*48)]+"」*", 
+				}));
+		 conv.ask(new Suggestions(word1+"空氣品質如何?","幫我查詢"+word2));
+		}
+		else{ conv.ask(`<speak><p><s>或對我說<break time="0.2s"/>區域查詢<break time="0.2s"/>來進行操作</s></p></speak>`);}
 	 
 	 }else{conv.ask('抱歉，我不懂你的意思，\n請點選建議卡片來進行操作。');}
 	 conv.ask(new Suggestions(eicon[parseInt(Math.random()*2)]+'最近的測站'));
@@ -732,6 +753,7 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 conv.ask(new SimpleResponse({               
 	  speech: `<speak><p><s>抱歉，獲取資料發生錯誤</s><s>請重新查詢</s></p></speak>`,
 	  text: '請輕觸下方卡片來選擇查詢區域!'}));
+	  console.log(error)
    conv.contexts.set(SelectContexts.parameter, 5);
 	  conv.ask(new Carousel({
 	  title: 'Carousel Title',
@@ -774,7 +796,6 @@ app.intent('Default Fallback Intent', (conv) => {
 		text:" • *「"+word1+"空氣品質如何?」*  \n • *「幫我查詢"+word2+"」*  \n • *「我想知道"+county_array[parseInt(Math.random()*48)]+"狀況怎樣」*  \n • *「幫我找"+county_array[parseInt(Math.random()*48)]+"」*  \n • *「我想看"+county_array[parseInt(Math.random()*48)]+"」*  \n • *「"+county_array[parseInt(Math.random()*48)]+"空氣好嗎?」*  \n • *「我要查"+county_array[parseInt(Math.random()*48)]+"」*", 
 	}));
 	conv.ask(new Suggestions(word1+'空氣品質如何?','幫我查詢'+word2));}
-	else{ conv.ask(`<speak><p><s>或對我說<break time="0.2s"/>區域查詢<break time="0.2s"/>查看縣市列表</s></p></speak>`);}
 
 	conv.noInputs = [`<speak><p><s>請試著再問一次</s><s>例如<break time="0.2s"/>${word1}空氣品質如何?`,"請試著問我要查詢的縣市","很抱歉，我幫不上忙"];	   
 
@@ -800,7 +821,7 @@ app.intent('語音指令範例', (conv) => {
 });
 
 app.intent('直接查詢', (conv,{station}) => {
-
+	
 	return new Promise(
 	function(resolve,reject){
 	database.ref('/TWair').on('value',e=>{resolve(e.val());});	
@@ -1194,6 +1215,8 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 	O3_list=final_data.O3;
 	station_array=final_data.SiteName
 
+	conv.noInputs = ["抱歉，我沒聽輕楚。請再問一次","請試著問我要查詢的縣市列表，例如、"+county_array[parseInt(Math.random()*48)]+"空氣品質如何?","很抱歉，我幫不上忙"];	   
+
 	if(conv.input.raw.indexOf('新北')!==-1){County="新北市";}
 	else if(conv.input.raw.indexOf('第一部分')!==-1||conv.input.raw.indexOf('一部分')!==-1){County="新北市第一部分";}
 	else if(conv.input.raw.indexOf('第二部分')!==-1){County="新北市第二部分";}
@@ -1224,9 +1247,11 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 	  items: {
 		'新北市第一部分': {
 		  title: '新北市(一)',
+        synonyms: ['新北','三重','土城','永和','汐止','板橋','林口'],
 		  description: '三重、土城、永和  \n汐止、板橋、林口',
 		},
 		'新北市第二部分': {
+        synonyms: ['新北','淡水','富貴角','菜寮','新店','新莊','萬里'],
 		  title: '新北市(二)',
 		  description: '淡水、富貴角、菜寮  \n新店、新莊、萬里',
 		},  },}));  
@@ -1236,15 +1261,17 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 	  title: 'Carousel Title',
 	  items: {
 		'北高雄': {
+        synonyms: ['北高雄','美濃','橋頭','楠梓','仁武','左營','前金',],
 		  title: '北高雄',
 		  description: '美濃、橋頭、楠梓  \n仁武、左營、前金',
 		},
 		'南高雄': {
+        synonyms: ['南高雄','鳳山','復興','前鎮','小港','大寮','林園',],
 		  title: '南高雄',
 		  description: '鳳山、復興、前鎮  \n小港、大寮、林園',
 		},  },}));  
 	  }
-	}
+	} 
 	else if(request_array.indexOf(County)!==-1){
 
 	conv.contexts.set(SelectContexts.parameter, 5);
@@ -1252,7 +1279,7 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 	if(conv.screen){conv.ask(new SimpleResponse({               
 							speech: `<speak><p><s>以下是${County}的監測站列表!<break time="0.5s"/>請查看</s></p></speak>`,
 							text: '以下是「'+County+'」的測站列表'}));}
-    else{conv.ask(new SimpleResponse(`<speak><p><s>以下是${County}的監測站列表</s><s>選項有以下幾個<break time="0.5s"/>${option_list[County]}<break time="1s"/>請選擇。</s></p></speak>`));}
+    else{conv.ask(new SimpleResponse(`<speak><p><s>以下是${County}的監測站列表</s><s>選項有以下幾個<break time="0.5s"/>${replaceString(option_list[County], ',', '<break time="0.25s"/>')}<break time="1s"/>請選擇。</s></p></speak>`));}
 
 	var the_array=option_list[County].split('、');
 	var county_list={};
@@ -1268,16 +1295,37 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 						    description: status_temp,
 						    image: new Image({url: pic_url,alt: 'Image alternate text',}),}
 	  }
+	  
+	if(mobile_display[County]!==undefined){
+		
+		the_array=mobile_display[County];
+		console.log(the_array)
+		for(i=0;i<the_array.length;i++)
+		  {	
+			    var num=station_array.indexOf(the_array[i]);
+				if(num!==-1){
+					var aqi_temp=AQI_list[parseInt(num)];
+					var pic_url=picture_generator(parseInt(aqi_temp));
+					var status_temp=status_generator(parseInt(aqi_temp));
+					
+					var select_title=the_array[i];
+						select_title=select_title.split('(')[1];
+						select_title=replaceString(select_title, ')', '');
+
+					county_list[the_array[i]]={ title:select_title+" (行動站)" ,
+												   description: status_temp,
+												   image: new Image({url: pic_url,alt: 'Image alternate text',}),}
+				}
+		  }
+	}
+	  
 	  conv.ask(new Carousel({
 		  title: 'Carousel Title',
 		  items: county_list,
 	}));
 	
-  if(County==="新北市第一部分"){conv.ask(new Suggestions('查看第二部分'));}
-  else if(County==="新北市第二部分"){conv.ask(new Suggestions('查看第一部分'));}
-  else if(County==="北高雄"){conv.ask(new Suggestions('查看南高雄'));}
-  else if(County==="南高雄"){conv.ask(new Suggestions('查看北高雄'));}	  
-	
+	if(suggest_list[County]!==undefined){conv.ask(new Suggestions('查看'+suggest_list[County]));}
+  
 	}	 
 	else if(station_array.indexOf(County)!==-1){
 	indexnumber=station_array.indexOf(County); //取得監測站對應的編號
@@ -1352,13 +1400,14 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 					text: '以下為「'+County+'」監測站的詳細資訊'}));
 	
 	if(conv.screen){
-	conv.ask(new BasicCard({  
-	image: new Image({url:"https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN",alt:'Pictures',}),
-	title:'有效數據不足',
-	text:'設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或有效數據不足等需查修維護情形，以致資料暫時中斷服務。  \n  \nPM₁₀ '+PM10+'(μg/m³) • PM₂.₅ '+PM25+'(μg/m³) • 臭氧 '+O3+'(ppb)  \n**測站資訊發布時間** • '+FormatTime(),
-	display: 'CROPPED',
-		 })); 
-	 conv.ask(new Suggestions('把它加入日常安排'));}else{conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`);}
+		conv.ask(new BasicCard({  
+		image: new Image({url:"https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN",alt:'Pictures',}),
+		title:'有效數據不足',
+		text:'設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或有效數據不足等需查修維護情形，以致資料暫時中斷服務。  \n  \nPM₁₀ '+PM10+'(μg/m³) • PM₂.₅ '+PM25+'(μg/m³) • 臭氧 '+O3+'(ppb)  \n**測站資訊發布時間** • '+FormatTime(),
+		display: 'CROPPED',
+			 })); 
+		 conv.ask(new Suggestions('把它加入日常安排'));
+	 }else{conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`);}
 
 	  }
 
@@ -1440,22 +1489,19 @@ app.intent('空氣品質預報', (conv,{day_select}) => {
 	
 	for(i=0;i<day_array.length;i++){if(day_array[i]!==day_select){conv.ask(new Suggestions(day_array[i]+'呢?'));}}
 	
-	var report_array=[];
-	var array=["北部","竹苗","中部","雲嘉南","高屏","宜蘭","花東"];
-	for(i=0;i<array.length;i++)
-	{
-		if(final_data[i].AQI<=50){report_array.push({cells: [array[i],final_data[i].AQI,"──"],dividerAfter: false,})}
-		 else{report_array.push({cells: [array[i],final_data[i].AQI,final_data[i].Pollutant],dividerAfter: false,})}
-	}
-	
-	
     conv.ask(new SimpleResponse({ 
 			 speech: `<speak><p><s>根據環保署，${day_select}各地的預報資訊如下<break time="0.5s"/>${report_content}</s></p></speak>`,
 			   text: "台灣"+day_select+"各地的預報如下",}));
 	conv.ask(new Table({
 		title: day_title,
 		columns: [{header: '空品區',align: 'CENTER',},{header: 'AQI預報值',align: 'CENTER',},{header: '指標污染物',align: 'CENTER',},],
-		rows: report_array,
+		rows: [{cells: ["北部",final_data[0].AQI,final_data[0].Pollutant],dividerAfter: false,},
+				{cells: ["竹苗",final_data[1].AQI,final_data[1].Pollutant],dividerAfter: false,},
+				{cells: ["中部",final_data[2].AQI,final_data[2].Pollutant],dividerAfter: false,},
+				{cells: ["雲嘉南",final_data[3].AQI,final_data[3].Pollutant],dividerAfter: false,},
+				{cells: ["高屏",final_data[4].AQI,final_data[4].Pollutant],dividerAfter: false,},
+				{cells: ["宜蘭",final_data[5].AQI,final_data[5].Pollutant],dividerAfter: false,},
+				{cells: ["花東",final_data[6].AQI,final_data[6].Pollutant],dividerAfter: false,}],
 		buttons: new Button({
 			title: '三天空品區預報',
 			url: 'https://airtw.epa.gov.tw/CHT/Forecast/Forecast_3days.aspx', }),		

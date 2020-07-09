@@ -10,7 +10,8 @@ const functions = require('firebase-functions');
 const i18n = require('i18n');
 //const dialogflow = require('dialogflow');
 var geoTz = require('geo-tz');              //取得所在位置時區
-var checker = require('./timezone');
+var checker = require('./timezone.json');
+var defaults = require('./default.json');
 const replaceString = require('replace-string');
 
 process.env.DEBUG = 'dialogflow:*'; // enables lib debugging statements
@@ -23,7 +24,7 @@ const app = dialogflow({debug: true});
 //});
 
 i18n.configure({  
-  locales: ['zh-TW','en','en-US','zh-CN','zh-HK'],
+  locales: ['zh-TW','en','en-US','zh-CN','zh-HK','ja-JP'],
   directory: __dirname + '/locales',
   defaultLocale: 'en',
 });
@@ -96,11 +97,12 @@ lasttime=thistime;
 thistime=number;
 }
 
-function Time_suggestion(){
-  time = new Date();
-hour_now= time.getHours();	
-if((hour_now+UTCtime)<0){hour_now=hour_now+UTCtime+24;} else{hour_now=hour_now+UTCtime;} 
-hour_now=(hour_now)%24; // 判斷現在時間自動給予建議
+function Time_suggestion(UTCtime){
+	
+    var today = new Date();
+    var nowTime = today.getTime()+UTCtime*3600*1000;
+    today.setTime(parseInt(nowTime));
+	hour_now= today.getHours();	
      
 if(hour_now>=4&&hour_now<=8){      
       new Breakfast();
@@ -153,38 +155,17 @@ timezone=conv.user.storage.timezone;
 lasttime1=0;lasttime2=0;lasttime3=0;lasttime4=0;lasttime=0;
 
 if(timezone===undefined){
-if(conv.user.locale==='zh-TW'){timezone = "Asia/Taipei";} 
-	 else if(conv.user.locale==='en-US'){timezone = "America/New_York";} 
-     else if(conv.user.locale==='en-HK'){timezone = "Asia/Hong_Kong";} 
-     else if(conv.user.locale==='zh-HK'){timezone = "Asia/Hong_Kong";} 
-     else if(conv.user.locale==='zh-MO'){timezone = "Asia/Macau";} 
-     else if(conv.user.locale==='en-SG'){timezone = "Etc/GMT-8";} 
-     else if(conv.user.locale==='zh-SG'){timezone = "Etc/GMT-8";} 
-	 else if(conv.user.locale==='zh-CN'){timezone = "Asia/Shanghai";} 
-     else if(conv.user.locale==='en-AU'){timezone = "Australia/Sydney";} 
-     else if(conv.user.locale==='en-BZ'){timezone = "America/Belize";} 
-     else if(conv.user.locale==='en-CA'){timezone = "America/Toronto";} 
-     else if(conv.user.locale==='en-CB'){timezone = "Etc/GMT-4";} 
-     else if(conv.user.locale==='en-IE'){timezone = "Europe/Dublin";} 
-     else if(conv.user.locale==='en-JM'){timezone = "America/Jamaica";} 
-     else if(conv.user.locale==='en-NZ'){timezone = "Pacific/Auckland";} 
-     else if(conv.user.locale==='en-PH'){timezone = "Asia/Manila";} 
-     else if(conv.user.locale==='en-ZA'){timezone = "Africa/Windhoek";} 
-     else if(conv.user.locale==='en-TT'){timezone = "Etc/GMT-4";} 
-     else if(conv.user.locale==='en-GB'){timezone = "Europe/London";} 
-     else if(conv.user.locale==='en-ZW'){timezone = "Africa/Harare";} 
-	 else if(conv.user.locale==='en-IN'){timezone = "Asia/Kolkata";}
-	 else if(conv.user.locale==='en-BE'){timezone = "Europe/Brussels";}
-	 else{timezone = "Etc/GMT";
-		  conv.ask(i18n.__('Default_Location')+timezone+i18n.__('Defalt_Location_Hint'));  }
+  timezone = defaults[conv.user.locale];
+  if(timezone===undefined){
+	  timezone = "Etc/GMT";
+	  conv.ask(i18n.__('Default_Location')+timezone+i18n.__('Defalt_Location_Hint'));  }
     
      array=String(timezone).split("/");
-     UTC_Area=array[0];UTC_State=array[1];
-	 UTCtime=checker.timezonechecker(UTC_Area,UTC_State); //呼叫外面的判斷函示來決策現在時區數值
+	 UTCtime=checker[array[0]][array[1]]; //決策現在時區數值
 }
 
    tip=false; 
-   new Time_suggestion();//取得時間判斷
+   new Time_suggestion(UTCtime);//取得時間判斷
    new IconEarth();
      output_food=chosen;
    if (output_food==='丼飯'){output_food='動飯';}
@@ -255,6 +236,10 @@ lasttime=conv.user.storage.lasttime;
  sentense = [i18n.__('Q1'),i18n.__('Q2'),i18n.__('Q3'),i18n.__('Q4'),i18n.__('Q5'),i18n.__('Q6'),i18n.__('Q7'),i18n.__('Q8'),i18n.__('Q9')];
  answer = [i18n.__('A1'),i18n.__('A2'),i18n.__('A3'),i18n.__('A4'),i18n.__('A5'),i18n.__('A6'),i18n.__('A7'),i18n.__('A8'),i18n.__('A9')];
 
+if(conv.user.locale==="zh-HK"){
+if(input==="午餐"){input="食晏"}
+else if(input==="下午茶"){input="茶餐"}
+}
 
 if(input===i18n.__('Breakfast')){type=i18n.__('Breakfast');}
 else if(input===i18n.__('Lunch')){type=i18n.__('Lunch');}
@@ -346,37 +331,17 @@ answer = [i18n.__('A1'),i18n.__('A2'),i18n.__('A3'),i18n.__('A4'),i18n.__('A5'),
 output_answer= answer[random_choicer()];
 
 if( timezone=== undefined){
-     if(conv.user.locale==='zh-TW'){timezone = "Asia/Taipei";} 
-	 else if(conv.user.locale==='en-US'){timezone = "America/New_York";} 
-     else if(conv.user.locale==='en-HK'){timezone = "Asia/Hong_Kong";} 
-     else if(conv.user.locale==='zh-HK'){timezone = "Asia/Hong_Kong";} 
-     else if(conv.user.locale==='zh-MO'){timezone = "Asia/Macau";} 
-     else if(conv.user.locale==='en-SG'){timezone = "Etc/GMT-8";} 
-     else if(conv.user.locale==='zh-SG'){timezone = "Etc/GMT-8";} 
-	 else if(conv.user.locale==='zh-CN'){timezone = "Asia/Shanghai";} 
-     else if(conv.user.locale==='en-AU'){timezone = "Australia/Sydney";} 
-     else if(conv.user.locale==='en-BZ'){timezone = "America/Belize";} 
-     else if(conv.user.locale==='en-CA'){timezone = "America/Toronto";} 
-     else if(conv.user.locale==='en-CB'){timezone = "Etc/GMT-4";} 
-     else if(conv.user.locale==='en-IE'){timezone = "Europe/Dublin";} 
-     else if(conv.user.locale==='en-JM'){timezone = "America/Jamaica";} 
-     else if(conv.user.locale==='en-NZ'){timezone = "Pacific/Auckland";} 
-     else if(conv.user.locale==='en-PH'){timezone = "Asia/Manila";} 
-     else if(conv.user.locale==='en-ZA'){timezone = "Africa/Windhoek";} 
-     else if(conv.user.locale==='en-TT'){timezone = "Etc/GMT-4";} 
-     else if(conv.user.locale==='en-GB'){timezone = "Europe/London";} 
-     else if(conv.user.locale==='en-ZW'){timezone = "Africa/Harare";} 
-	 else if(conv.user.locale==='en-IN'){timezone = "Asia/Kolkata";}
-	 else if(conv.user.locale==='en-BE'){timezone = "Europe/Brussels";}
-	 else{timezone = "Etc/GMT";
-		  conv.ask(i18n.__('Default_Location')+timezone+i18n.__('Defalt_Location_Hint'));  }
+  timezone = defaults[conv.user.locale];
+  if(timezone===undefined){
+	  timezone = "Etc/GMT";
+	  conv.ask(i18n.__('Default_Location')+timezone+i18n.__('Defalt_Location_Hint'));  }
 		  
      array=String(timezone).split("/");
      UTC_Area=array[0];UTC_State=array[1];
-	 UTCtime=checker.timezonechecker(UTC_Area,UTC_State); //呼叫外面的判斷函示來決策現在時區數值
+	 UTCtime=checker[UTC_Area][UTC_State]; //呼叫外面的判斷函示來決策現在時區數值
 }
 
-	  new Time_suggestion();   new IconEarth();
+	  new Time_suggestion(UTCtime);   new IconEarth();
       chosen_link=chosen;
       if (output_food==='丼飯'){output_food='動飯';}
       else if (output_food==='刈包'){output_food='掛包';}
@@ -514,7 +479,7 @@ lasttime1=conv.user.storage.lasttime1;
   if (conv.arguments.get('NEW_SURFACE').status === 'OK') {
       chosen_link=chosen;
       
-	  if(conv.user.locale==="zh-HK"||conv.user.locale!=="zh-TW"){
+	  if(["zh-HK","zh-TW"].indexOf(conv.user.locale)!==-1){
 		type=replaceString(type, 'Breakfast', '早餐'); 
  		type=replaceString(type, 'Brunch', '早午餐'); 
 		type=replaceString(type, 'Lunch', '午餐'); 
@@ -577,7 +542,6 @@ conv.ask(new SimpleResponse({speech:`<speak><par><media soundLevel="+2dB"><speak
 conv.ask(new BasicCard({   
         title: i18n.__('TeachTitle'),
         subtitle:i18n.__('Hintsubtitle'),     
-        text: i18n.__('Hinttext'), 
         }));
   conv.ask(new Suggestions(i18n.__('Help_suggest',I_think),i18n.__('Menu')));
   tip=false; 
@@ -621,36 +585,29 @@ app.intent('回傳資訊', (conv, params, permissionGranted)=> {
             const coordinates = conv.device.location.coordinates;
             // const city=conv.device.location.city;
             if (coordinates) {
+				sign='';
 				time = new Date();
 				timezone=geoTz(String(coordinates.latitude),String(coordinates.longitude));
 				array=String(timezone).split("/");
                 UTC_Area=array[0];UTC_State=array[1];
-                UTCtime=checker.timezonechecker(UTC_Area,UTC_State); //呼叫外面的判斷函示來決策現在時區數值
-				hour_now= time.getHours();	
-				userId =  conv.user.id;
-			    UTC_State=replaceString(UTC_State, '_', ' '); //消除輸入字串中的空格
-
-				if(parseInt(time.getUTCMinutes())<=9){minute='0';}else{minute='';}
+                UTCtime=checker[UTC_Area][UTC_State]; //呼叫外面的判斷函示來決策現在時區數值
+				var today = new Date();
+				var nowTime = today.getTime()+UTCtime*3600*1000;
+				today.setTime(parseInt(nowTime));
+				hour_now= today.getHours();	
+				var oMinute=time.getUTCMinutes().toString();
+				if (oMinute.length <= 1) oMinute = '0' + oMinute;
 				
-                if((hour_now+UTCtime)<0){hour_now=hour_now+UTCtime+24;} else{hour_now=hour_now+UTCtime;}    
+				conv.ask(new SimpleResponse({speech:i18n.__('LocationOutput',String(UTC_Area+' '+UTC_State),hour_now%24,oMinute),text:i18n.__('Locationshow')}));                 
 				
-				conv.ask(new SimpleResponse({speech:i18n.__('LocationOutput',String(UTC_Area+' '+UTC_State),hour_now%24,time.getUTCMinutes()),text:i18n.__('Locationshow')}));                 
-				
-				if(UTCtime>=0){sign='+';}else{sign='';}
+				if(UTCtime>=0){sign='+';}
 				conv.ask(new BasicCard({   
                 title:String(UTC_Area)+'/'+String(UTC_State),
-				subtitle:i18n.__('LocationSubTitle')+sign+UTCtime+i18n.__('Localtime')+(hour_now%24)+':'+minute+(time.getUTCMinutes()),
+				subtitle:i18n.__('LocationSubTitle',sign+UTCtime)+i18n.__('Localtime')+(hour_now%24)+':'+oMinute,
                 text:i18n.__('LocationText'),   
                  }));	
-             	
-			  function writeUserData(userId, UTCtime, timezone) {
- 			    firebase.database().ref('user/' + userId).set({
-			    UTCtime: UTCtime,
- 	            timezone: timezone,
- 			 });
-			}
 			
-			new Time_suggestion();
+			new Time_suggestion(UTCtime);
 	      conv.ask(new Suggestions(icon+i18n.__('Another',type)));
            			
 		  } else {

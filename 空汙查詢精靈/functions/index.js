@@ -126,7 +126,7 @@ function air_report_set(){
 
 //Promise B:取得測站資料
   data_get=new Promise(function(resolve,reject){
-	getJSON('https://data.epa.gov.tw/api/v1/aqx_p_432?format=json&limit=100&api_key=e44e7dd6-8d7a-433d-9fe6-8327b8dcfcad').then(function(response) {
+	getJSON('https://data.epa.gov.tw/api/v1/aqx_p_432?format=json&limit=100&api_key=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx').then(function(response) {
 		resolve(response.records)
        }).catch(function(error) {reject(new Error('資料獲取失敗'))});
 	});

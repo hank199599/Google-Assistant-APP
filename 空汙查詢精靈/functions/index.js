@@ -20,6 +20,7 @@ var option_list=require("./option.json");
 var keyword_list=require("./keywords.json");
 var mobile_display=require("./mobile.json");
 var suggest_list=require("./suggest.json");
+var explain_list=require("./explain.json");
 let serviceAccount = require("./config/b1a2b-krmfch-firebase-adminsdk-1tgdm-7347f3fed7.json");
 
 	admin.initializeApp({
@@ -832,7 +833,7 @@ app.intent('直接查詢', (conv,{station}) => {
 	PM10_list=final_data.PM10;
 	PM25_list=final_data.PM25;
 	O3_list=final_data.O3;
-	station_array=final_data.SiteName
+	station_array=final_data.SiteName;
 	
 	if(indexnumber=station_array.indexOf(station)===-1){
 			
@@ -964,40 +965,16 @@ app.intent('從風向看空氣品質', (conv,{Wind_direction}) => {
 	else if(conv.input.raw.indexOf('背風渦旋')!==-1){Wind_direction="背風渦旋";}
 
 	if(direction_array.indexOf(Wind_direction)!==-1){
-	if(Wind_direction==="東北風"){
-	explation="此類風向盛行於冬季，且風力相對較強。\n中部以北及東半部擴散條件相對較佳，空氣污染相對集中於高屏地區。"
-	picture="https://airtw.epa.gov.tw/images/indexHashtag/indexHashtag_1.jpg";}
-	else if(Wind_direction==="偏東風"){
-	explation="在高壓出海轉高壓迴流期間，臺灣附近風向逐漸由東北風轉為偏東風。\n該風向容易因臺灣地形產生「地形繞流」。 \n此現象容易在臺灣海峽上產生一背風渦旋， \n它可能將原已擴散至海面上的污染物又再度帶往陸地，易使局部地區空氣污染物濃度上升。"
-	picture="https://airtw.epa.gov.tw/images/indexHashtag/indexHashtag_3.jpg";}
-	else if(Wind_direction==="偏南風"){
-	explation="較常發生於夏半季，當臺灣附近風向為南風、南南東風或偏南風時，高屏及雲嘉南空氣品質通常較中部以北良好。\n此外，當高屏地區在較強的南風吹拂之下，高屏溪易有揚塵現象發生。"
-	picture="https://airtw.epa.gov.tw/images/indexHashtag/indexHashtag_5.jpg";}
-	else if(Wind_direction==="西南風"){
-	explation="夏季盛行的西南風通常夾帶較多水氣。\n普遍來說高屏及雲嘉南位於上風處且易有降水現象，因此空氣品質良好。\n而北部位於下風處，污染物易累積於此，相對之下空氣品質較差。"
-	picture="https://airtw.epa.gov.tw/images/indexHashtag/indexHashtag_6.jpg";}
-    else if(Wind_direction==="偏西風"){
-	explation="當臺灣附近風場為西風或偏西風時，\n西半部的空氣污染物不易往海面上移動、擴散，反而往中央山脈及內陸區域堆積，\n因此在此型態風場，西半部空氣品質相對差。\n而宜蘭位於背風側且風力通常偏弱不利污染物擴散，空氣品質也略差。"
-	picture="https://airtw.epa.gov.tw/images/indexHashtag/indexHashtag_7.jpg";}
-    else if(Wind_direction==="背風面"){
-	explation="當風遇到地形阻擋時，地形正對風向的一側稱為迎風面，背對風向的一側稱為背風面。迎風面空氣流動較佳，大氣擴散條件較好，有相對好的空氣品質；背風面則因空氣流動較少，擴散條件相對較差。"
-	picture="https://airtw.epa.gov.tw/images/pedia/pedia2_6_1.png";}
-    else if(Wind_direction==="下風處"){
-	explation="在空氣品質的探討中，粒狀污染物隨空氣流動、並隨著風吹往下風處，當下風處位於內陸、靠山區或是擴散條件較差時，粒狀污染物容易累積，使空氣品質相對於上風處較差。"
-	picture="https://airtw.epa.gov.tw/images/pedia/pedia2_6_2.png";}
-	else if(Wind_direction==="弱風環境"){
-	explation="當大氣中風速偏弱時，空氣流動較差，若有空氣污染物排放源，則使當地較易累積污染物。"
-	picture="https://airtw.epa.gov.tw/images/pedia/pedia2_6_3.png";}
-	else if(Wind_direction==="背風渦旋"){
-	explation="當氣流遇山脈或地形阻擋時，在山的背風面容易形成渦旋，渦旋的方向則不一定。當背風渦旋出現時，污染物常隨著氣流繞進此渦旋，造成污染物易累積。"
-	picture="https://airtw.epa.gov.tw/images/pedia/pedia2_6_4.png";}
+
+	explation=explain_list[Wind_direction][0];
+	picture=explain_list[Wind_direction][1];
 
 	conv.ask(new SimpleResponse({               
 				  speech: `<speak><p><s>以下是環保署對${Wind_direction}與空氣品質關聯性的說明</s><break time="1s"/><s>${replaceString(explation, '\n', '')}</s></p></speak>`,
-				  text: '以下為詳細說明。'}));
+				  text: '以下是環保署的解說'}));
     conv.ask(new BasicCard({  
 			image: new Image({url:picture,alt:'Pictures',}),
-			title:Wind_direction,
+			title:Wind_direction,display: 'CROPPED',
 			subtitle:explation,
 			text:"Ⓒ 圖文資訊來自 行政院環境保護署 **《空品小百科》**"})); 
 			
@@ -1022,33 +999,20 @@ app.intent('污染物特性及影響要素', (conv,{Pollutant_type}) => {
 
 	var explation="";
 	if(pollutant_array.indexOf(Pollutant_type)!==-1){
-	if(Pollutant_type==="河川揚塵"){
-	explation="當河道水位降低出現河床裸露，此時河床上細小的顆粒容易被風揚起，形成揚塵現象，進而影響當地以及下風處的空氣品質。河川揚塵好發時間通常在白天中午至傍晚風速較強的時段，當河川揚塵發生時，空氣污染物濃度可能在短時間內快速上升，但當風速減弱時，污染物濃度則又隨即降低。";
-	picture="https://airtw.epa.gov.tw/images/indexHashtag/indexHashtag_20.jpg";}
-	else if(Pollutant_type==="光化反應"){
-	explation="人為排放的氮氧化物及易揮發性的有機物等空氣污染物因大氣中光化學作用生成臭氧等衍生性空氣污染物，光化反應產生與否與紫外線強度有關，當白天雲量偏多則不利於光化反應作用，反之雲量偏少則有利於光化反應產生，特別是在炎熱、陽光普照的情況之下，會使空氣中的臭氧濃度升高，進而影響空氣品質。";
-	picture="https://airtw.epa.gov.tw/images/indexHashtag/indexHashtag_21.jpg";}
-	else if(Pollutant_type==="境外汙染"){
-	explation="由於臺灣位於東亞大陸空氣污染物傳輸路徑上，當東北季風盛行時，常夾帶上游的空氣污染物透過長程傳輸經過臺灣地區，進而影響臺灣的空氣品質。";
-	picture="https://airtw.epa.gov.tw/images/pedia/pedia3_3_1.png";}
-	else if(Pollutant_type==="降雨洗除作用"){
-	explation="大氣中空氣污染物濃度因降落的雨滴洗除，但降低程度仍會受降雨強度、降雨延時、風速或附近有無污染排放等因素而定。";
-	picture="https://airtw.epa.gov.tw/images/indexHashtag/indexHashtag_10.jpg";}
-	else if(Pollutant_type==="混合層高度"){
-	explation="混合層高度是指空氣污染物在混合層中垂直方向可擴散的高度，可表達環境大氣對空氣污染物傳輸與擴散的效果，白天溫度較高，垂直對流混合的範圍較大，使混合層高度較高，表示空氣中的污染物可擴散的垂直範圍愈大，愈容易被大氣所稀釋，因此有助於降低近地面的污染物濃度，反之夜間因溫度較低，垂直混合程度較低，因此混合層高度低，不易將污染物向垂直方向擴散。";
-	picture="https://airtw.epa.gov.tw/images/indexHashtag/indexHashtag_22.png";}
-	else{
-	explation="若近地面有沉降氣流或是沉降逆溫時，則表示大氣垂直擴散條件不佳，污染物容易累積於近地面造成濃度上升。最常見的氣流下沉運動是當高壓籠罩或是颱風的氣流所造成的過山沉降，下沉運動可抑制垂直對流，使天氣較為穩定，大氣穩定度較高，因此擴散條件也相對較差。";
-	picture="https://airtw.epa.gov.tw/images/indexHashtag/indexHashtag_19.jpg";}
+		
+	explation=explain_list[Pollutant_type][0];
+	picture=explain_list[Pollutant_type][1];
 
 	conv.ask(new SimpleResponse({               
 				  speech: `<speak><p><s>以下是環保署對${Pollutant_type}與空氣品質關聯性的說明</s><break time="1s"/><s>${replaceString(explation, '\n', '')}</s></p></speak>`,
-	  text: '以下為詳細說明。'}));    conv.ask(new BasicCard({  
+				  text: '以下是環保署的解說'}));
+	conv.ask(new BasicCard({  
 			image: new Image({url:picture,alt:'Pictures',}),
-			title:Pollutant_type,
-	subtitle:explation,
-	text:"Ⓒ 圖文資訊來自 行政院環境保護署 **《空品小百科》**"})); 
-		conv.ask(new Suggestions('說明其他汙染因素',eicon[parseInt(Math.random()*2)]+'最近的測站','🔎依區域查詢','👋 掰掰'));
+			title:Pollutant_type,display: 'CROPPED',
+			subtitle:explation,
+			text:"Ⓒ 圖文資訊來自 行政院環境保護署 **《空品小百科》**"})); 
+			
+	conv.ask(new Suggestions('說明其他汙染因素',eicon[parseInt(Math.random()*2)]+'最近的測站','🔎依區域查詢','👋 掰掰'));
 
 	}
 	else{
@@ -1213,7 +1177,7 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 	PM10_list=final_data.PM10;
 	PM25_list=final_data.PM25;
 	O3_list=final_data.O3;
-	station_array=final_data.SiteName
+	station_array=final_data.SiteName;
 
 	conv.noInputs = ["抱歉，我沒聽輕楚。請再問一次","請試著問我要查詢的縣市列表，例如、"+county_array[parseInt(Math.random()*48)]+"空氣品質如何?","很抱歉，我幫不上忙"];	   
 
@@ -1271,6 +1235,9 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 		  description: '鳳山、復興、前鎮  \n小港、大寮、林園',
 		},  },}));  
 	  }
+	 if(County!=="undefined"){conv.ask(new Suggestions('回主頁面'));}
+	 conv.ask(new Suggestions('👋 掰掰'));
+
 	} 
 	else if(request_array.indexOf(County)!==-1){
 
@@ -1279,7 +1246,7 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 	if(conv.screen){conv.ask(new SimpleResponse({               
 							speech: `<speak><p><s>以下是${County}的監測站列表!<break time="0.5s"/>請查看</s></p></speak>`,
 							text: '以下是「'+County+'」的測站列表'}));}
-    else{conv.ask(new SimpleResponse(`<speak><p><s>以下是${County}的監測站列表</s><s>選項有以下幾個<break time="0.5s"/>${replaceString(option_list[County], ',', '<break time="0.25s"/>')}<break time="1s"/>請選擇。</s></p></speak>`));}
+    else{conv.ask(new SimpleResponse(`<speak><p><s>以下是${County}的監測站列表</s><s>選項有以下幾個<break time="0.5s"/>${replaceString(option_list[County], '、', '<break time="0.25s"/>')}<break time="1s"/>請選擇。</s></p></speak>`));}
 
 	var the_array=option_list[County].split('、');
 	var county_list={};
@@ -1325,7 +1292,9 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 	}));
 	
 	if(suggest_list[County]!==undefined){conv.ask(new Suggestions('查看'+suggest_list[County]));}
-  
+    if(County!=="undefined"){conv.ask(new Suggestions('回主頁面'));}
+	 conv.ask(new Suggestions('👋 掰掰'));
+
 	}	 
 	else if(station_array.indexOf(County)!==-1){
 	indexnumber=station_array.indexOf(County); //取得監測站對應的編號
@@ -1372,7 +1341,7 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 	conv.ask(new SimpleResponse({               
 				  speech: `<speak><p><s>根據最新資料顯示，${County}監測站的AQI指數為${AQI}</s><s>您可放心出外活動!</s></p></speak>`,
 			  text: '以下為該監測站的詳細資訊，\n您可放心出外活動!'}));   }
-	else if(AQI>50){
+	else {
 	   conv.ask(new SimpleResponse({               
 	  speech: `<speak><p><s>根據最新資料顯示，${County}監測站的AQI指數為${AQI}</s><s>主要汙染源來自${replaceString(Pollutant, '八小時', '')}</s><s>${info}</s></p></speak>`,
 			  text: '以下為該監測站的詳細資訊'})); }
@@ -1391,7 +1360,8 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 			title:County,
 			subtitle:output_title,
 			text:info_output+'  \n  \nPM₁₀ '+PM10+'(μg/m³) • PM₂.₅ '+PM25+'(μg/m³) • 臭氧 '+O3+'(ppb)  \n**測站資訊發布時間** • '+FormatTime(),})); 
-		conv.ask(new Suggestions('把它加入日常安排'));}
+		 conv.ask(new Suggestions('把它加入日常安排'));
+		}
 	else{conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`);}
 
 	  }else{
@@ -1407,9 +1377,13 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 		display: 'CROPPED',
 			 })); 
 		 conv.ask(new Suggestions('把它加入日常安排'));
+
 	 }else{conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`);}
 
 	  }
+
+	 if(County!=="undefined"){conv.ask(new Suggestions('回主頁面'));}
+     conv.ask(new Suggestions('👋 掰掰'));
 
 	 }else{
 	  
@@ -1446,10 +1420,11 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 		  title: '行動測站',
 		  description: '環保署因應需求設置  \n可能隨時間發生變動', },	},}));
 	 if(conv.screen){
-	 conv.ask(new Suggestions(eicon[parseInt(Math.random()*2)]+'最近的測站'));}
-	 }
+	 conv.ask(new Suggestions(eicon[parseInt(Math.random()*2)]+'最近的測站'));
 	 if(County!=="undefined"){conv.ask(new Suggestions('回主頁面'));}
 	 conv.ask(new Suggestions('👋 掰掰'));
+	}
+ }
      conv.user.storage.choose_station=County;
      conv.data.choose_station=County;
 

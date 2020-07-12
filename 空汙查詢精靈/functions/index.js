@@ -154,7 +154,7 @@ function air_report_set(){
 	PM10_list=PM10_list_update;
 	PM25_list=PM25_list_update;
 	O3_list=O3_list_update;
-	station_array=Sitename_list_update
+	station_array=Sitename_list_update;
 	
    }).catch(function (error) {
 	   	database.ref('/TWair').on('value',e=>{
@@ -163,6 +163,7 @@ function air_report_set(){
 		PM10_list=e.val().PM10;
 		PM25_list=e.val().PM25;
 		O3_list=e.val().O3;
+		station_array=e.val().SiteName;
 		});
    });
   }
@@ -320,6 +321,7 @@ app.intent('預設歡迎語句', (conv) => {
 		O3_list=e.val().O3;
 		day2_report=e.val().tomorrow;
 		day3_report=e.val().aftertomorrow;
+		station_array=e.val().SiteName;
 		});
   });
 
@@ -380,6 +382,7 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 	O3_list=final_data.O3;
 	day2_report=final_data.tomorrow;
 	day3_report=final_data.aftertomorrow;
+	station_array=e.val().SiteName;
 	
    if(conv.input.raw.indexOf('最近')!==-1||conv.input.raw.indexOf('附近')!==-1){option="🌎 最近的測站";}
 	else if(conv.input.raw.indexOf('台東')!==-1||conv.input.raw.indexOf('臺東')!==-1){option="臺東";}

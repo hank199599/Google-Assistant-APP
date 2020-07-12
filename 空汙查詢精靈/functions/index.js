@@ -359,6 +359,7 @@ app.intent('依區域查詢', (conv) => {
 		  description: '澎湖縣、金門縣、\n連江縣',},
 	    '行動測站': {
 		  title: '行動測站',
+          synonyms: ['行動','移動'],
 		  description: '環保署因應需求設置  \n可能隨時間發生變動', },
 		},}));
 	 conv.ask(new Suggestions(eicon[parseInt(Math.random()*2)]+'最近的測站','語音查詢範例','今天的數值預報','風向對空污的影響','污染物影響要素','👋 掰掰'));
@@ -382,7 +383,7 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 	O3_list=final_data.O3;
 	day2_report=final_data.tomorrow;
 	day3_report=final_data.aftertomorrow;
-	station_array=e.val().SiteName;
+	station_array=final_data.SiteName;
 	
    if(conv.input.raw.indexOf('最近')!==-1||conv.input.raw.indexOf('附近')!==-1){option="🌎 最近的測站";}
 	else if(conv.input.raw.indexOf('台東')!==-1||conv.input.raw.indexOf('臺東')!==-1){option="臺東";}
@@ -564,8 +565,8 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 			var status_temp=status_generator(parseInt(aqi_temp));
 			
 			mobile_list[mobile_array[i]]={ title: mobile_array[i],
-						       description: status_temp,
-						       image: new Image({url: pic_url,alt: 'Image alternate text',}),}
+										   description: status_temp,
+										   image: new Image({url: pic_url,alt: 'Image alternate text',}),}
 		}  
 	  }
 	  conv.ask(new Carousel({

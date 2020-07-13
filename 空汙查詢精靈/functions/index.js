@@ -57,6 +57,7 @@ var pollutant_array=["河川揚塵","光化反應","境外汙染","降雨洗除�
 var weekdays = "日,一,二,三,四,五,六".split(",");
 var day_array=["今天","明天","後天"];
 var key_array=["東北季風","東北風","東北東風","偏北風","偏東風","偏西風","偏南風","西南季風","南風","南南東風","背風","下風","弱風","背風渦旋","揚塵","光化","境外","降雨","混合層高度","垂直擴散","沉降作用"];
+var area_array=["北部","竹苗","中部","雲嘉南","高屏","宜蘭","花東"];
 var eicon=["🌍 ","🌎 ","🌏 "];
 var output_title="";
 var origin_report="";
@@ -122,7 +123,7 @@ function air_report_set(){
 	hour_now= (time.getHours()+8)%24;
 	minute_now=time.getMinutes();
 	
-  if(minute_now>=0&&minute_now<=25){
+  if(minute_now<=25){
 
 //Promise B:取得測站資料
   data_get=new Promise(function(resolve,reject){
@@ -171,19 +172,18 @@ function air_report_set(){
 
 function predict(input){
 	
-	var array=["北部","竹苗","中部","雲嘉南","高屏","宜蘭","花東"];
 	var k=0;
 	var array1=[];	var array2=[];	var array3=[];
 	var array4=[];	var array5=[];	var array6=[];
 	var temp="";
 	
-	for(k=0;k<array.length;k++){
-		if(input[k].AQI>=0&&input[k].AQI<=50){array1.push(array[k])}
-		else if(input[k].AQI>=51&&input[k].AQI<=100){array2.push(array[k])}
-		else if(input[k].AQI>=100&&input[k].AQI<=150){array3.push(array[k])}
-		else if(input[k].AQI>=151&&input[k].AQI<=199){array4.push(array[k])}
-		else if(input[k].AQI>=200&&input[k].AQI<=300){array5.push(array[k])}
-		else if(input[k].AQI>301){array6.push(array[k])}
+	for(k=0;k<area_array.length;k++){
+		if(input[k].AQI>=0&&input[k].AQI<=50){array1.push(area_array[k])}
+		else if(input[k].AQI>=51&&input[k].AQI<=100){array2.push(area_array[k])}
+		else if(input[k].AQI>=100&&input[k].AQI<=150){array3.push(area_array[k])}
+		else if(input[k].AQI>=151&&input[k].AQI<=199){array4.push(area_array[k])}
+		else if(input[k].AQI>=200&&input[k].AQI<=300){array5.push(area_array[k])}
+		else if(input[k].AQI>301){array6.push(area_array[k])}
 	}
 	if(array1.length!==0){temp=temp+array1+"空品區為良好等級，";}
 	if(array2.length!==0){temp=temp+array2+"空品區為普通等級，";}
@@ -211,7 +211,7 @@ app.intent('預設歡迎語句', (conv) => {
 	hour_now= (time.getHours()+8)%24;
 	minute_now=time.getMinutes();
 	
-	if(minute_now<15){
+	if(minute_now<59){
 	
     request('https://airtw.epa.gov.tw/CHT/Forecast/Forecast_3days.aspx', function(err, response, body){
 		if( !err && response.statusCode == 200 ){
@@ -225,7 +225,7 @@ app.intent('預設歡迎語句', (conv) => {
 		var aqi_temp=$('#CPH_Content_hf_DT').val();
         var FCJsonObj = JSON.parse(aqi_temp.replace(/\r\n|\n/g, ""));
 		
-		if(hour_now===0){
+		if([0,7,12,17,22].indexOf(hour_now)!==-1){
 		//if(minute_now<59){
 		var i=0;
 		var return_array1=[];
@@ -359,7 +359,6 @@ app.intent('依區域查詢', (conv) => {
 		  description: '澎湖縣、金門縣、\n連江縣',},
 	    '行動測站': {
 		  title: '行動測站',
-          synonyms: ['行動','移動'],
 		  description: '環保署因應需求設置  \n可能隨時間發生變動', },
 		},}));
 	 conv.ask(new Suggestions(eicon[parseInt(Math.random()*2)]+'最近的測站','語音查詢範例','今天的數值預報','風向對空污的影響','污染物影響要素','👋 掰掰'));
@@ -555,7 +554,7 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 	  else{conv.ask(`<speak><p><s>抱歉，在目前對話的裝置上不支援搜尋「行動測站」</s><s>請試著提問來查詢縣市列表</s></p></speak>`);}
 		 
 		var mobile_list={};
-		console.log("mobile_array"+mobile_array)
+		//console.log("mobile_array"+mobile_array)
 	 for(i=0;i<mobile_array.length;i++)
 	  {	
 		var num=station_array.indexOf(mobile_array[i]);
@@ -565,8 +564,8 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 			var status_temp=status_generator(parseInt(aqi_temp));
 			
 			mobile_list[mobile_array[i]]={ title: mobile_array[i],
-										   description: status_temp,
-										   image: new Image({url: pic_url,alt: 'Image alternate text',}),}
+						       description: status_temp,
+						       image: new Image({url: pic_url,alt: 'Image alternate text',}),}
 		}  
 	  }
 	  conv.ask(new Carousel({
@@ -602,7 +601,7 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 	if(mobile_display[option]!==undefined){
 		
 		the_array=mobile_display[option];
-		console.log(the_array)
+		//console.log(the_array)
 		for(i=0;i<the_array.length;i++)
 		  {	
 			    var num=station_array.indexOf(the_array[i]);
@@ -891,7 +890,7 @@ app.intent('直接查詢', (conv,{station}) => {
 	else if(AQI>50){
 	   conv.ask(new SimpleResponse({               
 	  speech: `<speak><p><s>根據最新資料顯示，${station}監測站的AQI指數為${AQI}</s><s>主要汙染源來自${replaceString(Pollutant, '八小時', '')}</s><s>${info}</s></p></speak>`,
-			  text: '以下為該監測站的詳細資訊。'}));}
+			  text: '以下為該監測站的詳細資訊'}));}
 
     output_title=Status;
 	if(AQI>50){
@@ -1270,7 +1269,7 @@ app.intent('直接查詢縣市選單', (conv, {County}) => {
 	if(mobile_display[County]!==undefined){
 		
 		the_array=mobile_display[County];
-		console.log(the_array)
+		//console.log(the_array)
 		for(i=0;i<the_array.length;i++)
 		  {	
 			    var num=station_array.indexOf(the_array[i]);
@@ -1468,19 +1467,20 @@ app.intent('空氣品質預報', (conv,{day_select}) => {
 	
 	for(i=0;i<day_array.length;i++){if(day_array[i]!==day_select){conv.ask(new Suggestions(day_array[i]+'呢?'));}}
 	
+	var display_report=[];
+	for(i=0;i<area_array.length;i++)
+	{
+		if(final_data[i].AQI<=50){display_report.push({cells: [area_array[i],final_data[i].AQI,"──"],dividerAfter: false,})}
+		else{display_report.push({cells: [area_array[i],final_data[i].AQI,final_data[i].Pollutant],dividerAfter: false,})}
+	}
+	
     conv.ask(new SimpleResponse({ 
 			 speech: `<speak><p><s>根據環保署，${day_select}各地的預報資訊如下<break time="0.5s"/>${report_content}</s></p></speak>`,
 			   text: "台灣"+day_select+"各地的預報如下",}));
 	conv.ask(new Table({
 		title: day_title,
 		columns: [{header: '空品區',align: 'CENTER',},{header: 'AQI預報值',align: 'CENTER',},{header: '指標污染物',align: 'CENTER',},],
-		rows: [{cells: ["北部",final_data[0].AQI,final_data[0].Pollutant],dividerAfter: false,},
-				{cells: ["竹苗",final_data[1].AQI,final_data[1].Pollutant],dividerAfter: false,},
-				{cells: ["中部",final_data[2].AQI,final_data[2].Pollutant],dividerAfter: false,},
-				{cells: ["雲嘉南",final_data[3].AQI,final_data[3].Pollutant],dividerAfter: false,},
-				{cells: ["高屏",final_data[4].AQI,final_data[4].Pollutant],dividerAfter: false,},
-				{cells: ["宜蘭",final_data[5].AQI,final_data[5].Pollutant],dividerAfter: false,},
-				{cells: ["花東",final_data[6].AQI,final_data[6].Pollutant],dividerAfter: false,}],
+		rows:display_report,
 		buttons: new Button({
 			title: '三天空品區預報',
 			url: 'https://airtw.epa.gov.tw/CHT/Forecast/Forecast_3days.aspx', }),		

@@ -15,7 +15,7 @@
   
 立即試用
 -------
-###### *本服務支援中文、廣東話(香港)、日文及英文*  
+###### *本服務支援中文、廣東話(香港)、日文、韓文、泰文、法文、德文、丹麥文、荷蘭文、西班牙文、英文*  
 ◆ [於Google助理上試用](https://assistant.google.com/services/invoke/uid/00000038183bf1fb)
   
 ◆ [Google助理上的說明頁面](https://assistant.google.com/services/a/uid/00000038183bf1fb)

@@ -1,0 +1,100 @@
+{
+	"Northen": {
+		"臺北市": {
+			"title": "臺北市",
+			"description": "Taipei City"
+		},
+		"新北市": {
+			"title": "新北市",
+			"description": "New Taipei City"
+		},
+		"基隆市": {
+			"title": "基隆市",
+			"description": "Kelling City"
+		},
+		"桃園市": {
+			"title": "桃園市",
+			"description": "Taoyuan City"
+		},
+		"新竹縣": {
+			"title": "新竹縣",
+			"description": "Hsinchu County"
+		},
+		"新竹市": {
+			"title": "新竹市",
+			"description": "Hsinchu City"
+		}
+	},
+	"Central": {
+		"苗栗縣": {
+			"title": "苗栗縣",
+			"description": "Miaoli County"
+		},
+		"臺中市": {
+			"title": "臺中市",
+			"description": "Taichung City"
+		},
+		"彰化縣": {
+			"title": "彰化縣",
+			"description": "Changhua County"
+		},
+		"南投縣": {
+			"title": "南投縣",
+			"description": "Nantou County"
+		},
+		"雲林縣": {
+			"title": "雲林縣",
+			"description": "Yunlin County"
+		}
+	},
+	"Southen": {
+		"嘉義縣": {
+			"title": "嘉義縣",
+			"description": "Chiayi County"
+		},
+		"嘉義市": {
+			"title": "嘉義市",
+			"description": "Chiayi City"
+		},
+		"臺南市": {
+			"title": "臺南市",
+			"description": "Tainan City"
+		},
+		"高雄市": {
+			"title": "高雄市",
+			"description": "Kaohsiung City"
+		},
+		"屏東縣": {
+			"title": "屏東縣",
+			"description": "Pingtung County"
+		}
+	},
+	"East": {
+		"宜蘭縣": {
+			"title": "宜蘭縣",
+			"description": "Yilan County"
+		},
+		"花蓮縣": {
+			"title": "花蓮縣",
+			"description": "Hualien County"
+		},
+		"臺東縣": {
+			"title": "臺東縣",
+			"description": "Taitung County"
+		}
+	},
+	"Outlying_island": {
+		"澎湖縣": {
+			"title": "澎湖縣",
+			"description": "Penghu County"
+		},
+		"金門縣": {
+			"title": "金門縣",
+			"description": "Kinmen County"
+		},
+		"連江縣": {
+			"title": "連江縣",
+			"description": "Lienchiang County"
+		}
+	}
+}

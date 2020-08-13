@@ -2,7 +2,7 @@
   
 說明
 -------
-使用來自[APOD](https://apod.nasa.gov/)之每日天文資訊。  
+使用來自[APOD(Astronomy Picture of the Day)](https://apod.nasa.gov/)之每日天文資訊。  
 提供使用者在百忙中隨時補充天文小知識!。 
  
 立即試用

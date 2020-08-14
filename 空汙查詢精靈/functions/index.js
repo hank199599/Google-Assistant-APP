@@ -70,7 +70,7 @@ var download_data = {};
 
 function air_report_set() {
 
-	i = 0; Pollutant_list_update = []; AQI_list_update = []; PM25_list_update = []; PM10_list_update = []; O3_list_update = []; Sitename_list_update = [];
+	i = 0;  Sitename_list_update = []; var output = {};
 
 	//取得概況報告
 	time = new Date();
@@ -86,10 +86,7 @@ function air_report_set() {
 			}).catch(function (error) { reject(new Error('資料獲取失敗')) });
 		});
 
-		//取得各測站詳細資訊
-
-		var output = {};
-
+		//取得各測站詳細資訊，並加以梳理後儲存到Firebase
 		data_get.then(function (origin_data) {
 			for (i = 0; i < origin_data.length; i++) {
 				output[origin_data[i].SiteName] = {

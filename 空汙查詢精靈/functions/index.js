@@ -70,7 +70,7 @@ var download_data = {};
 
 function air_report_set() {
 
-	i = 0; Pollutant_list_update = []; AQI_list_update = []; PM25_list_update = []; PM10_list_update = []; O3_list_update = []; Sitename_list_update = [];
+	i = 0;  Sitename_list_update = []; var output = {};
 
 	//取得概況報告
 	time = new Date();
@@ -86,9 +86,7 @@ function air_report_set() {
 			}).catch(function (error) { reject(new Error('資料獲取失敗')) });
 		});
 
-		//取得各測站詳細資訊
-
-		var output = {};
+		//取得各測站詳細資訊，並加以梳理後儲存到Firebase
 
 		data_get.then(function (origin_data) {
 			for (i = 0; i < origin_data.length; i++) {
@@ -243,7 +241,7 @@ app.intent('預設歡迎語句', (conv) => {
 
 			}
 			database.ref('/TWair').on('value', e => {
-				download_data = final_data.data;
+				download_data = e.val().data;
 				station_array = e.val().SiteName;
 			});
 		});
@@ -783,11 +781,7 @@ app.intent('取得地點權限', (conv) => {
 	conv.data.requestedPermission = 'DEVICE_PRECISE_LOCATION';
 
 	database.ref('/TWair').on('value', e => {
-		Pollutant_list = e.val().Pollutant;
-		AQI_list = e.val().AQI;
-		PM10_list = e.val().PM10;
-		PM25_list = e.val().PM25;
-		O3_list = e.val().O3;
+		download_data = e.val().data;
 		station_array = e.val().SiteName;
 	});
 

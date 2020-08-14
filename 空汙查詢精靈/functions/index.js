@@ -24,6 +24,7 @@ var explain_list = require("./explain.json");
 var county_options = require("./county_list.json");
 let serviceAccount = require("./config/b1a2b-krmfch-firebase-adminsdk-1tgdm-7347f3fed7.json");
 var functions_fetch = require("./fetch.js");
+var options_county = require("./options_county.json");
 
 admin.initializeApp({
 	credential: admin.credential.cert(serviceAccount),
@@ -34,7 +35,7 @@ const database = admin.database();
 
 var picture = "";
 var picurl1 = ""; var picurl2 = ""; var picurl3 = "";
-var status1 = ""; var status2 = ""; var status3 = ""; 
+var status1 = ""; var status2 = ""; var status3 = "";
 var AQI1 = ""; var AQI2 = ""; var AQI3 = "";
 var station_array = ["二林", "三重", "三義", "土城", "士林", "大同", "大里", "大園", "大寮", "小港", "中山", "中壢", "仁武", "斗六", "冬山", "古亭", "左營", "平鎮", "永和", "安南", "朴子", "汐止", "竹山", "竹東", "西屯", "沙鹿", "宜蘭", "忠明", "松山", "板橋", "林口", "林園", "花蓮", "金門", "前金", "前鎮", "南投", "屏東", "琉球", "恆春", "美濃", "苗栗", "埔里", "桃園", "觀音工業區", "馬公", "馬祖", "基隆", "崙背", "淡水", "麥寮", "善化", "富貴角", "復興", "湖口", "菜寮", "陽明", "新竹", "新店", "新莊", "新港", "新營", "楠梓", "萬里", "萬華", "嘉義", "彰化", "大城", "臺西", "臺東", "臺南", "麻豆", "鳳山", "潮州", "線西", "橋頭", "頭份", "龍潭", "豐原", "關山", "觀音"];
 var station_explain = ["二林", "三重", "三義", "土城", "士林", "大同", "大里", "大園", "大寮", "小港", "中山", "中壢", "仁武", "斗六", "冬山", "古亭", "左營", "平鎮", "永和", "安南", "朴子", "汐止", "竹山", "竹東", "西屯", "沙鹿", "宜蘭", "忠明", "松山", "板橋", "林口", "林園", "花蓮", "金門", "前金", "前鎮", "南投", "屏東", "琉球", "恆春", "美濃", "苗栗", "埔里", "桃園", "觀音工業區", "馬公", "馬祖", "基隆", "崙背", "淡水", "麥寮", "善化", "富貴角", "復興", "湖口", "菜寮", "陽明", "新竹", "新店", "新莊", "新港", "新營", "楠梓", "萬里", "萬華", "嘉義", "彰化", "大城", "臺西", "臺東", "臺南", "麻豆", "鳳山", "潮州", "線西", "橋頭", "頭份", "龍潭", "豐原", "關山", "觀音"];
@@ -57,15 +58,15 @@ var key_array = ["東北季風", "東北風", "東北東風", "偏北風", "偏�
 var area_array = ["北部", "竹苗", "中部", "雲嘉南", "高屏", "宜蘭", "花東"];
 var eicon = ["🌍 ", "🌎 ", "🌏 "];
 var output_title = "";
-var Pollutant_list = []; var AQI_list = []; var PM25_list = []; var PM10_list = []; var O3_list = []; 
-var Pollutant_list_update = []; var AQI_list_update = []; var PM25_list_update = []; var PM10_list_update = []; var O3_list_update = []; var Sitename_list_update = [];
+var Sitename_list_update = [];
 var PM25 = ""; var PM10 = ""; var O3 = "";
-var time = 0; var hour_now = 0; var minute_now = 0; 
-var i = 0; var data_get = ""; 
+var time = 0; var hour_now = 0; var minute_now = 0;
+var i = 0; var data_get = "";
 var sitename = "";
 var day2_report = "";
 var day3_report = "";
-var report_output="";
+var report_output = "";
+var download_data = {};
 
 function air_report_set() {
 
@@ -76,55 +77,48 @@ function air_report_set() {
 	hour_now = (time.getHours() + 8) % 24;
 	minute_now = time.getMinutes();
 
-	if (minute_now < 15) {
+	if (minute_now < 59) {
 
 		//Promise B:取得測站資料
 		data_get = new Promise(function (resolve, reject) {
-			getJSON('https://data.epa.gov.tw/api/v1/aqx_p_432?format=json&limit=100&api_key=e44e7dd6-8d7a-433d-9fe6-8327b8dcfcad').then(function (response) {
+			getJSON('https://data.epa.gov.tw/api/v1/aqx_p_432?format=json&limit=100&api_key=xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx').then(function (response) {
 				resolve(response.records)
 			}).catch(function (error) { reject(new Error('資料獲取失敗')) });
 		});
 
 		//取得各測站詳細資訊
+
+		var output = {};
+
 		data_get.then(function (origin_data) {
 			for (i = 0; i < origin_data.length; i++) {
-				Pollutant_list_update[i] = origin_data[i].Pollutant;
-				AQI_list_update[i] = origin_data[i].AQI;
-				PM10_list_update[i] = origin_data[i]['PM10'];
-				PM25_list_update[i] = origin_data[i]['PM2.5'];
-				O3_list_update[i] = origin_data[i].O3;
-				Sitename_list_update[i] = origin_data[i].SiteName;
+				output[origin_data[i].SiteName] = {
+					Pollutant: origin_data[i].Pollutant,
+					AQI: origin_data[i].AQI,
+					PM10: origin_data[i]['PM10'],
+					PM25: origin_data[i]['PM2.5'],
+					O3: origin_data[i].O3,
+				}
+				Sitename_list_update.push(origin_data[i].SiteName);
 			}
 
-			database.ref('/TWair').update({ Pollutant: Pollutant_list_update });
-			database.ref('/TWair').update({ AQI: AQI_list_update });
-			database.ref('/TWair').update({ PM25: PM25_list_update });
-			database.ref('/TWair').update({ PM10: PM10_list_update });
-			database.ref('/TWair').update({ O3: O3_list_update });
+			database.ref('/TWair').update({ data: output });
 			database.ref('/TWair').update({ SiteName: Sitename_list_update });
 
-			Pollutant_list = Pollutant_list_update;
-			AQI_list = AQI_list_update;
-			PM10_list = PM10_list_update;
-			PM25_list = PM25_list_update;
-			O3_list = O3_list_update;
+			download_data = output;
 			station_array = Sitename_list_update;
 
 		}).catch(function (error) {
 			database.ref('/TWair').on('value', e => {
-				Pollutant_list = e.val().Pollutant;
-				AQI_list = e.val().AQI;
-				PM10_list = e.val().PM10;
-				PM25_list = e.val().PM25;
-				O3_list = e.val().O3;
+				
 				station_array = e.val().SiteName;
 			});
 		});
 	}
 }
 
-const SelectContexts = {parameter: 'select'};
-const AppContexts = {LOCATION: 'sendback_premission'};
+const SelectContexts = { parameter: 'select' };
+const AppContexts = { LOCATION: 'sendback_premission' };
 
 app.intent('預設歡迎語句', (conv) => {
 
@@ -249,13 +243,7 @@ app.intent('預設歡迎語句', (conv) => {
 
 			}
 			database.ref('/TWair').on('value', e => {
-				Pollutant_list = e.val().Pollutant;
-				AQI_list = e.val().AQI;
-				PM10_list = e.val().PM10;
-				PM25_list = e.val().PM25;
-				O3_list = e.val().O3;
-				day2_report = e.val().tomorrow;
-				day3_report = e.val().aftertomorrow;
+				download_data = final_data.data;
 				station_array = e.val().SiteName;
 			});
 		});
@@ -288,15 +276,7 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 		function (resolve, reject) {
 			database.ref('/TWair').on('value', e => { resolve(e.val()); });
 		}).then(function (final_data) {
-
-			report_output = final_data.report;
-			Pollutant_list = final_data.Pollutant;
-			AQI_list = final_data.AQI;
-			PM10_list = final_data.PM10;
-			PM25_list = final_data.PM25;
-			O3_list = final_data.O3;
-			day2_report = final_data.tomorrow;
-			day3_report = final_data.aftertomorrow;
+			download_data = final_data.data;
 			station_array = final_data.SiteName;
 
 			if (conv.input.raw.indexOf('最近') !== -1 || conv.input.raw.indexOf('附近') !== -1) { option = "🌎 最近的測站"; }
@@ -316,116 +296,19 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 				}
 
 				conv.contexts.set(SelectContexts.parameter, 5);
-				if (option === "北部地區") {
 
-					conv.ask(new Carousel({
-						items: {
-							'臺北市': {
-								synonyms: ['台北', '中正', '大同', '中山', '松山', '大安', '萬華', '信義', '士林', '北投', '內湖', '南港', '文山'],
-								title: '臺北市',
-								description: '士林、大同、中山  \n古亭、松山、陽明  \n萬華',
-							},
-							'基隆': {
-								synonyms: ['基隆', '仁愛', '信義', '中正', '中山', '安樂', '暖暖', '七堵區',],
-								title: '基隆市',
-								description: '基隆\n',
-							},
-							'新北市第一部分': {
-								title: '新北市(一)',
-								synonyms: ['新北', '三重', '土城', '永和', '汐止', '板橋', '林口'],
-								description: '三重、土城、永和  \n汐止、板橋、林口',
-							},
-							'新北市第二部分': {
-								synonyms: ['新北', '淡水', '富貴角', '菜寮', '新店', '新莊', '萬里'],
-								title: '新北市(二)',
-								description: '淡水、富貴角、菜寮  \n新店、新莊、萬里',
-							},
-							'桃園市': {
-								synonyms: ['桃園', '中壢', '平鎮', '龍潭', '楊梅', '新屋', '觀音', '桃園', '龜山', '八德', '大溪', '復興', '大園', '蘆竹',],
-								title: '桃園市',
-								description: '大園、中壢、平鎮  \n桃園、龍潭、觀音',
-							},
-							'新竹縣市': {
-								synonyms: ['新竹', '竹北', '湖口', '新豐', '新埔', '關西', '芎林', '寶山', '竹東', '五峰', '橫山', '尖石', '北埔', '峨眉',],
-								title: '新竹縣市',
-								description: '新竹、竹東  \n湖口',
-							}
-						},
-					}));
+				if (["北部地區", "中部地區", "南部地區"].indexOf(option) !== -1) {
+					conv.ask(new Carousel({ items: options_county[option] }));
 				}
-				else if (option === "中部地區") {
-					conv.ask(new Carousel({
-						items: {
-							'苗栗縣': {
-								synonyms: ['竹南', '頭份', '三灣', '南庄', '獅潭', '後龍', '通霄', '苑裡', '苗栗', '造橋', '頭屋', '公館', '大湖', '泰安', '銅鑼', '三義', '西湖', '卓蘭',],
-								title: '苗栗縣',
-								description: '三義、苗栗、頭份\n',
-							},
-							'臺中市': {
-								synonyms: ['台中', '北屯', '西屯', '南屯', '太平', '大里', '霧峰', '烏日', '豐原', '后里', '石岡', '東勢', '和平', '新社', '潭子', '大雅', '神岡', '大肚', '沙鹿', '龍井', '梧棲', '清水', '大甲', '外埔', '大安',],
-								title: '臺中市',
-								description: '大里、西屯、沙鹿  \n忠明、豐原',
-							},
-							'彰化縣': {
-								synonyms: ['彰化', '彰化', '芬園', '花壇', '秀水', '鹿港', '福興', '線西', '和美', '伸港', '員林', '社頭', '永靖', '埔心', '溪湖', '大村', '埔鹽', '田中', '北斗', '田尾', '埤頭', '溪州', '竹塘', '二林', '大城', '芳苑', '二水',],
-								title: '彰化縣',
-								description: '二林、彰化、線西  \n',
-							},
-							'南投縣': {
-								synonyms: ['南投', '中寮', '草屯', '國姓', '埔里', '仁愛', '名間', '集集', '水里', '魚池', '信義', '竹山', '鹿谷',],
-								title: '南投縣',
-								description: '竹山、南投、埔里\n',
-							},
-							'雲林縣': {
-								synonyms: ['雲林', '斗南', '大埤', '虎尾', '土庫', '褒忠', '東勢', '臺西', '崙背', '麥寮', '斗六', '林內', '古坑', '莿桐', '西螺', '二崙', '北港', '水林', '口湖', '四湖', '元長',],
-								title: '雲林縣',
-								description: '斗六、崙背、麥寮  \n臺西',
-							}
-						},
-					}));
-				}
-				else if (option === "南部地區") {
-
-					conv.ask(new Carousel({
-						items: {
-							'嘉義縣市': {
-								synonyms: ['嘉義', '番路', '梅山', '竹崎', '阿里山', '中埔', '大埔', '水上', '鹿草', '太保', '朴子', '東石', '六腳', '新港', '民雄', '大林', '溪口', '義竹', '布袋',],
-								title: '嘉義縣市',
-								description: '嘉義、朴子、新港\n',
-							},
-							'臺南市': {
-								synonyms: ['台南', '安平', '安南', '永康', '歸仁', '新化', '左鎮', '玉井', '楠西', '南化', '仁德', '關廟', '龍崎', '官田', '麻豆', '佳里', '西港', '七股', '將軍', '學甲', '北門', '新營', '後壁', '白河', '東山', '六甲', '下營', '柳營', '鹽水', '善化', '大內', '山上', '新市', '安定',],
-								title: '台南市',
-								description: '安南、善化、新營  \n臺南',
-							},
-							'北高雄': {
-								synonyms: ['北高雄', '美濃', '橋頭', '楠梓', '仁武', '左營', '前金',],
-								title: '北高雄',
-								description: '美濃、橋頭、楠梓  \n仁武、左營、前金',
-							},
-							'南高雄': {
-								synonyms: ['南高雄', '鳳山', '復興', '前鎮', '小港', '大寮', '林園',],
-								title: '南高雄',
-								description: '鳳山、復興、前鎮  \n小港、大寮、林園',
-							},
-							'屏東縣': {
-								synonyms: ['屏東', '屏東', '三地門', '霧臺', '瑪家', '九如', '里港', '高樹', '鹽埔', '長治', '麟洛', '竹田', '內埔', '萬丹', '潮州', '泰武', '來義', '萬巒', '崁頂', '新埤', '南州', '林邊', '東港', '琉球', '佳冬', '新園', '枋寮', '枋山', '春日', '獅子', '車城', '牡丹', '恆春', '滿州',],
-								title: '屏東縣',
-								description: '屏東、潮州、恆春  \n',
-							}
-						},
-					}));
-				}
-				else if (option === "東部地區") {
+				else if (["東部地區", "離島地區"].indexOf(option) !== -1) {
 
 					var the_array = option_list[option].split('、');
 					var county_list = {};
 
 					for (i = 0; i < the_array.length; i++) {
-						var num = station_array.indexOf(the_array[i]);
-						var aqi_temp = AQI_list[parseInt(num)];
+						var aqi_temp = download_data[the_array[i]].AQI;
 						var pic_url = functions_fetch.picture_generator(parseInt(aqi_temp));
-						var status_temp =functions_fetch.status_generator(parseInt(aqi_temp));
+						var status_temp = functions_fetch.status_generator(parseInt(aqi_temp));
 
 						county_list[the_array[i]] = {
 							title: the_array[i],
@@ -437,43 +320,6 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 						title: 'Carousel Title',
 						items: county_list,
 					}));
-
-				}
-				else if (option === "離島地區") {
-
-					AQI1 = AQI_list[parseInt(station_array.indexOf('金門'))];
-					AQI2 = AQI_list[parseInt(station_array.indexOf('馬祖'))];
-					AQI3 = AQI_list[parseInt(station_array.indexOf('馬公'))];
-
-					picurl1 =functions_fetch.picture_generator(parseInt(AQI1));
-					picurl2 =functions_fetch.picture_generator(parseInt(AQI2));
-					picurl3 =functions_fetch.picture_generator(parseInt(AQI3));
-					status1 =functions_fetch.status_generator(parseInt(AQI1));
-					status2 =functions_fetch.status_generator(parseInt(AQI2));
-					status3 =functions_fetch.status_generator(parseInt(AQI3));
-
-					conv.ask(new Carousel({
-						items: {
-							'金門': {
-								synonyms: ['金門', '金沙', '金湖', '金寧', '金城', '烈嶼', '烏坵',],
-								title: '金門',
-								description: status1,
-								image: new Image({ url: picurl1, alt: 'Image alternate text', }),
-							},
-							'馬祖': {
-								synonyms: ['馬祖', '南竿', '北竿', '莒光', '東引',],
-								title: '馬祖',
-								description: status2,
-								image: new Image({ url: picurl2, alt: 'Image alternate text', }),
-							},
-							'馬公': {
-								synonyms: ['澎湖', '馬公', '西嶼', '望安', '七美', '白沙', '湖西',],
-								title: '馬公',
-								description: status3,
-								image: new Image({ url: picurl3, alt: 'Image alternate text', }),
-							},
-						}
-					}));
 				}
 				else if (option === "行動測站") {
 					if (conv.screen) { conv.ask('以下是「行動測站」列表，\n實際資訊供應可能隨時間變化。'); }
@@ -484,9 +330,9 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 					for (i = 0; i < mobile_array.length; i++) {
 						var num = station_array.indexOf(mobile_array[i]);
 						if (num !== -1) {
-							var aqi_temp = AQI_list[parseInt(num)];
-							var pic_url =functions_fetch.picture_generator(parseInt(aqi_temp));
-							var status_temp =functions_fetch.status_generator(parseInt(aqi_temp));
+							var aqi_temp = download_data[mobile_array[i]].AQI;
+							var pic_url = functions_fetch.picture_generator(parseInt(aqi_temp));
+							var status_temp = functions_fetch.status_generator(parseInt(aqi_temp));
 
 							mobile_list[mobile_array[i]] = {
 								title: mobile_array[i],
@@ -517,10 +363,9 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 				var county_list = {};
 
 				for (i = 0; i < the_array.length; i++) {
-					var num = station_array.indexOf(the_array[i]);
-					var aqi_temp = AQI_list[parseInt(num)];
-					var pic_url =functions_fetch.picture_generator(parseInt(aqi_temp));
-					var status_temp =functions_fetch.status_generator(parseInt(aqi_temp));
+					var aqi_temp = download_data[the_array[i]].AQI;
+					var pic_url = functions_fetch.picture_generator(parseInt(aqi_temp));
+					var status_temp = functions_fetch.status_generator(parseInt(aqi_temp));
 
 					county_list[the_array[i]] = {
 						title: the_array[i],
@@ -536,9 +381,9 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 					for (i = 0; i < the_array.length; i++) {
 						var num = station_array.indexOf(the_array[i]);
 						if (num !== -1) {
-							var aqi_temp = AQI_list[parseInt(num)];
-							var pic_url =functions_fetch.picture_generator(parseInt(aqi_temp));
-							var status_temp =functions_fetch.status_generator(parseInt(aqi_temp));
+							var aqi_temp = download_data[the_array[i]].AQI;
+							var pic_url = functions_fetch.picture_generator(parseInt(aqi_temp));
+							var status_temp = functions_fetch.status_generator(parseInt(aqi_temp));
 							var select_title = the_array[i];
 							select_title = select_title.split('(')[1];
 							select_title = replaceString(select_title, ')', '');
@@ -562,18 +407,20 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 			}
 			else if (station_array.indexOf(option) !== -1) {
 
-				indexnumber = station_array.indexOf(option); //取得監測站對應的編號	
-				AQI = AQI_list[parseInt(indexnumber)]; Pollutant = Pollutant_list[parseInt(indexnumber)];
-				PM10 = PM10_list[parseInt(indexnumber)];
-				PM25 = PM25_list[parseInt(indexnumber)];
-				O3 = O3_list[parseInt(indexnumber)];
-				Status =functions_fetch.status_generator(parseInt(AQI));
+				var temp = download_data[option];
+				
+				AQI = temp.AQI;
+				Pollutant = temp.Pollutant;
+				PM10 = temp.PM10;
+				PM25 = temp.PM25;
+				O3 = temp.O3;
+				Status = functions_fetch.status_generator(parseInt(AQI));
 
 				if (Status !== "有效數據不足") {
-					
-					picture=functions_fetch.big_picture_generator(AQI);
-					info=functions_fetch.info_generator(AQI);
-					info_output=functions_fetch.info_output_generator(AQI);
+
+					picture = functions_fetch.big_picture_generator(AQI);
+					info = functions_fetch.info_generator(AQI);
+					info_output = functions_fetch.info_output_generator(AQI);
 
 					if (mobile_array.indexOf(option) === -1) { conv.ask(new Suggestions('把它加入日常安排')); }
 
@@ -610,7 +457,7 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 							text: info_output + '  \n  \nPM₁₀ ' + PM10 + '(μg/m³) • PM₂.₅ ' + PM25 + '(μg/m³) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + functions_fetch.FormatTime(),
 						}));
 
-					} else { conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`); }
+					} else { conv.expectUserResponse=false} //告知Google助理結束對話
 				} else {
 					conv.ask(new SimpleResponse({
 						speech: `<speak><p><s>由於${option}監測站正處於維修狀態或數據不足。我無法提供你最新資訊。</s></p></speak>`,
@@ -745,14 +592,10 @@ app.intent('直接查詢', (conv, { station }) => {
 			database.ref('/TWair').on('value', e => { resolve(e.val()); });
 		}).then(function (final_data) {
 
-			Pollutant_list = final_data.Pollutant;
-			AQI_list = final_data.AQI;
-			PM10_list = final_data.PM10;
-			PM25_list = final_data.PM25;
-			O3_list = final_data.O3;
+			download_data = final_data.data;
 			station_array = final_data.SiteName;
 
-			if (indexnumber = station_array.indexOf(station) === -1) {
+			if (station_array.indexOf(station) === -1) {
 
 				conv.ask(new SimpleResponse({
 					speech: `<speak><p><s>抱歉，您欲查詢的監測站似乎不存在，我無法提供你最新資訊。</s></p></speak>`,
@@ -765,20 +608,19 @@ app.intent('直接查詢', (conv, { station }) => {
 				}));
 			}
 			else {
-				if ((typeof AQI_list[0] === "undefined") !== true) {
-					indexnumber = station_array.indexOf(station); //取得監測站對應的編號
-
-					AQI = AQI_list[parseInt(indexnumber)];
-					Pollutant = Pollutant_list[parseInt(indexnumber)];
-					Status =functions_fetch.status_generator(parseInt(AQI));
-					PM10 = PM10_list[parseInt(indexnumber)];
-					PM25 = PM25_list[parseInt(indexnumber)];
-					O3 = O3_list[parseInt(indexnumber)];
-
+					var temp = download_data[station];
+					
+					AQI = temp.AQI;
+					Pollutant = temp.Pollutant;
+					PM10 = temp.PM10;
+					PM25 = temp.PM25;
+					O3 = temp.O3;
+					Status=functions_fetch.status_generator(parseInt(AQI));
+					
 					if (Status !== "有效數據不足") {
-						picture=functions_fetch.big_picture_generator(AQI);
-						info=functions_fetch.info_generator(AQI);
-						info_output=functions_fetch.info_output_generator(AQI);
+						picture = functions_fetch.big_picture_generator(AQI);
+						info = functions_fetch.info_generator(AQI);
+						info_output = functions_fetch.info_output_generator(AQI);
 
 						if (AQI >= 0 && AQI <= 50) {
 							conv.ask(new SimpleResponse({
@@ -821,19 +663,9 @@ app.intent('直接查詢', (conv, { station }) => {
 							display: 'CROPPED',
 						}));
 					}
-				} else {
-					conv.ask(new SimpleResponse({
-						speech: `<speak><p><s>糟糕，查詢似乎發生錯誤。請稍後再試。</s></p></speak>`,
-						text: '發生錯誤，請稍後再試一次。'
-					}));
-					conv.close(new BasicCard({
-						image: new Image({ url: "https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤", alt: 'Pictures', }),
-						title: '數據加載發生問題',
-						subtitle: '請過一段時間後再回來查看', display: 'CROPPED',
-					}));
-				}
 			}
 		}).catch(function (error) {
+			console.log(error)
 			conv.ask(new SimpleResponse({
 				speech: `<speak><p><s>糟糕，查詢似乎發生錯誤。請稍後再試。</s></p></speak>`,
 				text: '發生錯誤，請稍後再試一次。'
@@ -986,80 +818,99 @@ app.intent('回傳資訊', (conv, params, permissionGranted) => {
 				};
 				sitename = (findNearestLocation(myLocation, locations)).location.Sitename; //透過模組找到最近的測站
 
-				conv.ask(new SimpleResponse({ speech: `<speak><p><s>查詢完成!</s><s>距離你最近的測站是<break time="0.2s"/>${sitename}。</s></p></speak>`, text: '最近的測站是「' + sitename + '」!' }));
+				return new Promise(
+					function (resolve, reject) {
+						database.ref('/TWair').on('value', e => { resolve(e.val().data[sitename]); });
+					}).then(function (final_data) {
 
-				if ((typeof AQI_list[0] === "undefined") !== true) {
-					indexnumber = station_array.indexOf(sitename); //取得監測站對應的編號
+						conv.ask(new SimpleResponse({ speech: `<speak><p><s>查詢完成!</s><s>距離你最近的測站是<break time="0.2s"/>${sitename}。</s></p></speak>`, text: '最近的測站是「' + sitename + '」!' }));
 
-					AQI = AQI_list[parseInt(indexnumber)];
-					Pollutant = Pollutant_list[parseInt(indexnumber)];
-					PM10 = PM10_list[parseInt(indexnumber)];
-					PM25 = PM25_list[parseInt(indexnumber)];
-					O3 = O3_list[parseInt(indexnumber)];
-					Status =functions_fetch.status_generator(parseInt(AQI));
+						if (final_data !== undefined) {
+							//indexnumber = station_array.indexOf(sitename); //取得監測站對應的編號
+							console.log(final_data)
+							AQI = final_data.AQI;
+							Pollutant = final_data.Pollutant;
+							PM10 = final_data.PM10;
+							PM25 = final_data.PM25;
+							O3 = final_data.O3;
+							Status = functions_fetch.status_generator(parseInt(AQI));
 
-					if (Status !== "有效數據不足") {
-						picture=functions_fetch.big_picture_generator(AQI);
-						info=functions_fetch.info_generator(AQI);
-						info_output=functions_fetch.info_output_generator(AQI);
+							if (Status !== "有效數據不足") {
+								picture = functions_fetch.big_picture_generator(AQI);
+								info = functions_fetch.info_generator(AQI);
+								info_output = functions_fetch.info_output_generator(AQI);
 
-						if (AQI >= 0 && AQI <= 50) {
+								if (AQI >= 0 && AQI <= 50) {
+									conv.ask(new SimpleResponse({
+										speech: `<speak><p><s>根據最新資料顯示，${sitename}監測站的AQI指數為${AQI}</s><s>您可放心出外活動!</s></p></speak>`,
+										text: '以下為該監測站的詳細資訊，\n您可放心出外活動!'
+									}));
+								}
+								else if (AQI > 50) {
+									conv.ask(new SimpleResponse({
+										speech: `<speak><p><s>根據最新資料顯示，${sitename}監測站的AQI指數為${AQI}</s><s>主要汙染源來自${replaceString(Pollutant, '八小時', '')}</s><s>${info}</s></p></speak>`,
+										text: '以下為該監測站的詳細資訊'
+									}));
+								}
+
+								output_title = Status;
+								if (AQI > 50) {
+									if (Pollutant === "臭氧八小時") { Pollutant = "臭氧 (O₃)"; }
+									else if (Pollutant === "細懸浮微粒") { Pollutant = "細懸浮微粒(PM₂.₅)"; }
+									else if (Pollutant === "懸浮微粒") { Pollutant = "懸浮微粒(PM₁₀)"; }
+									output_title = output_title + ' • ' + Pollutant;
+								}
+
+								if (conv.screen) {
+
+									conv.ask(new BasicCard({
+										image: new Image({ url: picture, alt: 'Pictures', }), display: 'CROPPED',
+										title: sitename,
+										subtitle: output_title,
+										text: info_output + '  \n  \nPM₁₀ ' + PM10 + '(μg/m³) • PM₂.₅ ' + PM25 + '(μg/m³) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + functions_fetch.FormatTime(),
+									}));
+
+									conv.ask(new Suggestions('把它加入日常安排'));
+								} else { conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`); }
+							}
+							else {
+								conv.ask(new SimpleResponse({
+									speech: `<speak><p><s>由於${sitename}監測站數據不足或處於維修狀態，我無法提供你最新資訊。</s></p></speak>`,
+									text: '以下為「' + sitename + '」監測站的詳細資訊'
+								}));
+								conv.ask(new BasicCard({
+									image: new Image({ url: "https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN", alt: 'Pictures', }),
+									title: '有效數據不足',
+									text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或有效數據不足等需查修維護情形，以致資料暫時中斷服務。  \n  \nPM₁₀ ' + PM10 + '(μg/m³) • PM₂.₅ ' + PM25 + '(μg/m³) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + functions_fetch.FormatTime(),
+									display: 'CROPPED',
+								}));
+							}
+						if (conv.screen) { conv.ask(new Suggestions('回主頁面', '👋 掰掰')); } else { conv.expectUserResponse=false}//告知Google助理結束對話 
+
+						} else {
 							conv.ask(new SimpleResponse({
-								speech: `<speak><p><s>根據最新資料顯示，${sitename}監測站的AQI指數為${AQI}</s><s>您可放心出外活動!</s></p></speak>`,
-								text: '以下為該監測站的詳細資訊，\n您可放心出外活動!'
+								speech: `<speak><p><s>糟糕，查詢似乎發生錯誤。</s><s>請稍後再試。</s></p></speak>`,
+								text: '發生錯誤，請稍後再試一次。'
 							}));
-						}
-						else if (AQI > 50) {
-							conv.ask(new SimpleResponse({
-								speech: `<speak><p><s>根據最新資料顯示，${sitename}監測站的AQI指數為${AQI}</s><s>主要汙染源來自${replaceString(Pollutant, '八小時', '')}</s><s>${info}</s></p></speak>`,
-								text: '以下為該監測站的詳細資訊'
-							}));
-						}
-
-						output_title = Status;
-						if (AQI > 50) {
-							if (Pollutant === "臭氧八小時") { Pollutant = "臭氧 (O₃)"; }
-							else if (Pollutant === "細懸浮微粒") { Pollutant = "細懸浮微粒(PM₂.₅)"; }
-							else if (Pollutant === "懸浮微粒") { Pollutant = "懸浮微粒(PM₁₀)"; }
-							output_title = output_title + ' • ' + Pollutant;
-						}
-
-						if (conv.screen) {
-
 							conv.ask(new BasicCard({
-								image: new Image({ url: picture, alt: 'Pictures', }), display: 'CROPPED',
-								title: sitename,
-								subtitle: output_title,
-								text: info_output + '  \n  \nPM₁₀ ' + PM10 + '(μg/m³) • PM₂.₅ ' + PM25 + '(μg/m³) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + functions_fetch.FormatTime(),
+								image: new Image({ url: "https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤", alt: 'Pictures', }),
+								title: '數據加載發生問題',
+								subtitle: '請過一段時間後再回來查看', display: 'CROPPED',
 							}));
-
-							conv.ask(new Suggestions('把它加入日常安排'));
-						} else { conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`); }
-					}
-
-					else {
+						}
+					}).catch(function (error) {
 						conv.ask(new SimpleResponse({
-							speech: `<speak><p><s>由於${sitename}監測站數據不足或處於維修狀態，我無法提供你最新資訊。</s></p></speak>`,
-							text: '以下為「' + sitename + '」監測站的詳細資訊'
+							speech: `<speak><p><s>糟糕，查詢似乎發生錯誤。請稍後再試。</s></p></speak>`,
+							text: '發生錯誤，請稍後再試一次。'
 						}));
 						conv.ask(new BasicCard({
-							image: new Image({ url: "https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN", alt: 'Pictures', }),
-							title: '有效數據不足',
-							text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或有效數據不足等需查修維護情形，以致資料暫時中斷服務。  \n  \nPM₁₀ ' + PM10 + '(μg/m³) • PM₂.₅ ' + PM25 + '(μg/m³) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + functions_fetch.FormatTime(),
-							display: 'CROPPED',
+							image: new Image({ url: "https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤", alt: 'Pictures', }),
+							title: '數據加載發生問題',
+							subtitle: '請過一段時間後再回來查看', display: 'CROPPED',
 						}));
-					}
-				} else {
-					conv.ask(new SimpleResponse({
-						speech: `<speak><p><s>糟糕，查詢似乎發生錯誤。</s><s>請稍後再試。</s></p></speak>`,
-						text: '發生錯誤，請稍後再試一次。'
-					}));
-					conv.ask(new BasicCard({
-						image: new Image({ url: "https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤", alt: 'Pictures', }),
-						title: '數據加載發生問題',
-						subtitle: '請過一段時間後再回來查看', display: 'CROPPED',
-					}));
-				}
+						if (conv.screen) { conv.ask(new Suggestions('回主頁面', '👋 掰掰')); } else { conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`); }
+
+					});
 			} else {
 				// Note: Currently, precise locaton only returns lat/lng coordinates on phones and lat/lng coordinates
 				// and a geocoded address on voice-activated speakers.
@@ -1083,11 +934,7 @@ app.intent('直接查詢縣市選單', (conv, { County }) => {
 			database.ref('/TWair').on('value', e => { resolve(e.val()); });
 		}).then(function (final_data) {
 
-			Pollutant_list = final_data.Pollutant;
-			AQI_list = final_data.AQI;
-			PM10_list = final_data.PM10;
-			PM25_list = final_data.PM25;
-			O3_list = final_data.O3;
+			download_data = final_data.data;			
 			station_array = final_data.SiteName;
 
 			conv.noInputs = ["抱歉，我沒聽輕楚。請再問一次", "請試著問我要查詢的縣市列表，例如、" + county_array[parseInt(Math.random() * 48)] + "空氣品質如何?", "很抱歉，我幫不上忙"];
@@ -1171,10 +1018,9 @@ app.intent('直接查詢縣市選單', (conv, { County }) => {
 				var county_list = {};
 
 				for (i = 0; i < the_array.length; i++) {
-					var num = station_array.indexOf(the_array[i]);
-					var aqi_temp = AQI_list[parseInt(num)];
-					var pic_url =functions_fetch.picture_generator(parseInt(aqi_temp));
-					var status_temp =functions_fetch.status_generator(parseInt(aqi_temp));
+					var aqi_temp = download_data[the_array[i]].AQI;
+					var pic_url = functions_fetch.picture_generator(parseInt(aqi_temp));
+					var status_temp = functions_fetch.status_generator(parseInt(aqi_temp));
 
 					county_list[the_array[i]] = {
 						title: the_array[i],
@@ -1190,9 +1036,9 @@ app.intent('直接查詢縣市選單', (conv, { County }) => {
 					for (i = 0; i < the_array.length; i++) {
 						var num = station_array.indexOf(the_array[i]);
 						if (num !== -1) {
-							var aqi_temp = AQI_list[parseInt(num)];
-							var pic_url =functions_fetch.picture_generator(parseInt(aqi_temp));
-							var status_temp =functions_fetch.status_generator(parseInt(aqi_temp));
+							var aqi_temp = download_data[the_array[i]].AQI;
+							var pic_url = functions_fetch.picture_generator(parseInt(aqi_temp));
+							var status_temp = functions_fetch.status_generator(parseInt(aqi_temp));
 
 							var select_title = the_array[i];
 							select_title = select_title.split('(')[1];
@@ -1218,26 +1064,19 @@ app.intent('直接查詢縣市選單', (conv, { County }) => {
 
 			}
 			else if (station_array.indexOf(County) !== -1) {
-				indexnumber = station_array.indexOf(County); //取得監測站對應的編號
 
-				database.ref('/TWair').on('value', e => {
-					Pollutant_list = e.val().Pollutant;
-					AQI_list = e.val().AQI;
-					PM25_list = e.val().PM25;
-					O3_list = e.val().O3;
-				});
-
-				AQI = AQI_list[parseInt(indexnumber)];
-				Pollutant = Pollutant_list[parseInt(indexnumber)];
-				Status =functions_fetch.status_generator(parseInt(AQI));
-				PM10 = PM10_list[parseInt(indexnumber)];
-				PM25 = PM25_list[parseInt(indexnumber)];
-				O3 = O3_list[parseInt(indexnumber)];
-
+				AQI = download_data[County].AQI;
+				Pollutant = download_data[County].Pollutant;
+				Status = download_data[County].Status;
+				PM10 = download_data[County].PM10;
+				PM25 = download_data[County].PM25;
+				O3 = download_data[County].O3;
+				Status=functions_fetch.status_generator(parseInt(AQI));
+				
 				if (Status !== "有效數據不足") {
-					picture=functions_fetch.big_picture_generator(AQI);
-					info=functions_fetch.info_generator(AQI);
-					info_output=functions_fetch.info_output_generator(AQI);
+					picture = functions_fetch.big_picture_generator(AQI);
+					info = functions_fetch.info_generator(AQI);
+					info_output = functions_fetch.info_output_generator(AQI);
 
 
 					if (AQI >= 0 && AQI <= 50) {
@@ -1347,11 +1186,11 @@ app.intent('空氣品質預報', (conv, { day_select }) => {
 
 		}).then(function (final_data) {
 
-			var report_content =functions_fetch.predict(final_data);
+			var report_content = functions_fetch.predict(final_data);
 
-			if (day_select === "今天") { var day_title =functions_fetch.getDay(0); }
-			else if (day_select === "明天") { var day_title =functions_fetch.getDay(1); }
-			else { var day_title =functions_fetch.getDay(2); }
+			if (day_select === "今天") { var day_title = functions_fetch.getDay(0); }
+			else if (day_select === "明天") { var day_title = functions_fetch.getDay(1); }
+			else { var day_title = functions_fetch.getDay(2); }
 
 			for (i = 0; i < day_array.length; i++) { if (day_array[i] !== day_select) { conv.ask(new Suggestions(day_array[i] + '呢?')); } }
 

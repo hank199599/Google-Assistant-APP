@@ -77,7 +77,7 @@ function air_report_set() {
 	hour_now = (time.getHours() + 8) % 24;
 	minute_now = time.getMinutes();
 
-	if (minute_now < 59) {
+	if (minute_now < 15) {
 
 		//Promise B:取得測站資料
 		data_get = new Promise(function (resolve, reject) {

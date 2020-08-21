@@ -87,7 +87,10 @@ function air_report_set() {
 		});
 
 		//取得各測站詳細資訊，並加以梳理後儲存到Firebase
+<<<<<<< HEAD
 
+=======
+>>>>>>> 83634560f913572573e5e89e9cf5f87d9b03b405
 		data_get.then(function (origin_data) {
 			for (i = 0; i < origin_data.length; i++) {
 				output[origin_data[i].SiteName] = {

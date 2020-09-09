@@ -1,6 +1,9 @@
 [<img src="https://upload.wikimedia.org/wikipedia/commons/c/cb/Google_Assistant_logo.svg" width=100 height=100 />](https://assistant.google.com/intl/zh_tw/)
 
-### Google Assistant APP  
+>本專案獲選進入「[Arctic Code Vault Contributor](https://archiveprogram.github.com/)」  
+  
+Google Assistant APP  
+------
 
 在此提供我所製作的Google Assistant BOT 背後執行的代碼  
 >Google助理是由Google所開發之智慧型個人助理，  

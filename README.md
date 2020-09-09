@@ -1,6 +1,6 @@
 [<img src="https://upload.wikimedia.org/wikipedia/commons/c/cb/Google_Assistant_logo.svg" width=100 height=100 />](https://assistant.google.com/intl/zh_tw/)
 
->本專案獲選進入「[《GitHub存檔計畫》](https://archiveprogram.github.com/)」  
+>✴本專案獲選進入「[《GitHub存檔計畫》](https://archiveprogram.github.com/)」  
   被選中的專案會被備份，並以磁帶形式送到挪威斯瓦巴的北極程式碼避難所之中封存  
   
 Google Assistant APP  

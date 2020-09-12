@@ -1,0 +1,10 @@
+{
+    "Play": "number",
+    "Restart": "restart",
+    "LEVEL": "level",
+    "ReAns": "refill",
+    "Option": "select_answer",
+    "Main": "main_option",
+    "EXP": "explain",
+    "Bye": "bye"
+}

@@ -1,0 +1,27 @@
+{
+  "入門": {
+    "synonyms": ["一","簡單","初階"],
+    "title": "入門",
+    "description": "目標數字 • 12 "
+  },
+  "經典": {
+    "synonyms": ["二","中等","普通"],
+    "title": "經典",
+    "description": "目標數字 • 24 "
+  },
+  "高階": {
+    "synonyms": ["三","最難","高等"],
+    "title": "高階",
+    "description": "目標數字 • 25 "
+  },
+  "專家": {
+    "synonyms": ["四","超難"],
+    "title": "專家",
+    "description": "目標數字 • 36 "
+  },
+  "精通": {
+    "synonyms": ["五","最難","最高等"],
+    "title": "精通者",
+    "description": "目標數字 • 48 "
+  }   
+}

@@ -471,9 +471,9 @@ app.intent('重新輸入答案', (conv) => {
 
 app.intent('遊戲說明', (conv) => {
 
-	conv.ask(new SimpleResponse({ speech: `<speak><p><s>根據維基百科</s><s>24點遊戲是一種使用撲克牌來進行的益智類遊戲，遊戲內容是：從一副撲克牌中抽去大小王剩下52張，任意抽取4張牌，把牌面上的數（A代表1）運用加、減、乘、除和括號進行運算得出24</s><s>每張牌都必須使用一次，但不能重複使用</s><s>在不同版本中，對J、Q、和K的處理有些差異</s><s>一個常見的版本是把J、Q、和K去除，或當成10；還有一個版本是把J表示11，Q表示12，K代表13</s></p></speak>`, text: "下面是來自維基百科的定義", }));
+	conv.ask(new SimpleResponse({ speech: `<speak><p><s>遊戲開始時，會產生一組固定順序的四個數字，其中</s><s>每個數字範圍是1到13</s><s>且數字間彼此可以重複</s><s>統計而言，組合高達28561種</s><s>玩家在這個遊戲中要做的，即利用指定順序的數字進行加減乘除，得到指定的答案!</s></p></speak>`, text: "以下是遊戲說明，請查看!", }));
 
-	wiki.buttons = new Button({ title: '在維基百科上查看更多', url: 'https://zh.wikipedia.org/zh-tw/24點', });
+	wiki.buttons = new Button({ title: '在維基百科上查看條目', url: 'https://zh.wikipedia.org/zh-tw/24點', });
 
 	conv.ask(new BasicCard(wiki));
 

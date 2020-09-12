@@ -471,7 +471,7 @@ app.intent('重新輸入答案', (conv) => {
 
 app.intent('遊戲說明', (conv) => {
 
-	conv.ask(new SimpleResponse({ speech: `<speak><p><s>遊戲開始時，會產生一組固定順序的四個數字，其中</s><s>每個數字範圍是1到13</s><s>且數字間彼此可以重複</s><s>統計而言，組合高達28561種</s><s>玩家在這個遊戲中要做的，即利用指定順序的數字進行加減乘除，得到指定的答案!</s></p></speak>`, text: "以下是遊戲說明，請查看!", }));
+	conv.ask(new SimpleResponse({ speech: `<speak><p><s>遊戲開始時，會產生一組固定順序的四個數字，其中</s><s>每個數字範圍是1到13</s><s>且數字間彼此可以重複</s><s>統計而言，組合高達28561種</s><s>而你要做的，即利用指定順序的數字進行加減乘除，得到指定的答案!</s></p></speak>`, text: "以下是遊戲說明，請查看!", }));
 
 	wiki.buttons = new Button({ title: '在維基百科上查看條目', url: 'https://zh.wikipedia.org/zh-tw/24點', });
 

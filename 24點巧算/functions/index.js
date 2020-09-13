@@ -37,6 +37,7 @@ function roundDecimal(val, precision) {
 
 var options = ['＋', '－', '×', '／'];
 var hint_list = ["接下來呢?", "下一個是?", "再來一個", "接著要填甚麼?", "然後?"];
+var wrong_list = ["很抱歉，我不太清楚你的意思", "我剛剛恍神了，再說一次好嗎?", "麻煩你再說一次", "不好意思，我不太明白", "不好意思，可以重複一下剛剛說的話嗎?"];
 
 
 app.intent('預設歡迎畫面', (conv) => {
@@ -69,7 +70,7 @@ app.intent('選擇難度', (conv) => {
 
 	conv.ask(new SimpleResponse({
 		speech: `<speak><p><s>好的</s><s>請選擇遊玩模式!</s></p></speak>`,
-		text: '好的，\n請選擇遊玩模式!'
+		text: '好的，請選擇!'
 	}));
 
 	conv.ask(new List({ 
@@ -136,8 +137,6 @@ app.intent('輸入數字', (conv, { operator }) => {
 			operator_list.push(operator);
 			conv.user.storage.operator_list = operator_list;
 
-			conv.contexts.set(Contexts.ReAns, 1);
-
 			if (operator_list.length === 3) {
 				var temp = conv.user.storage.combintion;
 				conv.contexts.set(Contexts.Option, 1);
@@ -181,7 +180,7 @@ app.intent('輸入數字', (conv, { operator }) => {
 					}));
 
 					conv.ask(new Suggestions("重新填寫"));
-
+					conv.contexts.set(Contexts.ReAns, 1);
 				}
 				else {
 
@@ -197,7 +196,7 @@ app.intent('輸入數字', (conv, { operator }) => {
 					}));
 
 					conv.ask(new Suggestions("確定", "不太確定"));
-
+					conv.contexts.set(Contexts.ReAns, 1);
 				}
 			}
 			else {
@@ -223,9 +222,11 @@ app.intent('輸入數字', (conv, { operator }) => {
 		}
 		else {
 
+			var temp=wrong_list[parseInt(Math.random() * (wrong_list.length))];
+
 			conv.ask(new SimpleResponse({
-				speech: `<speak><p><s>很抱歉，我不太清楚你的意思。</s><s>請試著點擊建議卡片來進行輸入</s></p></speak>`,
-				text: '抱歉，請再說一次好嗎?'
+				speech: `<speak><p><s>${temp}</s><s>或透過建議卡片輸入你的選擇</s></p></speak>`,
+				text: temp
 			}));
 
 			conv.ask(new BasicCard({
@@ -235,9 +236,16 @@ app.intent('輸入數字', (conv, { operator }) => {
 			}));
 
 			conv.ask(new Suggestions(options));
-			conv.ask(new Suggestions("顯示答案", "重新作答"));
-			conv.contexts.set(Contexts.ReAns, 1);
+			conv.ask(new Suggestions("顯示答案"));
 
+			if(operator_list.length===0){
+				conv.ask(new Suggestions("重新開始"));
+				conv.contexts.set(Contexts.Restart, 1);
+			}
+			else{
+				conv.ask(new Suggestions("重新填寫"));
+				conv.contexts.set(Contexts.ReAns, 1);
+			}
 		}
 	}
 	else {
@@ -447,33 +455,35 @@ app.intent('重新開始', (conv) => {
 
 app.intent('重新輸入答案', (conv) => {
 
-	var speration = conv.user.storage.combintion.toString();
-	var title = replaceString(speration, ",", "☐");
+	var operator_list=conv.user.storage.operator_list;
+
+	if(operator_list.length===0){operator_list=[0]}
 
 	conv.ask(new SimpleResponse({
 
-		speech: `<speak><p><s>我知道了!</s><s>我們重新開始吧，數字是${speration}</s></p></speak>`,
-		text: '好的，我們重新填寫吧!'
+		speech: `<speak><p><s>好的，我知道了!</s><s>請重新填寫第${operator_list.length}個位置的運算元</s></p></speak>`,
+		text: '好的，我們重新填寫第'+operator_list.length+'個位置的運算元'
 	}));
 
+	operator_list.length=operator_list.length-1;
+
 	conv.ask(new BasicCard({
-		title: title,
+		title: formula.generator(conv.user.storage.combintion, operator_list),
 		subtitle: "請試著運用加減乘除得到「"+target[conv.user.storage.level]+"」",
 		text: conv.user.storage.level + " • " + conv.user.storage.count + "種解法",
 	}));
 	conv.ask(new Suggestions(options));
-	conv.ask(new Suggestions("重新開始"));
-	conv.contexts.set(Contexts.Restart, 1);
+	conv.ask(new Suggestions("重新作答"));
+	conv.contexts.set(Contexts.ReAns, 1);
 	conv.contexts.set(Contexts.Play, 1);
-	conv.user.storage.operator_list = [];
-
+	conv.user.storage.operator_list = operator_list;
 });
 
 app.intent('遊戲說明', (conv) => {
 
 	conv.ask(new SimpleResponse({ speech: `<speak><p><s>遊戲開始時，會產生一組固定順序的四個數字，其中</s><s>每個數字範圍是1到13</s><s>且數字間彼此可以重複</s><s>統計而言，組合高達28561種</s><s>而你要做的，即利用指定順序的數字進行加減乘除，得到指定的答案!</s></p></speak>`, text: "以下是遊戲說明，請查看!", }));
 
-	wiki.buttons = new Button({ title: '在維基百科上查看條目', url: 'https://zh.wikipedia.org/zh-tw/24點', });
+	wiki.buttons = new Button({ title: '在維基百科上查看條目', url: 'https://zh.wikipedia.org/wiki/24%E7%82%B9', });
 
 	conv.ask(new BasicCard(wiki));
 
@@ -487,7 +497,9 @@ app.intent('遊戲說明', (conv) => {
 
 app.intent('預設罐頭回覆', (conv) => {
 
-	conv.ask(new SimpleResponse({ speech: `<speak><p><s>抱歉，我不懂你的意思</s><s></s></p></speak>`, text: "抱歉，我不明白你的意思", }));
+	var temp=wrong_list[parseInt(Math.random() * (wrong_list.length))];
+	
+	conv.ask(new SimpleResponse({ speech: `<speak><p><s>${temp}</s><s></s></p></speak>`, text: temp, }));
 
 	conv.ask(new Suggestions("選擇難度", "👋 掰掰"));
 

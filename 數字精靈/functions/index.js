@@ -57,36 +57,23 @@ app.intent('預設歡迎語句', (conv) => {
         text: i18n.__('Welcome_back'),
       }));
 
+    } else {
+
+      conv.ask(new SimpleResponse({
+        speech: `<speak><p><s>${i18n.__('Welcome_1')}</s><s>${i18n.__('Welcome_2')}</s><s>${i18n.__('Select1')}</s><s>${i18n.__('Select2')}</s><s>${i18n.__('Select3')}</s></p></speak>`,
+        text: i18n.__('Welcome_init'),
+      }));
+     }
+
       conv.ask(new BasicCard({
         title: i18n.__('SelectTitle'),
         subtitle: i18n.__('SelectSubTitle'),
         text: i18n.__('SelectText')
       }));
 
-
       conv.ask(new Suggestions('50', '100', '250', '500', '1000', '🎲 ' + i18n.__('Lucky')));
       conv.contexts.set(Contexts.guess, 1);
-
-    } else {
-
-      conv.ask(new SimpleResponse({
-        speech: `<speak><p><s>${i18n.__('Welcome_1')}</s><s>${i18n.__('Welcome_2')}</s><s>${i18n.__('Welcome_3')}</s><s>${i18n.__('Welcome_4')}</s></p></speak>`,
-        text: i18n.__('Welcome_init'),
-      }));
-
-      conv.ask(new BasicCard({
-        image: new Image({ url: 'https://imgur.com/jDh7GXp.jpg', alt: 'Pictures', }),
-        title: i18n.__('Welcome_Title'),
-        subtitle: i18n.__('Welcome_Subtitle'),
-        text: i18n.__('Welcome_Text'),
-        display: 'CROPPED',//更改圖片顯示模式為自動擴展
-      }));
-
-      conv.ask(new Suggestions('🎮 ' + i18n.__('StartGame'), '👋 ' + i18n.__('Bye')));
-      conv.contexts.set(Contexts.Bye, 1);
-      conv.contexts.set(Contexts.guess, 1);
-    }
-
+    
   } else {
 
     conv.noInputs = [i18n.__('Welcome_Noinput_1'), i18n.__('Welcome_Noinput_2'), i18n.__('Welcome_Noinput_3')];
@@ -134,7 +121,7 @@ app.intent('輸入數字', (conv, { any }) => {
         text: i18n.__('RandomOut'),
       }));
 
-      if (any < 3) { any = 3; }
+      if (any < 10) { any = 10; }
     }
 
     var returns = replaceString.input(any, conv.user.locale);  //藉由子函式吐回數字以及是否為合法輸入
@@ -148,11 +135,15 @@ app.intent('輸入數字', (conv, { any }) => {
         sys_complete = true;
 
         //若使用者預選的數字小於3，則自動修正並加以提示
-        if (number < 3) {
-          number = 3;
-          conv.ask(`<speak><p><s>${i18n.__('Range_hint')}</s></p></speak>`);
+        if (number < 10) {
+          number = 10;
+          conv.ask(`<speak><p><s>${i18n.__('Range_hint_min')}</s></p></speak>`);
         }
-
+        else if(number > 10000000000000000){
+          number=10000000000000000;
+          conv.ask(`<speak><p><s>${i18n.__('Range_hint_max')}</s></p></speak>`);
+        }
+        
         conv.user.storage.yourchoice = number;
         U_limit = number;
 

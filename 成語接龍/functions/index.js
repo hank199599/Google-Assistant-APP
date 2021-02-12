@@ -12,9 +12,6 @@ const {
 
 // Import the firebase-functions package for deployment.
 
-//var getJSON = require('get-json')//引用呼叫網路內容之模組
-//var parser=require('json-parser');
-
 const functions = require('firebase-functions');
 const replaceString = require('replace-string');
 var pinyin = require("pinyin");
@@ -37,16 +34,36 @@ var end_game = false; //判別遊戲是否已結束
 var question_output = false; //判別是否拿到出題目許可
 var end_game = false; //判別是否輸入許可的答案
 var input_list = new Array([]);;
-var checker = false;
-var input_init = "";
 var start_game = false;
 var inputarray = ["🔄 重新開始", "再來一次", "再玩一次", "再試一次", "再來", "重新開始", "重來", "好", "OK", "可以", "再一次", "好啊"];
 var wrong_array = "";
 var return_array = ["準備接招吧!", "小菜一碟 😎", "能接的成語顯而易見呢!", "這還不簡單?", "輕而易舉的問題"];
 var jumpcount = "";
 var wrong_count = 0;
-const LeaveContexts = { parameter: 'bye', }
-const ExplainContexts = { parameter: 'explain', }
+
+const Contexts = {
+    Leave: 'bye',
+    Answer: 'answer',
+    Explain: 'explain',
+    Counter: 'hint_count',
+    Get_hint: 'get_hint',
+    Skip: 'skip',
+    Quit: 'leave',
+    Repeat: 'repeat'
+}
+
+var example_array = [
+    ['登峰造極', '擊轂摩肩', '姦淫擄掠', '掠地攻城', '承顏候色'],
+    ['豁然開朗', '浪跡天涯', '睚眥之隙', '惜墨如金', '斤斤計較'],
+    ['少不更事', '視若無睹', '獨占鰲頭', '偷饞抹嘴', '罪孽深重'],
+    ['似漆如膠', '攪海翻江', '將李代桃', '陶犬瓦雞', '雞鳴犬吠'],
+    ['冠冕堂皇', '恍如隔世', '石沉大海', '海北天南', '南阮北阮'],
+    ['拉朽摧枯', '苦盡甘來', '來龍去脈', '賣弄玄虛', '虛張形勢'],
+    ['耳濡目染', '燃眉之急', '肌無完膚', '腹便便', '變生肘腋'],
+    ['加體黃袍', '拋金棄鼓', '古貌古心', '心粗膽大', '打主意'],
+    ['養精蓄銳', '銳未可當', '當風秉燭', '舳艫相繼', '積玉堆金'],
+    ['滿腹經綸', '論斤估兩', '量力而行', '形隻影單', '殫誠畢慮']
+]
 
 
 app.intent('預設歡迎語句', (conv) => {
@@ -64,6 +81,16 @@ app.intent('預設歡迎語句', (conv) => {
             last_word = "";
             first_word = "";
 
+            var example = "";
+            var example_list = example_array[parseInt(Math.random() * (example_array.length - 1))];
+
+            for (var i = 0; i < example_list.length; i++) {
+                example = example + example_list[i]
+                if (example_list[i + 1] !== undefined) {
+                    example = example + ">"
+                }
+            }
+
             conv.ask(new SimpleResponse({
                 speech: `<speak><p><s>想和我一較高下嗎</s><s>在遊戲過程中，成語不能重複!</s><s>與此同時，你隨時都能退出挑戰結算成績!</s><s>來挑戰看看八!</s></p></speak>`,
                 text: '歡迎來挑戰!',
@@ -73,14 +100,15 @@ app.intent('預設歡迎語句', (conv) => {
                 image: new Image({ url: 'https://i.imgur.com/dB4pcgi.jpg', alt: 'Pictures', }),
                 title: '遊戲規則',
                 subtitle: '  • 前後成語的讀音須相同但不限音調。\n  • 在遊戲過程中，詞彙不能重複!\n  • 隨時都能跳過詞彙，共有五次機會。\n  • 你隨時都能退出結算成績。',
-                text: '**範例**：  \n互限為穿>川流不舍>捨本逐末>摩頂至踵>眾散親離',
+                text: '**範例**：  \n' + example,
                 buttons: new Button({
                     title: '《教育部成語典》',
                     url: 'https://dict.idioms.moe.edu.tw/search.jsp?webMd=2&la=0',
                 }),
             }));
             conv.ask(new Suggestions('🎮 開始挑戰', '👋 掰掰'));
-            conv.contexts.set(LeaveContexts.parameter, 1);
+            conv.contexts.set(Contexts.Leave, 1);
+
         } else {
             menu = false;
             question_output = true;
@@ -94,12 +122,12 @@ app.intent('預設歡迎語句', (conv) => {
 
             if (conv.user.last.seen) {
                 conv.ask(new SimpleResponse({
-                    speech: `<speak><p><s>歡迎回來!</s><break time="0.3s"/><s>在你開始接龍前，可以說<break time="0.2s"/>重新開始<break time="0.2s"/>讓我重新想一個成語作為開頭。</s><s>當你接不下去時，可以說<break time="0.2s"/>跳ㄍㄨㄛˋ<break time="0.2s"/>讓我幫你想一個成語!</s><break time="0.3s"/><s>準備好了嗎?<break time="1s"/></s></p></speak>`,
+                    speech: `<speak><p><s>歡迎回來!</s><break time="0.3s"/><s>在你開始接龍前，可以說<break time="0.2s"/>重新開始<break time="0.2s"/>讓我重新想一個成語作為開頭。</s><s>當你接不下去時，可以說<break time="0.2s"/>跳過<break time="0.2s"/>讓我幫你想一個成語!</s><break time="0.3s"/><s>準備好了嗎?<break time="1s"/></s></p></speak>`,
                     text: '遊戲前說明',
                 }));
             } else {
                 conv.ask(new SimpleResponse({
-                    speech: `<speak><p><s>在開始遊戲前，我需要跟您進行說明。本服務的語音辨識由Google執行。</s><s>碰到同音成語或雜音等問題時，可能會發生辨識錯誤。僅此知會你一聲!</s><break time="0.5s"/><s>此外，在你開始接龍前，你可以說<break time="0.2s"/>重新開始<break time="0.2s"/>讓我重新想一個成語作為開頭。</s><s>當你接不下去時，可以說<break time="0.2s"/>跳ㄍㄨㄛˋ<break time="0.2s"/>讓我幫你想一個成語!</s><break time="0.3s"/><s>準備好了嗎?<break time="1s"/></s></p></speak>`,
+                    speech: `<speak><p><s>在開始遊戲前，我需要跟您進行說明。本服務的語音辨識由Google執行。</s><s>碰到同音成語或雜音等問題時，可能會發生辨識錯誤。僅此知會你一聲!</s><break time="0.5s"/><s>此外，在你開始接龍前，你可以說<break time="0.2s"/>重新開始<break time="0.2s"/>讓我重新想一個成語作為開頭。</s><s>當你接不下去時，可以說<break time="0.2s"/>跳過<break time="0.2s"/>讓我幫你想一個成語!</s><break time="0.3s"/><s>準備好了嗎?<break time="1s"/></s></p></speak>`,
                     text: '遊戲前說明',
                 }));
             }
@@ -114,10 +142,13 @@ app.intent('預設歡迎語句', (conv) => {
             }));
 
             input_list.push(sys_word); //將字成語存入佇列
-            var temp = pinyin(sys_word, { style: pinyin.STYLE_NORMAL, heteronym: false });
-            last_word = transform_library[temp[sys_word.length - 1][0]];
 
-            conv.contexts.set(ExplainContexts.parameter, 1);
+            last_word = idiom_varify[sys_word][1];
+
+            conv.contexts.set(Contexts.Explain, 1);
+            conv.contexts.set(Contexts.Get_hint, 1);
+            conv.contexts.set(Contexts.Skip, 1);
+            conv.contexts.set(Contexts.Repeat, 1);
 
         }
     } else {
@@ -211,8 +242,8 @@ app.intent('問題產生器', (conv, { input }) => {
                 sys_word = text_start[parseInt(Math.random() * 599)];
 
                 input_list.push(sys_word); //將字成語存入佇列
-                var temp = pinyin(sys_word, { style: pinyin.STYLE_NORMAL, heteronym: false });
-                last_word = transform_library[temp[sys_word.length - 1][0]];
+                last_word = idiom_varify[sys_word][1];
+
                 conv.speechBiasing = idiom_library[last_word];
                 conv.ask(new SimpleResponse({
                     speech: `<speak><p><s>開始啦!</s><s>第一個成語是<break time="0.2s"/>${sys_word}</s></p></speak>`,
@@ -238,22 +269,26 @@ app.intent('問題產生器', (conv, { input }) => {
                 conv.ask(new BasicCard({
                     title: '『' + sys_word + '』',
                     subtitle: '解釋：' + explain,
-                    text: '_若開頭成語太難，可以說「重新開始」_  \n或者跳過它讓我幫你想一個成語，每回合共五次機會',
+                    //  text: '_若開頭成語太難，可以說「重新開始」_  \n或者跳過它讓我幫你想一個成語，每回合共五次機會',
+                    text: '_若開頭成語太難，可以說「重新開始」_  \n也可以請我給點提示或直掉跳過它，每回合共五次機會',
                 }));
 
-                conv.ask(new Suggestions('🔄 重新開始', '查詢意思', '跳過這個成語', '放棄本回合'));
-                conv.contexts.set(ExplainContexts.parameter, 1);
+                conv.ask(new Suggestions('🔄 重新開始', '給點提示', '跳過這個成語', '放棄本回合'));
+
+                conv.contexts.set(Contexts.Explain, 1);
+                conv.contexts.set(Contexts.Quit, 1);
+                conv.contexts.set(Contexts.Get_hint, 1);
+                conv.contexts.set(Contexts.Skip, 1);
+                conv.contexts.set(Contexts.Repeat, 1);
+
 
             } else {
-                input_init = input.split('');
-                var temp = pinyin(input, { style: pinyin.STYLE_NORMAL, heteronym: false });
-                first_word = transform_library[temp[0][0]];
+
                 conv.noInputs = ["我剛剛說的是" + sys_word + "，請說以" + last_word + "為開頭的成語", "遊戲已經開始囉，請說以" + last_word + "為開頭的成語", "抱歉，由於您沒有回應因此遊戲到此結束。下次見。"];
 
-                checker = idiom_varify[input]
                 conv.speechBiasing = idiom_library[last_word];
 
-                if (checker === undefined) {
+                if (idiom_varify[input] === undefined) {
                     wrong_count++;
                     wrong_array = [`<speak><p><s>你說的${input}不是成語喔!再想一個八!</s></p></speak>`,
                         `<speak><p><s>${input}好像不是成語，試著換一個八!</s></p></speak>`,
@@ -278,15 +313,26 @@ app.intent('問題產生器', (conv, { input }) => {
                             conv.ask(new BasicCard({
                                 title: '『' + sys_word + '』',
                                 subtitle: '請輸入以「' + last_word + '」開頭的成語',
-                                text: '_[!]你目前剩下' + (5 - jumpcount) + '次跳過機會_',
+                                text: '_[!]你目前剩下' + (5 - jumpcount) + '次跳過或獲取提示的機會_',
                             }));
                         }
-                        if (jumpcount <= 4) { conv.ask(new Suggestions('跳過這個成語')); }
+                        if (jumpcount <= 4) {
+                            conv.ask(new Suggestions('來點提示'));
+                            conv.ask(new Suggestions('跳過這個成語'));
+                        }
                         conv.ask(new Suggestions('放棄本回合'));
+
+                        conv.contexts.set(Contexts.Quit, 1);
+                        conv.contexts.set(Contexts.Skip, 1);
+                        conv.contexts.set(Contexts.Repeat, 1);
+                        conv.contexts.set(Contexts.Get_hint, 1);
+
                     } else {
                         if (wrong_count <= 2) { conv.ask(`<speak><p><s>現在接到<break time="0.2s"/>${sys_word}<break time="0.2s"/>請試著繼續接下去</s></p></speak>`); } else if (wrong_count < 5) { conv.ask(`<speak><p><s>現在接到<break time="0.2s"/>${sys_word}<break time="0.2s"/>如果仍想不到可以接甚麼成語，可以對我說<break time="0.2s"/>跳過它</s></p></speak>`); } else { conv.close(`<speak><p><s>由於我們的對話無法繼續，遊戲先到這裡八<break time="0.2s"/>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`); }
                     }
                 } else {
+
+                    first_word = idiom_varify[input][0]
 
                     if (last_word !== first_word) {
                         wrong_count++;
@@ -306,11 +352,21 @@ app.intent('問題產生器', (conv, { input }) => {
                             conv.ask(new BasicCard({
                                 title: '『' + sys_word + '』',
                                 subtitle: '請輸入以「' + last_word + '」開頭的成語',
-                                text: '_[!]你目前剩下' + (5 - jumpcount) + '次跳過機會_',
+                                text: '_[!]你目前剩下' + (5 - jumpcount) + '次跳過或獲取提示的機會_',
                             }));
 
-                            if (jumpcount <= 4) { conv.ask(new Suggestions('跳過這個成語')); }
+                            if (jumpcount <= 4) {
+                                conv.ask(new Suggestions('來點提示'));
+                                conv.ask(new Suggestions('跳過這個成語'));
+                            }
                             conv.ask(new Suggestions('放棄本回合'));
+
+                            conv.contexts.set(Contexts.Quit, 1);
+                            conv.contexts.set(Contexts.Get_hint, 1);
+                            conv.contexts.set(Contexts.Skip, 1);
+                            conv.contexts.set(Contexts.Repeat, 1);
+                            conv.contexts.set(Contexts.Get_hint, 1);
+
                         } else {
                             if (wrong_count <= 2) { conv.ask(`<speak><p><s>現在接到<break time="0.2s"/>${sys_word}<break time="0.2s"/>請試著繼續接下去</s></p></speak>`); } else if (wrong_count < 5) { conv.ask(`<speak><p><s>現在接到<break time="0.2s"/>${sys_word}<break time="0.2s"/>如果仍想不到可以接甚麼成語，可以對我說<break time="0.2s"/>跳過它</s></p></speak>`); } else { conv.close(`<speak><p><s>由於我們的對話無法繼續，遊戲先到這裡八<break time="0.2s"/>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`); }
                         }
@@ -321,8 +377,7 @@ app.intent('問題產生器', (conv, { input }) => {
                         if (input_list.indexOf(input) === -1) { //偵錯看是否輸入到重複的成語
 
                             input_list.push(input); //將字成語存入佇列
-                            var temp = pinyin(input, { style: pinyin.STYLE_NORMAL, heteronym: false });
-                            input_word = transform_library[temp[input.length - 1][0]];
+                            input_word = idiom_varify[input][1]
 
                             output_array = idiom_library[input_word]; //進入詞彙庫取得對應詞彙
 
@@ -343,7 +398,7 @@ app.intent('問題產生器', (conv, { input }) => {
                                     }));
 
                                     conv.ask(new Suggestions('🔄 重新開始', '👋 掰掰'));
-                                    conv.contexts.set(LeaveContexts.parameter, 1);
+                                    conv.contexts.set(Contexts.Leave, 1);
 
                                     Total_Count = 0;
                                     input_list = [];
@@ -354,8 +409,8 @@ app.intent('問題產生器', (conv, { input }) => {
                                 }
                             } else {
                                 sys_word = output_array[parseInt(Math.random() * (output_array.length - 1))];
-                                var temp = pinyin(sys_word, { style: pinyin.STYLE_NORMAL, heteronym: false });
-                                last_word = transform_library[temp[sys_word.length - 1][0]];
+
+                                last_word = idiom_varify[sys_word][1];
 
                                 if (input_list.indexOf(sys_word) !== -1) {
                                     menu = false;
@@ -373,7 +428,7 @@ app.intent('問題產生器', (conv, { input }) => {
                                             text: '共進行' + Total_Count + '次接龍(不計入跳過的成語)',
                                         }));
                                         conv.ask(new Suggestions('🔄 重新開始', '👋 掰掰'));
-                                        conv.contexts.set(LeaveContexts.parameter, 1);
+                                        conv.contexts.set(Contexts.Leave, 1);
                                         Total_Count = 0;
                                         input_list = [];
                                         start_game = false;
@@ -386,7 +441,7 @@ app.intent('問題產生器', (conv, { input }) => {
 
                                     output_array = idiom_library[last_word]; //進入字成語庫取得對應字成語
 
-                                    if (typeof output_array === "undefined") {
+                                    if (output_array === undefined) {
                                         menu = false;
                                         question_output = false;
                                         end_game = true;
@@ -401,10 +456,14 @@ app.intent('問題產生器', (conv, { input }) => {
                                                 title: '我想的『' + sys_word + '』接不下去拉!',
                                                 subtitle: '本回合已結束',
                                                 text: '共進行' + Total_Count + '次接龍(不計入跳過的成語)',
+                                                buttons: new Button({
+                                                    title: '在《萌典》上看「' + sys_word + '」的意思',
+                                                    url: 'https://www.moedict.tw/' + sys_word,
+                                                })
                                             }));
 
                                             conv.ask(new Suggestions('🔄 重新開始', '👋 掰掰'));
-                                            conv.contexts.set(LeaveContexts.parameter, 1);
+                                            conv.contexts.set(Contexts.Leave, 1);
 
                                             Total_Count = 0;
                                             input_list = [];
@@ -422,10 +481,18 @@ app.intent('問題產生器', (conv, { input }) => {
                                             text: return_array[parseInt(Math.random() * 4)],
                                         }));
 
-                                        conv.contexts.set(ExplainContexts.parameter, 1);
-                                        conv.ask(new Suggestions('查詢意思'));
-                                        if (jumpcount <= 4) { conv.ask(new Suggestions('跳過這個成語')); }
+                                        //conv.ask(new Suggestions('查詢意思'));
+                                        if (jumpcount <= 4) {
+                                            conv.ask(new Suggestions('來點提示'));
+                                            conv.ask(new Suggestions('跳過這個成語'));
+                                        }
                                         conv.ask(new Suggestions('放棄本回合'));
+
+                                        conv.contexts.set(Contexts.Skip, 1);
+                                        conv.contexts.set(Contexts.Quit, 1);
+                                        conv.contexts.set(Contexts.Explain, 1);
+                                        conv.contexts.set(Contexts.Repeat, 1);
+                                        conv.contexts.set(Contexts.Get_hint, 1);
 
                                         conv.user.storage.menu = menu;
                                         conv.user.storage.end_game = end_game;
@@ -446,10 +513,12 @@ app.intent('問題產生器', (conv, { input }) => {
                                         conv.ask(new BasicCard({
                                             title: '『' + sys_word + '』',
                                             subtitle: '解釋：' + explain,
-                                            text: '_[!]你目前剩下' + (5 - jumpcount) + '次跳過機會_',
+                                            text: '_[!]你目前剩下' + (5 - jumpcount) + '次跳過或獲取提示的機會_',
                                         }));
 
-                                        conv.contexts.set(ExplainContexts.parameter, 1);
+                                        conv.contexts.set(Contexts.Explain, 1);
+                                        conv.contexts.set(Contexts.Quit, 1);
+                                        conv.contexts.set(Contexts.Get_hint, 1);
 
                                     }
                                 }
@@ -470,7 +539,7 @@ app.intent('問題產生器', (conv, { input }) => {
                                 subtitle: '本回合已結束',
                                 text: '共進行' + Total_Count + '次接龍(不計入跳過的成語)',
                             }));
-                            conv.contexts.set(LeaveContexts.parameter, 1);
+                            conv.contexts.set(Contexts.Leave, 1);
 
                             conv.ask(new Suggestions('🔄 重新開始', '👋 掰掰'));
                             Total_Count = 0;
@@ -486,7 +555,7 @@ app.intent('問題產生器', (conv, { input }) => {
                 speech: `<speak><p><s>不好意思，我沒聽清楚。\n</s><s>請試著說<break time="0.2s"/>重新開始<break time="0.2s"/>或<break time="0.2s"/>掰掰<break time="0.2s"/>來確認你的操作。</s></p></speak>`,
                 text: '抱歉，我不懂你的意思。\n請點擊建議卡片來確認你的操作。'
             }));
-            conv.contexts.set(LeaveContexts.parameter, 1);
+            conv.contexts.set(Contexts.Leave, 1);
 
             conv.ask(new Suggestions('🔄 重新開始', '👋 掰掰'));
         } else {
@@ -551,32 +620,28 @@ app.intent('結束挑戰', (conv, { end_game }) => {
         if (conv.screen) {
             conv.ask(new SimpleResponse({ speech: `<speak><p><s>你在這回合一共進行${Total_Count}次接龍。</s><s>你要再試一次嗎?</s></p></speak>`, text: '驗收成果' }));
 
-            if (typeof output_array === "undefined") {
+            var output_content = {
+                image: new Image({ url: 'https://i.imgur.com/PLVkbbK.jpg', alt: 'Pictures', }),
+                title: '本回合共進行' + Total_Count + '次接龍',
+                subtitle: '不計入跳過的成語次數',
+                text: '✮增強功力：  \n在「' + last_word + '」後面，無法再繼續接下去了...',
+                display: 'CROPPED', //更改圖片顯示模式為自動擴展
+            }
 
-                conv.ask(new BasicCard({
-                    image: new Image({ url: 'https://i.imgur.com/PLVkbbK.jpg', alt: 'Pictures', }),
-                    title: '本回合共進行' + Total_Count + '次接龍',
-                    subtitle: '不計入跳過的成語次數',
-                    text: '✮增強功力：  \n在「' + last_word + '」後面，無法再繼續接下去了...',
-                    display: 'CROPPED', //更改圖片顯示模式為自動擴展
-                }));
-            } else {
+            if (output_array !== undefined) {
+
                 sys_word = output_array[parseInt(Math.random() * (output_array.length - 1))];
 
-                conv.ask(new BasicCard({
-                    image: new Image({ url: 'https://i.imgur.com/PLVkbbK.jpg', alt: 'Pictures', }),
-                    title: '本回合共進行' + Total_Count + '次接龍',
-                    subtitle: '不計入跳過的成語次數',
-                    text: '✮增強功力：  \n以「' + last_word + '」開頭的成語有『' + sys_word + '』。',
-                    buttons: new Button({
-                        title: '在《萌典》上看「' + sys_word + '」的意思',
-                        url: 'https://www.moedict.tw/' + sys_word,
-                    }),
-                    display: 'CROPPED', //更改圖片顯示模式為自動擴展
-                }));
+                output_content.text = '✮增強功力：  \n以「' + last_word + '」開頭的成語有『' + sys_word + '』。';
+                output_content.buttons = new Button({
+                    title: '在《萌典》上看「' + sys_word + '」的意思',
+                    url: 'https://www.moedict.tw/' + sys_word,
+                })
             }
+
+            conv.ask(new BasicCard(output_content));
             conv.ask(new Suggestions('🔄 重新開始', '👋 掰掰'));
-            conv.contexts.set(LeaveContexts.parameter, 1);
+            conv.contexts.set(Contexts.Leave, 1);
             Total_Count = 0;
             input_list = [];
             start_game = false;
@@ -609,7 +674,6 @@ app.intent('結束挑戰', (conv, { end_game }) => {
 
 });
 
-
 app.intent('解說意思', (conv) => {
     sys_word = conv.user.storage.sys_word;
     jumpcount = conv.user.storage.jumpcount;
@@ -629,13 +693,422 @@ app.intent('解說意思', (conv) => {
     conv.ask(new BasicCard({
         title: '『' + sys_word + '』',
         subtitle: '解釋：' + explain,
-        text: '_[!]你目前剩下' + (5 - jumpcount) + '次跳過機會_',
+        text: '_[!]你目前剩下' + (5 - jumpcount) + '次跳過或獲取提示的機會_',
     }));
 
-    if (jumpcount <= 4) { conv.ask(new Suggestions('跳過這個成語')); }
+    if (jumpcount <= 4) {
+        conv.ask(new Suggestions('來點提示'));
+        conv.ask(new Suggestions('跳過這個成語'));
+    }
     conv.ask(new Suggestions('放棄本回合'));
 
+    conv.contexts.set(Contexts.Quit, 1);
+    conv.contexts.set(Contexts.Get_hint, 1);
+    conv.contexts.set(Contexts.Skip, 1);
+    conv.contexts.set(Contexts.Repeat, 1);
+
 });
+
+app.intent('重覆題目', (conv) => {
+    sys_word = conv.user.storage.sys_word;
+    jumpcount = conv.user.storage.jumpcount;
+
+    var explain = brief_explain[sys_word];
+    var reply_array = ["沒問題", "我知道了", "OK", "我了解了", "好的", "收到"]
+    var reply_confirm = reply_array[parseInt(Math.random() * (reply_array.length - 1))];
+
+    if (explain.indexOf("查「") !== -1) {
+        explain = brief_explain[brief_explain[sys_word].replace(/[\查|\「|\」|\辞]/gm, "")]
+    }
+
+    conv.noInputs = ["我剛剛說的是" + sys_word + "，請說以" + last_word + "為開頭的成語", "請繼續接龍吧，以" + last_word + "為開頭的成語", "抱歉，由於您沒有回應因此遊戲到此結束。下次見。"];
+
+    conv.ask(new SimpleResponse({
+        speech: `<speak><p><s>${reply_confirm}，我剛剛說的是<break time="0.5s"/>${sys_word}</s></p></speak>`,
+        text: reply_confirm + '，仔細聽好囉!',
+    }));
+
+    conv.ask(new BasicCard({
+        title: '『' + sys_word + '』',
+        subtitle: '解釋：' + explain,
+        text: '_[!]你目前剩下' + (5 - jumpcount) + '次跳過或獲取提示的機會_',
+    }));
+
+    //conv.ask(new Suggestions('查詢意思'));
+    if (jumpcount <= 4) {
+        conv.ask(new Suggestions('來點提示'));
+        conv.ask(new Suggestions('跳過這個成語'));
+    }
+    conv.ask(new Suggestions('放棄本回合'));
+
+    conv.contexts.set(Contexts.Explain, 1);
+    conv.contexts.set(Contexts.Quit, 1);
+    conv.contexts.set(Contexts.Get_hint, 1);
+    conv.contexts.set(Contexts.Skip, 1);
+    conv.contexts.set(Contexts.Repeat, 1);
+
+});
+
+app.intent('提示前面的字', (conv) => {
+
+    conv.user.storage.hint_count = 0;
+    var last_word = conv.user.storage.last_word;
+
+    jumpcount = conv.user.storage.jumpcount;
+    jumpcount++
+
+    output_array = idiom_library[last_word]; //進入成語彙庫取得對應成語彙
+
+    if (jumpcount <= 5) {
+
+        if ((5 - jumpcount) !== 0) {
+            conv.ask(new SimpleResponse({
+                speech: `<speak><p><s>好的</s><s>你現在剩下${5 - jumpcount}次請求提示的機會!</s></p></speak>`,
+                text: '好的，你還有' + (5 - jumpcount) + '次請求提示的機會'
+            }));
+
+        } else {
+            conv.ask(new SimpleResponse({
+                speech: `<speak><p><s>提醒你</s><s>你已經用完所有請求提示的機會!</s></p></speak>`,
+                text: '你已經用完所有請求提示的機會'
+            }));
+        }
+
+        if (output_array === undefined) {
+            menu = false;
+            question_output = false;
+            end_game = true;
+            conv.ask(new SimpleResponse({
+                speech: `<speak><p><s>看來這個成語彙是接不下去的，回合結束!</s></p></speak>`,
+                text: '這個成語是接不下去的，回合結束',
+            }));
+            if (conv.screen) {
+                conv.ask(new BasicCard({
+                    title: '看來『' + input_list[-1] + '』是接不下去的',
+                    subtitle: '本回合已結束',
+                    text: '共進行' + Total_Count + '次接龍(不計入跳過的成語彙)',
+                    buttons: new Button({
+                        title: '在《萌典》上看「' + input_list[-1] + '」的意思',
+                        url: 'https://www.moedict.tw/' + input_list[-1],
+                    })
+                }));
+                conv.ask(new Suggestions('🔄 重新開始', '👋 掰掰'));
+                conv.contexts.set(Contexts.Leave, 1);
+                Total_Count = 0;
+                input_list = [];
+                start_game = false;
+            } else {
+                conv.user.storage = {}; //離開同時清除暫存資料	
+                conv.close(`<speak><p><s>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);
+            }
+
+        } else {
+            sys_word = output_array[parseInt(Math.random() * (output_array.length - 1))];
+
+            var hint_array = sys_word.split('');
+
+            var word_length = Math.floor(sys_word.replace("，", "").length / 2);
+            var display_hint = "";
+            var hint = "";
+
+            for (var i = 0; i < hint_array.length; i++) {
+                if (i < word_length) {
+                    display_hint = display_hint + hint_array[i];
+                    hint = hint + hint_array[i]
+                } else if (hint_array[i] === "，") {
+                    display_hint = display_hint + "，"
+                } else {
+                    display_hint = display_hint + "☐"
+                }
+            }
+
+            conv.speechBiasing = output_array;
+
+            conv.noInputs = ["我剛剛說的提示是" + hint + "，請試著接下去", "請說以" + hint + "為開頭的成語", "抱歉，由於您沒有回應因此遊戲到此結束。下次見。"];
+
+            var explain = brief_explain[sys_word];
+            if (explain.indexOf("查「") !== -1) {
+                explain = brief_explain[brief_explain[sys_word].replace(/[\查|\「|\」|\辞]/gm, "")]
+            }
+
+            var hint_array = [
+                `<speak><p><s>前${word_length}個字是<break time="0.5s"/>${hint}<break time="0.5s"/>，它有${explain}的意思<break time="0.5s"/>我就幫到這裡了</s></p></speak>`,
+                `<speak><p><s>這個成語的前${word_length}個字是<break time="0.5s"/>${hint}<break time="0.5s"/>，意思是${explain}<break time="0.5s"/>接下來換你了</s></p></speak>`,
+                `<speak><p><s>前${word_length}個字是<break time="0.5s"/>${hint}<break time="0.5s"/>，這個成語的意思是${explain}<break time="0.5s"/>請試著完成他吧</s></p></speak>`
+            ]
+
+            conv.ask(new SimpleResponse({
+                speech: hint_array[parseInt(Math.random() * (hint_array.length - 1))],
+                text: "提示如下，我就幫到這了",
+            }));
+
+            conv.ask(new BasicCard({
+                title: display_hint,
+                subtitle: '解釋：' + explain,
+                text: '_[!]這個提示有' + (3 - conv.user.storage.hint_count) + '次猜測機會_',
+            }));
+
+            conv.ask(new Suggestions('查看答案', '放棄本回合'));
+
+            conv.contexts.set(Contexts.Quit, 1);
+            conv.contexts.set(Contexts.Counter, 1);
+            conv.contexts.set(Contexts.Answer, 1);
+
+            conv.user.storage.display_hint = display_hint;
+            conv.user.storage.sys_word = sys_word;
+            conv.user.storage.explain = explain;
+            conv.user.storage.jumpcount = jumpcount;
+        }
+    } else {
+
+        sys_word = conv.user.storage.sys_word;
+
+        var explain = brief_explain[sys_word];
+        if (explain.indexOf("查「") !== -1) {
+            explain = brief_explain[brief_explain[sys_word].replace(/[\查|\「|\」|\辞]/gm, "")]
+        }
+
+        conv.noInputs = ["我剛剛說的是" + sys_word + "，請說以" + last_word + "為開頭的成語", "請繼續接龍吧，以" + last_word + "為開頭的成語", "抱歉，由於您沒有回應因此遊戲到此結束。下次見。"];
+
+        conv.ask(new SimpleResponse({
+            speech: `<speak><p><s>很抱歉，你已經用完提示的機會，請試著自行繼續接下去</s></p></speak>`,
+            text: '很抱歉，你已經用完提示的機會了',
+        }));
+
+        conv.ask(new BasicCard({
+            title: '『' + sys_word + '』',
+            subtitle: '解釋：' + explain,
+            text: '_[!]你已經用完跳過或獲取提示的機會_',
+        }));
+
+        if (jumpcount <= 4) {
+            conv.ask(new Suggestions('來點提示'));
+            conv.ask(new Suggestions('跳過這個成語'));
+        }
+        conv.ask(new Suggestions('放棄本回合'));
+
+        conv.contexts.set(Contexts.Quit, 1);
+        conv.contexts.set(Contexts.Skip, 1);
+        conv.contexts.set(Contexts.Get_hint, 1);
+        conv.contexts.set(Contexts.Repeat, 1);
+
+    }
+
+});
+
+app.intent('進行猜測', (conv, { input }) => {
+
+    var jumpcount = conv.user.storage.jumpcount;
+    var Total_Count = conv.user.storage.Total_Count;
+
+    if (input !== conv.user.storage.sys_word) {
+        var hint_count = conv.user.storage.hint_count;
+        hint_count++;
+        conv.user.storage.hint_count = hint_count;
+
+        if (hint_count <= 2) {
+
+            var sys_word = conv.user.storage.sys_word.replace("，", "");
+            conv.speechBiasing = [conv.user.storage.sys_word];
+
+            var courage_array = ["再接再厲!", "再想看看吧", "加油，答案就在眼前", "答案很接近了"]
+
+            conv.ask(new SimpleResponse(`<speak><p><s>${courage_array[parseInt(Math.random() * (courage_array.length - 1))]}</s></p></speak>`));
+
+            conv.ask(new BasicCard({
+                title: conv.user.storage.display_hint,
+                subtitle: '解釋：' + conv.user.storage.explain,
+                text: '_[!]這個提示有' + (3 - hint_count) + '次猜測機會_',
+            }));
+
+            conv.ask(new Suggestions('查看答案', '放棄本回合'));
+
+            conv.contexts.set(Contexts.Counter, 1);
+            conv.contexts.set(Contexts.Quit, 1);
+            conv.contexts.set(Contexts.Answer, 1);
+
+        } else {
+
+            conv.ask(new SimpleResponse({
+                speech: `<speak><p><s>答案揭曉，這個成語是${conv.user.storage.sys_word}，請繼續接下去吧!</s></p></speak>`,
+                text: '答案揭曉，請試著繼續接下去!',
+            }));
+
+            var sys_word = conv.user.storage.sys_word;
+            var last_word = idiom_varify[sys_word][1];
+            output_array = idiom_library[last_word]; //進入成語彙庫取得對應成語彙
+
+            input_list.push(input); //將成語彙存入佇列
+            conv.speechBiasing = output_array;
+            conv.noInputs = ["我剛剛說的是" + sys_word + "，請說以" + last_word + "為開頭的成語", "遊戲已經開始囉，請說以" + last_word + "為開頭的成語", "抱歉，由於您沒有回應因此遊戲到此結束。下次見。"];
+
+            conv.ask(new BasicCard({
+                title: "『" + conv.user.storage.sys_word + "』",
+                subtitle: '解釋：' + conv.user.storage.explain,
+                text: '_[!]你目前剩下' + (5 - jumpcount) + '次跳過或獲取提示的機會_',
+            }));
+
+            //conv.ask(new Suggestions('查詢意思'));
+
+            if (jumpcount <= 4) {
+                conv.ask(new Suggestions('來點提示'));
+                conv.ask(new Suggestions('跳過這個成語'));
+            }
+            conv.ask(new Suggestions('放棄本回合'));
+
+            conv.contexts.set(Contexts.Quit, 1);
+            conv.contexts.set(Contexts.Explain, 1);
+            conv.contexts.set(Contexts.Get_hint, 1);
+            conv.contexts.set(Contexts.Skip, 1);
+            conv.contexts.set(Contexts.Repeat, 1);
+
+            conv.user.storage.sys_word = sys_word;
+            conv.user.storage.last_word = last_word;
+            conv.user.storage.input_list = input_list;
+            conv.user.storage.Total_Count = Total_Count;
+            conv.user.storage.start_game = start_game;
+            conv.user.storage.jumpcount = jumpcount;
+
+        }
+
+    } else {
+
+        Total_Count++;
+
+        sys_word = conv.user.storage.sys_word;
+        last_word = idiom_varify[input][1];
+
+        input_list.push(input); //將成語彙存入佇列
+        output_array = idiom_library[last_word]; //進入成語彙庫取得對應成語彙
+
+        if (output_array === undefined) {
+            menu = false;
+            question_output = false;
+            end_game = true;
+
+            conv.ask(new SimpleResponse({
+                speech: `<speak><p><s>糟糕<break time="0.2s"/>我所選的${sys_word}是沒辦法接下去的!回合結束!</s></p></speak>`,
+                text: '我所想的成語是接不下去的，\n因此回合結束拉!',
+            }));
+            if (conv.screen) {
+                conv.ask(new BasicCard({
+                    title: '我想的『' + sys_word + '』接不下去拉!',
+                    subtitle: '本回合已結束',
+                    text: '共進行' + Total_Count + '次接龍(不計入跳過的成語彙)',
+                    buttons: new Button({
+                        title: '在《萌典》上看「' + sys_word + '」的意思',
+                        url: 'https://www.moedict.tw/' + sys_word,
+                    })
+                }));
+                conv.ask(new Suggestions('🔄 重新開始', '👋 掰掰'));
+                conv.contexts.set(Contexts.Leave, 1);
+                Total_Count = 0;
+                input_list = [];
+                start_game = false;
+            } else {
+                conv.user.storage = {}; //離開同時清除暫存資料	
+                conv.close(`<speak><p><s>在這回合中你進行${Total_Count}次接龍，下次見!</s></p></speak>`);
+            }
+        } else {
+
+            sys_word = output_array[parseInt(Math.random() * (output_array.length - 1))];
+            last_word = idiom_varify[sys_word][1];
+
+            conv.noInputs = ["我剛剛說的是" + sys_word + "，請說以" + last_word + "為開頭的成語", "遊戲已經開始囉，請說以" + last_word + "為開頭的成語", "抱歉，由於您沒有回應因此遊戲到此結束。下次見。"];
+            conv.speechBiasing = output_array;
+
+            conv.ask(`<speak><p><s>恭喜答對啦!</s></p></speak>`);
+            conv.ask(new SimpleResponse({
+                speech: `<speak><p><s>下一個成語是<break time="0.5s"/>${sys_word}</s></p></speak>`,
+                text: "下一個成語是...",
+            }));
+
+            var explain = brief_explain[sys_word];
+            if (explain.indexOf("查「") !== -1) {
+                explain = brief_explain[brief_explain[sys_word].replace(/[\查|\「|\」|\辞]/gm, "")]
+            }
+
+            conv.ask(new BasicCard({
+                title: '『' + sys_word + '』',
+                subtitle: '解釋：' + explain,
+                text: '_[!]你目前剩下' + (5 - jumpcount) + '次跳過或獲取提示的機會_',
+            }));
+
+            //conv.ask(new Suggestions('查詢意思'));
+
+            if (jumpcount <= 4) {
+                conv.ask(new Suggestions('來點提示'));
+                conv.ask(new Suggestions('跳過這個成語'));
+            }
+            conv.ask(new Suggestions('放棄本回合'));
+
+            conv.contexts.set(Contexts.Explain, 1);
+            conv.contexts.set(Contexts.Quit, 1);
+            conv.contexts.set(Contexts.Skip, 1);
+            conv.contexts.set(Contexts.Get_hint, 1);
+            conv.contexts.set(Contexts.Repeat, 1);
+
+            conv.user.storage.menu = menu;
+            conv.user.storage.end_game = end_game;
+            conv.user.storage.question_output = question_output;
+            conv.user.storage.sys_word = sys_word;
+            conv.user.storage.last_word = last_word;
+            conv.user.storage.input_list = input_list;
+            conv.user.storage.Total_Count = Total_Count;
+            conv.user.storage.start_game = start_game;
+            conv.user.storage.jumpcount = jumpcount;
+        }
+    }
+
+});
+
+app.intent('查看提示的答案', (conv) => {
+
+    var reply_array = ["沒問題", "我知道了", "OK", "我了解了", "好的", "收到"]
+    var sys_word = conv.user.storage.sys_word;
+    conv.ask(new SimpleResponse(`<speak><p><s>${reply_array[parseInt(Math.random() * (reply_array.length - 1))]}</s></p></speak>`));
+
+    conv.ask(new SimpleResponse({
+        speech: `<speak><p><s>這個成語是${conv.user.storage.sys_word}，請繼續接下去吧!</s></p></speak>`,
+        text: '答案揭曉，請試著繼續接下去!',
+    }));
+
+    var last_word = idiom_varify[conv.user.storage.sys_word][1];
+    output_array = idiom_library[last_word]; //進入成語彙庫取得對應成語彙
+
+    var jumpcount = conv.user.storage.jumpcount;
+
+    input_list.push(conv.user.storage.sys_word); //將成語彙存入佇列
+    conv.speechBiasing = output_array;
+    conv.noInputs = ["我剛剛說的是" + sys_word + "，請說以" + last_word + "為開頭的成語", "遊戲已經開始囉，請說以" + last_word + "為開頭的成語", "抱歉，由於您沒有回應因此遊戲到此結束。下次見。"];
+
+    conv.ask(new BasicCard({
+        title: "『" + conv.user.storage.sys_word + "』",
+        subtitle: '解釋：' + conv.user.storage.explain,
+        text: '_[!]你目前剩下' + (5 - jumpcount) + '次跳過或獲取提示的機會_',
+    }));
+
+    //conv.ask(new Suggestions('查詢意思'));
+
+    if (jumpcount <= 4) {
+        conv.ask(new Suggestions('來點提示'));
+        conv.ask(new Suggestions('跳過這個成語'));
+    }
+    conv.ask(new Suggestions('放棄本回合'));
+
+    conv.contexts.set(Contexts.Quit, 1);
+    conv.contexts.set(Contexts.Explain, 1);
+    conv.contexts.set(Contexts.Skip, 1);
+    conv.contexts.set(Contexts.Get_hint, 1);
+    conv.contexts.set(Contexts.Repeat, 1);
+
+    conv.user.storage.sys_word = sys_word;
+    conv.user.storage.last_word = last_word;
+    conv.user.storage.input_list = input_list;
+    conv.user.storage.Total_Count = Total_Count;
+    conv.user.storage.start_game = start_game;
+    conv.user.storage.jumpcount = jumpcount;
+})
 
 app.intent('跳過題目', (conv) => {
 
@@ -650,25 +1123,25 @@ app.intent('跳過題目', (conv) => {
     jumpcount = conv.user.storage.jumpcount;
 
     jumpcount++;
+    conv.user.storage.wrong_count = 0;
 
     if (jumpcount <= 5) {
 
-
         if ((5 - jumpcount) !== 0) {
             conv.ask(new SimpleResponse({
-                speech: `<speak><p><s>好的</s><s>你現在剩下${5 - jumpcount}次跳ㄍㄨㄛˋ的機會!</s></p></speak>`,
+                speech: `<speak><p><s>好的</s><s>你現在剩下${5 - jumpcount}次跳過的機會!</s></p></speak>`,
                 text: '好的，你還有' + (5 - jumpcount) + '次跳過的機會'
             }));
         } else {
             conv.ask(new SimpleResponse({
-                speech: `<speak><p><s>提醒你</s><s>你已經用完所有跳ㄍㄨㄛˋ的機會!</s></p></speak>`,
+                speech: `<speak><p><s>提醒你</s><s>你已經用完所有跳過的機會!</s></p></speak>`,
                 text: '你已經用完所有跳過的機會'
             }));
         }
 
         output_array = idiom_library[last_word]; //進入成語彙庫取得對應成語彙
 
-        if (typeof output_array === "undefined") {
+        if (output_array === undefined) {
             menu = false;
             question_output = false;
             end_game = true;
@@ -681,9 +1154,13 @@ app.intent('跳過題目', (conv) => {
                     title: '看來『' + input_list[-1] + '』是接不下去的',
                     subtitle: '本回合已結束',
                     text: '共進行' + Total_Count + '次接龍(不計入跳過的成語彙)',
+                    buttons: new Button({
+                        title: '在《萌典》上看「' + input_list[-1] + '」的意思',
+                        url: 'https://www.moedict.tw/' + input_list[-1],
+                    })
                 }));
                 conv.ask(new Suggestions('🔄 重新開始', '👋 掰掰'));
-                conv.contexts.set(LeaveContexts.parameter, 1);
+                conv.contexts.set(Contexts.Leave, 1);
                 Total_Count = 0;
                 input_list = [];
                 start_game = false;
@@ -695,8 +1172,8 @@ app.intent('跳過題目', (conv) => {
         } else {
             var pre_word = sys_word;
             sys_word = output_array[parseInt(Math.random() * (output_array.length - 1))];
-            var temp = pinyin(sys_word, { style: pinyin.STYLE_NORMAL, heteronym: false });
-            last_word = transform_library[temp[sys_word.length - 1][0]];
+
+            last_word = idiom_varify[sys_word][1];
 
             if (input_list.indexOf(sys_word) !== -1) {
                 menu = false;
@@ -713,7 +1190,7 @@ app.intent('跳過題目', (conv) => {
                         text: '共進行' + Total_Count + '次接龍(不計入跳過的成語彙)',
                     }));
                     conv.ask(new Suggestions('🔄 重新開始', '👋 掰掰'));
-                    conv.contexts.set(LeaveContexts.parameter, 1);
+                    conv.contexts.set(Contexts.Leave, 1);
                     Total_Count = 0;
                     input_list = [];
                     start_game = false;
@@ -726,7 +1203,7 @@ app.intent('跳過題目', (conv) => {
                 input_list.push(sys_word); //將成語彙存入佇列
                 output_array = idiom_library[last_word]; //進入成語彙庫取得對應成語彙
 
-                if (typeof output_array === "undefined") {
+                if (output_array === undefined) {
                     menu = false;
                     question_output = false;
                     end_game = true;
@@ -740,9 +1217,13 @@ app.intent('跳過題目', (conv) => {
                             title: '我想的『' + sys_word + '』接不下去拉!',
                             subtitle: '本回合已結束',
                             text: '共進行' + Total_Count + '次接龍(不計入跳過的成語彙)',
+                            buttons: new Button({
+                                title: '在《萌典》上看「' + sys_word + '」的意思',
+                                url: 'https://www.moedict.tw/' + sys_word,
+                            })
                         }));
                         conv.ask(new Suggestions('🔄 重新開始', '👋 掰掰'));
-                        conv.contexts.set(LeaveContexts.parameter, 1);
+                        conv.contexts.set(Contexts.Leave, 1);
                         Total_Count = 0;
                         input_list = [];
                         start_game = false;
@@ -759,11 +1240,20 @@ app.intent('跳過題目', (conv) => {
                         text: "「" + pre_word + "」可以接「" + sys_word + "」， \n請試著繼續接下去。",
                     }));
 
-                    conv.contexts.set(ExplainContexts.parameter, 1);
-                    conv.ask(new Suggestions('查詢意思'));
+                    //conv.ask(new Suggestions('查詢意思'));
 
-                    if (jumpcount <= 4) { conv.ask(new Suggestions('跳過這個成語')); }
+                    if (jumpcount <= 4) {
+                        conv.ask(new Suggestions('來點提示'));
+                        conv.ask(new Suggestions('跳過這個成語'));
+                    }
+
                     conv.ask(new Suggestions('放棄本回合'));
+
+                    conv.contexts.set(Contexts.Explain, 1);
+                    conv.contexts.set(Contexts.Quit, 1);
+                    conv.contexts.set(Contexts.Skip, 1);
+                    conv.contexts.set(Contexts.Get_hint, 1);
+                    conv.contexts.set(Contexts.Repeat, 1);
 
                     conv.user.storage.menu = menu;
                     conv.user.storage.end_game = end_game;
@@ -783,7 +1273,7 @@ app.intent('跳過題目', (conv) => {
                     conv.ask(new BasicCard({
                         title: '『' + sys_word + '』',
                         subtitle: '解釋：' + explain,
-                        text: '_[!]你目前剩下' + (5 - jumpcount) + '次跳過機會_',
+                        text: '_[!]你目前剩下' + (5 - jumpcount) + '次跳過或獲取提示的機會_',
                     }));
 
 
@@ -792,45 +1282,36 @@ app.intent('跳過題目', (conv) => {
         }
     } else {
 
-        menu = false;
-        question_output = false;
-        end_game = true;
+        sys_word = conv.user.storage.sys_word;
 
-        output_array = idiom_library[last_word]; //進入成語庫取得對應成語
-
-        if (conv.screen) {
-            conv.ask(new SimpleResponse({ speech: `<speak><p><s>你在這回合一共進行${Total_Count}次接龍。</s><s>你要再試一次嗎?</s></p></speak>`, text: '驗收成果' }));
-
-            if (typeof output_array === "undefined") {
-
-                conv.ask(new BasicCard({
-                    image: new Image({ url: 'https://i.imgur.com/PLVkbbK.jpg', alt: 'Pictures', }),
-                    title: '本回合共進行' + Total_Count + '次接龍',
-                    subtitle: '不計入跳過的成語次數',
-                    text: '✮增強功力：  \n在「' + last_word + '」後面，無法再繼續接下去了...',
-                    display: 'CROPPED', //更改圖片顯示模式為自動擴展
-                }));
-            } else {
-                sys_word = output_array[parseInt(Math.random() * (output_array.length - 1))];
-
-                conv.ask(new BasicCard({
-                    image: new Image({ url: 'https://i.imgur.com/PLVkbbK.jpg', alt: 'Pictures', }),
-                    title: '本回合共進行' + Total_Count + '次接龍',
-                    subtitle: '不計入跳過的成語次數',
-                    text: '✮增強功力：  \n以「' + last_word + '」開頭的成語有『' + sys_word + '』。',
-                    buttons: new Button({
-                        title: '在《萌典》上看「' + sys_word + '」的意思',
-                        url: 'https://www.moedict.tw/' + sys_word,
-                    }),
-                    display: 'CROPPED', //更改圖片顯示模式為自動擴展
-                }));
-            }
-            conv.ask(new Suggestions('🔄 重新開始', '👋 掰掰'));
-            conv.contexts.set(LeaveContexts.parameter, 1);
-        } else {
-            subtitle_suggest = replaceString(subtitle_suggest, '『', '<break time="0.3s"/>『');
-            conv.close(new SimpleResponse({ speech: `<speak><p><s>以${last_word}開頭的成語${subtitle_suggest}</s><s>你在本回合共進行${Total_Count}次接龍。</s><s>下次見!</s></p></speak>`, text: '驗收成果' }));
+        var explain = brief_explain[sys_word];
+        if (explain.indexOf("查「") !== -1) {
+            explain = brief_explain[brief_explain[sys_word].replace(/[\查|\「|\」|\辞]/gm, "")]
         }
+
+        conv.noInputs = ["我剛剛說的是" + sys_word + "，請說以" + last_word + "為開頭的成語", "請繼續接龍吧，以" + last_word + "為開頭的成語", "抱歉，由於您沒有回應因此遊戲到此結束。下次見。"];
+
+        conv.ask(new SimpleResponse({
+            speech: `<speak><p><s>很抱歉，你已經用完跳過的機會，請試著自行繼續接下去</s></p></speak>`,
+            text: '很抱歉，你已經用完跳過的機會了',
+        }));
+
+        conv.ask(new BasicCard({
+            title: '『' + sys_word + '』',
+            subtitle: '解釋：' + explain,
+            text: '_[!]你已經用完跳過或獲取提示的機會_',
+        }));
+
+        if (jumpcount <= 4) {
+            conv.ask(new Suggestions('來點提示'));
+            conv.ask(new Suggestions('跳過這個成語'));
+        }
+        conv.ask(new Suggestions('放棄本回合'));
+
+        conv.contexts.set(Contexts.Quit, 1);
+        conv.contexts.set(Contexts.Skip, 1);
+        conv.contexts.set(Contexts.Get_hint, 1);
+        conv.contexts.set(Contexts.Repeat, 1);
     }
 
     conv.user.storage.menu = menu;
@@ -857,7 +1338,5 @@ app.intent('結束對話', (conv) => {
     }));
 
 });
-
-
 
 exports.idiom_solitaire = functions.https.onRequest(app);

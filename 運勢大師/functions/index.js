@@ -159,7 +159,7 @@ function list_generator(input) {
             title: astro_array[i],
             description: astro_list[astro_array[i]].description,
             image: new Image({
-                url: 'https://firebasestorage.googleapis.com/v0/b/hank199599.appspot.com/o/' + astro_array_tw[i].replace(/[\座|]/g, "") + '.png?alt=media',
+                url: 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E9%81%8B%E5%8B%A2%E5%A4%A7%E5%B8%AB/assets/' + astro_array_tw[i].replace(/[\座|]/g, "") + '.png',
                 alt: astro_array[i],
             }),
         }
@@ -175,16 +175,16 @@ app.intent('預設歡迎畫面', (conv) => {
     if (conv.user.last.seen) {
         if (conv.screen) {
             conv.ask(new SimpleResponse({
-                speech: `<speak><par><media xml:id="quote" begin="4s" soundLevel="+3dB"><speak><p><s><emphasis level="moderate">${i18n.__('seen1')}<break time="0.2s"/>${i18n.__('seen2')}</emphasis></s></p></speak></media><media xml:id="sound" repeatCount="1" soundLevel="-2dB"><audio src="https://firebasestorage.googleapis.com/v0/b/hank199599.appspot.com/o/cut1.mp3?alt=media"/></media></par></speak>`,
+                speech: `<speak><par><media xml:id="quote" begin="4s" soundLevel="+3dB"><speak><p><s><emphasis level="moderate">${i18n.__('seen1')}<break time="0.2s"/>${i18n.__('seen2')}</emphasis></s></p></speak></media><media xml:id="sound" repeatCount="1" soundLevel="-2dB"><audio src="https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E9%81%8B%E5%8B%A2%E5%A4%A7%E5%B8%AB/assets/cut1.mp3"/></media></par></speak>`,
                 text: i18n.__('seen1')
             }));
         } else {
-            conv.ask(new SimpleResponse(`<speak><par><media xml:id="quote" begin="4s" soundLevel="+3dB"><speak><p><s><emphasis level="moderate">${i18n.__('seen1')}<break time="0.2s"/>${i18n.__('seen2')}</emphasis></s></p></speak></media><media xml:id="sound" repeatCount="1" soundLevel="-2dB"><audio src="https://firebasestorage.googleapis.com/v0/b/hank199599.appspot.com/o/cut1.mp3?alt=media"/></media></par></speak>`));
+            conv.ask(new SimpleResponse(`<speak><par><media xml:id="quote" begin="4s" soundLevel="+3dB"><speak><p><s><emphasis level="moderate">${i18n.__('seen1')}<break time="0.2s"/>${i18n.__('seen2')}</emphasis></s></p></speak></media><media xml:id="sound" repeatCount="1" soundLevel="-2dB"><audio src="https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E9%81%8B%E5%8B%A2%E5%A4%A7%E5%B8%AB/assets/cut1.mp3"/></media></par></speak>`));
             conv.noInputs = [i18n.__('no_input1', astro_array[parseInt(Math.random() * 11)]), i18n.__('no_input2'), i18n.__('no_input3')];
         }
     } else {
         conv.ask(new SimpleResponse({
-            speech: `<speak><par><media xml:id="quote" begin="4s" soundLevel="+3dB"><speak><p><s><emphasis level="moderate">歡迎<break time="0.2s"/>${i18n.__('seen1')}<break time="0.2s"/>${i18n.__('seen2')}</emphasis></s></p></speak></media><media xml:id="sound" repeatCount="1" soundLevel="-2dB"><audio src="https://firebasestorage.googleapis.com/v0/b/hank199599.appspot.com/o/cut1.mp3?alt=media"/></media></par></speak>`,
+            speech: `<speak><par><media xml:id="quote" begin="4s" soundLevel="+3dB"><speak><p><s><emphasis level="moderate">歡迎<break time="0.2s"/>${i18n.__('seen1')}<break time="0.2s"/>${i18n.__('seen2')}</emphasis></s></p></speak></media><media xml:id="sound" repeatCount="1" soundLevel="-2dB"><audio src="https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E9%81%8B%E5%8B%A2%E5%A4%A7%E5%B8%AB/assets/cut1.mp3"/></media></par></speak>`,
             text: i18n.__('welcome1')
         }));
     }
@@ -239,7 +239,7 @@ app.intent('查看選擇的星座', (conv, input, option) => {
             var output_content = content.replace(/[。\；]/gi, "</s><s>")
 
             conv.ask(new SimpleResponse({
-                speech: `<speak><par><media xml:id="quote" begin="4s" soundLevel="+3dB"><speak><p><s>${option}的你在今天<break time="0.3s"/>${short_content}<break time="0.5s"/>整體運勢而言<break time="0.2s"/>${output_content}</s></p></speak></media><media xml:id="sound" repeatCount="2" soundLevel="-2dB"><audio src="https://firebasestorage.googleapis.com/v0/b/hank199599.appspot.com/o/cut2.mp3?alt=media"/></media></par></speak>`,
+                speech: `<speak><par><media xml:id="quote" begin="4s" soundLevel="+3dB"><speak><p><s>${option}的你在今天<break time="0.3s"/>${short_content}<break time="0.5s"/>整體運勢而言<break time="0.2s"/>${output_content}</s></p></speak></media><media xml:id="sound" repeatCount="2" soundLevel="-2dB"><audio src="https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E9%81%8B%E5%8B%A2%E5%A4%A7%E5%B8%AB/assets/cut2.mp3"/></media></par></speak>`,
                 text: i18n.__('fortune_text', option)
             }));
             if (conv.screen) {
@@ -336,7 +336,7 @@ app.intent('直接查看星座', (conv, { day_select, sign }) => {
             var output_content = content.replace(/[。\；]/gi, "</s><s>")
 
             conv.ask(new SimpleResponse({
-                speech: `<speak><par><media xml:id="quote" begin="4s" soundLevel="+3dB"><speak><p><s>${sign}的你在${day_select}<break time="0.3s"/>${short_content}<break time="0.5s"/>整體運勢而言<break time="0.2s"/>${output_content}</s></p></speak></media><media xml:id="sound" repeatCount="2" soundLevel="-2dB"><audio src="https://firebasestorage.googleapis.com/v0/b/hank199599.appspot.com/o/cut2.mp3?alt=media"/></media></par></speak>`,
+                speech: `<speak><par><media xml:id="quote" begin="4s" soundLevel="+3dB"><speak><p><s>${sign}的你在${day_select}<break time="0.3s"/>${short_content}<break time="0.5s"/>整體運勢而言<break time="0.2s"/>${output_content}</s></p></speak></media><media xml:id="sound" repeatCount="2" soundLevel="-2dB"><audio src="https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E9%81%8B%E5%8B%A2%E5%A4%A7%E5%B8%AB/assets/cut2.mp3"/></media></par></speak>`,
                 text: i18n.__('fortune_text_select', sign, day_select)
             }));
 

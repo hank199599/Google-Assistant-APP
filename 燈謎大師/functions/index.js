@@ -55,10 +55,10 @@ var answer_input = false; //判別是否輸入許可的答案
 var next_question = false; //判別是否輸入許可的答案
 
 var theArray = new Array([]); //宣告陣列，隨機挑選開始畫面圖片
-theArray[0] = "https://i.imgur.com/oBhfSML.jpg";
-theArray[1] = "https://i.imgur.com/fYURNI2.png";
-theArray[2] = "https://i.imgur.com/nn0j7oV.jpg";
-theArray[3] = "https://i.imgur.com/DQsRg0a.png";
+theArray[0] = "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E7%87%88%E8%AC%8E%E5%A4%A7%E5%B8%AB/assets/oBhfSML.jpg";
+theArray[1] = "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E7%87%88%E8%AC%8E%E5%A4%A7%E5%B8%AB/assets/fYURNI2.png";
+theArray[2] = "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E7%87%88%E8%AC%8E%E5%A4%A7%E5%B8%AB/assets/nn0j7oV.jpg";
+theArray[3] = "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E7%87%88%E8%AC%8E%E5%A4%A7%E5%B8%AB/assets/DQsRg0a.png";
 
 function ranFun() { return parseInt(Math.random() * 3); }
 var Picture_url = '';
@@ -120,8 +120,8 @@ app.intent('預設歡迎語句', (conv) => {
         Question_Title = output_array[0]; //選出這次的題目標題
         Hint = output_array[1]; //取得本題目的提示
         Answer = output_array[2]; //取得本題目的正確答案
-        charactor = output_array[3]; //取得本題目答案之字元數
-        Audio = output_array[4]; //取得本題目答案之語音網址
+        charactor = output_array[2].length; //取得本題目答案之字元數
+        Audio = output_array[3]; //取得本題目答案之語音網址
 
         if (Audio.length !== 0) {
             conv.noInputs = [new SimpleResponse(`<speak>快想看看答案是什麼，題目是<audio src="${Audio}"/></speak>`), "抱歉，你的答案是什麼?", "我想我們先進行到這裡吧，下次見!"];
@@ -234,8 +234,8 @@ app.intent('問題挑選器', (conv, { input }) => {
         Question_Title = output_array[0]; //選出這次的題目標題
         Hint = output_array[1]; //取得本題目的提示
         Answer = output_array[2]; //取得本題目的正確答案
-        charactor = output_array[3]; //取得本題目答案之字元數
-        Audio = output_array[4]; //取得本題目答案之語音網址
+        charactor = output_array[2].length; //取得本題目答案之字元數
+        Audio = output_array[3]; //取得本題目答案之語音網址
 
         if (Audio.length !== 0) {
             conv.noInputs = [new SimpleResponse(`<speak>快想看看答案是什麼，題目是<audio src="${Audio}"/></speak>`), "抱歉，你的答案是什麼?", "我想我們先進行到這裡吧，下次見!"];
@@ -296,8 +296,8 @@ app.intent('問題挑選器', (conv, { input }) => {
                 Question_Title = output_array[0]; //選出這次的題目標題
                 Hint = output_array[1]; //取得本題目的提示
                 Answer = output_array[2]; //取得本題目的正確答案
-                charactor = output_array[3]; //取得本題目答案之字元數
-                Audio = output_array[4]; //取得本題目答案之語音網址
+                charactor = output_array[2].length; //取得本題目答案之字元數
+                Audio = output_array[3]; //取得本題目答案之語音網址
 
                 if (Audio.length !== 0) {
                     conv.noInputs = [new SimpleResponse(`<speak>快想看看答案是什麼，題目是<audio src="${Audio}"/></speak>`), "抱歉，你的答案是什麼?", "我想我們先進行到這裡吧，下次見!"];
@@ -377,8 +377,8 @@ app.intent('問題挑選器', (conv, { input }) => {
                             Question_Title = output_array[0]; //選出這次的題目標題
                             Hint = output_array[1]; //取得本題目的提示
                             Answer = output_array[2]; //取得本題目的正確答案
-                            charactor = output_array[3]; //取得本題目答案之字元數
-                            Audio = output_array[4]; //取得本題目答案之語音網址
+                            charactor = output_array[2].length; //取得本題目答案之字元數
+                            Audio = output_array[3]; //取得本題目答案之語音網址
 
                             if (Audio.length !== 0) {
                                 conv.noInputs = [new SimpleResponse(`<speak>快想看看答案是什麼，題目是<audio src="${Audio}"/></speak>`), "抱歉，你的答案是什麼?", "我想我們先進行到這裡吧，下次見!"];
@@ -412,7 +412,7 @@ app.intent('問題挑選器', (conv, { input }) => {
         Prograss = roundDecimal(Prograss, 1);
         conv.ask(new SimpleResponse({ speech: `<speak><audio src="${calculate_sound}"/><prosody volume="loud"><p><s>根據Google神通廣大的雲端計算!</s><s>你在這回合一共進行<break time="0.05s"/>${Total_Count}<break time="0.03s"/>題題目。</s><s>你要再試一次嗎?</s></p></prosody></speak>`, text: '驗收成果' }));
         conv.ask(new BasicCard({
-            image: new Image({ url: 'https://i.imgur.com/VyWzbJB.png', alt: 'Pictures', }),
+            image: new Image({ url: 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E7%87%88%E8%AC%8E%E5%A4%A7%E5%B8%AB/assets/VyWzbJB.png', alt: 'Pictures', }),
             title: '本回合共進行:' + Total_Count + '個謎題  \n(' + '約為總謎題的' + Prograss + '%)',
             subtitle: '答對數：' + Correct_Count + '  \n錯誤數：' + Wrong_Count,
         }));
@@ -524,8 +524,8 @@ app.intent('顯示答案', (conv) => {
                 Question_Title = output_array[0]; //選出這次的題目標題
                 Hint = output_array[1]; //取得本題目的提示
                 Answer = output_array[2]; //取得本題目的正確答案
-                charactor = output_array[3]; //取得本題目答案之字元數
-                Audio = output_array[4]; //取得本題目答案之語音網址
+                charactor = output_array[2].length; //取得本題目答案之字元數
+                Audio = output_array[3]; //取得本題目答案之語音網址
 
                 if (Audio.length !== 0) {
                     conv.noInputs = [new SimpleResponse(`<speak>快想看看答案是什麼，題目是<audio src="${Audio}"/></speak>`), "抱歉，你的答案是什麼?", "我想我們先進行到這裡吧，下次見!"];
@@ -641,8 +641,8 @@ app.intent('提示字數', (conv) => {
         Question_Title = output_array[0]; //選出這次的題目標題
         Hint = output_array[1]; //取得本題目的提示
         Answer = output_array[2]; //取得本題目的正確答案
-        charactor = output_array[3]; //取得本題目答案之字元數
-        Audio = output_array[4]; //取得本題目答案之語音網址
+        charactor = output_array[2].length; //取得本題目答案之字元數
+        Audio = output_array[3]; //取得本題目答案之語音網址
 
         if (Audio.length !== 0) {
             conv.noInputs = [new SimpleResponse(`<speak>快想看看答案是什麼，題目是<audio src="${Audio}"/></speak>`), "抱歉，你的答案是什麼?", "我想我們先進行到這裡吧，下次見!"];
@@ -663,7 +663,6 @@ app.intent('提示字數', (conv) => {
             title: '請開啟「網路和應用程式活動」功能',
             subtitle: '為了給您個人化的遊戲體驗，\n請點擊下方按鈕前往Google帳戶設定，\n開啟「包括 Chrome 瀏覽記錄以及採用 Google 服務的網站、應用程式和裝置中的活動記錄」\n我即可為你帶來客製化遊戲體驗!',
             buttons: new Button({ title: 'Google活動控制項', url: "https://myaccount.google.com/activitycontrols?pli=1", }),
-
         }));
     }
 
@@ -758,8 +757,8 @@ app.intent('重複題目', (conv) => {
         Question_Title = output_array[0]; //選出這次的題目標題
         Hint = output_array[1]; //取得本題目的提示
         Answer = output_array[2]; //取得本題目的正確答案
-        charactor = output_array[3]; //取得本題目答案之字元數
-        Audio = output_array[4]; //取得本題目答案之語音網址
+        charactor = output_array[2].length; //取得本題目答案之字元數
+        Audio = output_array[3]; //取得本題目答案之語音網址
 
         if (Audio.length !== 0) {
             conv.noInputs = [new SimpleResponse(`<speak>快想看看答案是什麼，題目是<audio src="${Audio}"/></speak>`), "抱歉，你的答案是什麼?", "我想我們先進行到這裡吧，下次見!"];
@@ -863,8 +862,8 @@ app.intent('重新開始', (conv) => {
         Question_Title = output_array[0]; //選出這次的題目標題
         Hint = output_array[1]; //取得本題目的提示
         Answer = output_array[2]; //取得本題目的正確答案
-        charactor = output_array[3]; //取得本題目答案之字元數
-        Audio = output_array[4]; //取得本題目答案之語音網址
+        charactor = output_array[2].length; //取得本題目答案之字元數
+        Audio = output_array[3]; //取得本題目答案之語音網址
 
         if (Audio !== "") {
             conv.ask(new SimpleResponse({ speech: `<speak>第${Total_Count}題<break time="0.2s"/><audio src="${Audio}"/><break time="0.5s"/>給個提示<break time="0.2s"/>${Hint}</speak>`, text: '熱騰騰的謎題來啦!' }));
@@ -1002,8 +1001,8 @@ app.intent('結束對話', (conv) => {
                 Question_Title = output_array[0]; //選出這次的題目標題
                 Hint = output_array[1]; //取得本題目的提示
                 Answer = output_array[2]; //取得本題目的正確答案
-                charactor = output_array[3]; //取得本題目答案之字元數
-                Audio = output_array[4]; //取得本題目答案之語音網址
+                charactor = output_array[2].length; //取得本題目答案之字元數
+                Audio = output_array[3]; //取得本題目答案之語音網址
 
                 if (Audio.length !== 0) {
                     conv.noInputs = [new SimpleResponse(`<speak>快想看看答案是什麼，題目是<audio src="${Audio}"/></speak>`), "抱歉，你的答案是什麼?", "我想我們先進行到這裡吧，下次見!"];
@@ -1083,8 +1082,8 @@ app.intent('結束對話', (conv) => {
                             Question_Title = output_array[0]; //選出這次的題目標題
                             Hint = output_array[1]; //取得本題目的提示
                             Answer = output_array[2]; //取得本題目的正確答案
-                            charactor = output_array[3]; //取得本題目答案之字元數
-                            Audio = output_array[4]; //取得本題目答案之語音網址
+                            charactor = output_array[2].length; //取得本題目答案之字元數
+                            Audio = output_array[3]; //取得本題目答案之語音網址
 
                             if (Audio.length !== 0) {
                                 conv.noInputs = [new SimpleResponse(`<speak>快想看看答案是什麼，題目是<audio src="${Audio}"/></speak>`), "抱歉，你的答案是什麼?", "我想我們先進行到這裡吧，下次見!"];

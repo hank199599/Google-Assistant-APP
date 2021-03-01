@@ -1,0 +1,376 @@
+{
+    "臺北市": [
+        {
+            "title": "大安號捐血車",
+            "url": "https://goo.gl/maps/XH2pZxeTQ7Fuy8eC8",
+            "description": "臺北市台北市建國南路2段  \n作業時間：每週四~週日09:00~17:00  \n備註：提供全血捐血服務。"
+        },
+        {
+            "title": "公園號捐血車",
+            "url": "https://goo.gl/maps/K7aJh7v2oJwxXr3R9",
+            "description": "臺北市公園路+襄陽路口  \n作業時間：10:00~18:00  \n備註：提供全血捐血服務。",
+            "footer": "【乳糜血檢測特定作業地點】"
+        },
+        {
+            "title": "市府捐血室",
+            "url": "https://goo.gl/maps/xrKut1L4XuDpMKhG9",
+            "description": "臺北市市府路1號市政府西大門內左側  \n作業時間：9:00~17:00(週六、週日不作業)  \n備註：提供全血、分離術捐血服務。",
+            "footer": "【乳糜血檢測特定作業地點】"
+        },
+        {
+            "title": "忠孝號捐血車",
+            "url": "https://goo.gl/maps/oYqvj5fucqDEQCZM6",
+            "description": "臺北市大安路一段瑠公公園旁  \n作業時間：11:00~19:00  \n備註：提供全血捐血服務。",
+            "footer": "【乳糜血檢測特定作業地點】"
+        },
+        {
+            "title": "長春捐血室",
+            "url": "https://goo.gl/maps/aGcpvqVrzK6gxG897",
+            "description": "臺北市復興北路69號5樓  \n 作業時間：9:00~17:00(週日不作業)  \n備註：提供全血、分離術捐血服務。  ",
+            "footer": "【乳糜血檢測特定作業地點】"
+        },
+        {
+            "title": "南海捐血室",
+            "url": "https://goo.gl/maps/jrdGvCrVwVJPXNK46",
+            "description": "臺北市南海路1號3樓  \n作業時間：8:00~17:30  \n備註：提供全血、分離術捐血服務。",
+            "footer": "【乳糜血檢測特定作業地點】"
+        },
+        {
+            "title": "峨嵋號捐血車",
+            "url": "https://goo.gl/maps/xGDnW2pc4nxw5wFR6",
+            "description": "臺北市萬華區峨嵋街立體停車場旁 \n作業時間：13:00~21:00  \n備註：提供全血捐血服務。 ",
+            "footer": "【乳糜血檢測特定作業地點】"
+        },
+        {
+            "title": "捷運捐血室",
+            "url": "https://goo.gl/maps/Nk5skKAQczFBiRt57",
+            "description": "臺北市台北車站B1，M7出口誠品書店旁  \n作業時間：10:00~18:00  \n備註：提供全血捐血服務。",
+            "footer": "【乳糜血檢測特定作業地點】"
+        },
+        {
+            "title": "新光號捐血車",
+            "url": "https://goo.gl/maps/Vak3cpKNZvwe5neV7",
+            "description": "臺北市忠孝西路一段66號面對新光摩天大樓左側腹地 \n作業時間：11:00~19:00  \n備註：提供全血捐血服務。 ",
+            "footer": "【乳糜血檢測特定作業地點】"
+        },
+        {
+            "title": "關渡捐血室",
+            "url": "https://goo.gl/maps/dnRr47uFMvz2siKi7",
+            "description": "臺北市立德路123號  \n作業時間：8:00~17:00  \n備註：提供全血、分離術捐血服務。 ",
+            "footer": "【乳糜血檢測特定作業地點】"
+        }
+    ],
+    "新北市": [
+        {
+            "title": "三重捐血室",
+            "url": "https://goo.gl/maps/ag2va5uVxDyQCjBL9",
+            "description": "新北市三重區重新路四段12號7樓之2  \n作業時間：9:00~17:00  \n備註：提供全血、分離術捐血服務。 ",
+            "footer": "【乳糜血檢測特定作業地點】"
+        },
+        {
+            "title": "土城號捐血車",
+            "url": "https://goo.gl/maps/RbrZCHnS4bbh3kk87",
+            "description": "新北市土城區裕民路171巷裕民廣場內  \n作業時間：每週六、日10:00~18:00  \n備註：提供全血捐血服務。 ",
+            "footer": "【乳糜血檢測特定作業地點】"
+        },
+        {
+            "title": "中和號捐血車",
+            "url": "https://goo.gl/maps/gmth2KikxkhRbp1e9",
+            "description": "新北市中和區中安街圖書館旁  \n作業時間：9:00~17:00  \n備註：提供全血捐血服務。 ",
+            "footer": "【乳糜血檢測特定作業地點】"
+        },
+        {
+            "title": "汐止捐血室",
+            "url": "https://goo.gl/maps/Uhg85yH7D2jEKd3B9",
+            "description": "新北市汐止區新台五路一段207號11樓B室  \n作業時間：9:00~17:00(週六不作業)  \n備註：提供全血、分離術捐血服務。 ",
+            "footer": "【乳糜血檢測特定作業地點】"
+        },
+        {
+            "title": "府中捐血室",
+            "url": "https://goo.gl/maps/rtCR5JQCWSpBVGo17",
+            "description": "新北市板橋區中山路一段50巷36號2樓之4  \n作業時間：10:00~18:00  \n備註：提供全血捐血服務。 ",
+            "footer": "【乳糜血檢測特定作業地點】"
+        },
+        {
+            "title": "板橋捐血站",
+            "url": "https://goo.gl/maps/xxmNVca4WXXgG1PX8",
+            "description": "新北市板橋區雙十路三段27號2樓  \n作業時間：08:00-17:00  \n備註：提供全血、分離術捐血服務。 ",
+            "footer": "【乳糜血檢測特定作業地點】"
+        },
+        {
+            "title": "新店捐血室",
+            "url": "https://goo.gl/maps/nVaVkrsXZnDD9oae6",
+            "description": "新北市新店區民權路95號6樓之2  \n作業時間：9:00~17:00  \n備註：提供全血、分離術捐血服務。 ",
+            "footer": "【乳糜血檢測特定作業地點】"
+        },
+        {
+            "title": "新莊號捐血車",
+            "url": "https://goo.gl/maps/qBENAmnuMUa47Cpk6",
+            "description": "新北市新莊區中華路一段+復興路一段交叉口  \n作業時間：10:00~18:00  \n備註：提供全血捐血服務。 ",
+            "footer": "【乳糜血檢測特定作業地點】"
+        }
+    ],
+    "基隆市": [
+        {
+            "title": "基隆捐血站",
+            "description": "基隆市信一路14號1樓",
+            "footer": "作業時間：08:00-17:00  \n備註：提供全血、分離術捐血服務。  \n【乳糜血檢測特定作業地點】",
+            "url": "https://goo.gl/maps/mHbajyoDFsAbpU2v8"
+        }
+    ],
+    "宜蘭縣": [
+        {
+            "title": "宜蘭捐血站",
+            "url": "https://goo.gl/maps/w13r1bV2MufQGHqf6",
+            "description": "宜蘭縣宜蘭市擺厘路16-7號  \n作業時間：8:00~17:00  \n備註：提供全血、分離術捐血服務。 ",
+            "footer": "【乳糜血檢測特定作業地點】"
+        },
+        {
+            "title": "羅東萬連號捐血車",
+            "url": "https://goo.gl/maps/1c1RM5zs77eBWTAx7",
+            "description": "宜蘭縣羅東鎮公所前(羅東鎮中興路3號)  \n作業時間：週一、四(春節假期休息)9:00~15:00  \n備註：提供全血捐血服務。"
+        }
+    ],
+    "花蓮縣": [
+        {
+            "title": "中山捐血室",
+            "url": "https://goo.gl/maps/BPRMr35hDd4ZWhxh7",
+            "description": "花蓮縣花蓮市中山路231號3樓  \n作業時間：週四~週六 09:30~17:30  \n備註：提供全血捐血服務。 ",
+            "footer": "【乳糜血檢測特定作業地點】"
+        },
+        {
+            "title": "花蓮捐血站",
+            "url": "https://goo.gl/maps/XwFkY9YjFT4UqKCJ6",
+            "description": "花蓮縣花蓮市中山路一段170號  \n作業時間：8:30~17:00  \n備註：提供全血捐血服務。 ",
+            "footer": "【乳糜血檢測特定作業地點】"
+        }
+    ],
+    "新竹市": [
+        {
+            "title": "西大捐血室",
+            "description": "新竹市文雅街6號(消防局正對面)",
+            "footer": "作業時間：09:00-17:00  \n備註：提供全血、分離術捐血服務。 ",
+            "url": "https://goo.gl/maps/Unaaocbu2JzrK8sD8"
+        }
+    ],
+    "新竹縣": [
+        {
+            "title": "竹北愛心樓",
+            "description": "新竹縣竹北市光明11路215巷8號",
+            "footer": "作業時間：08:00~17:00  \n備註：提供全血、分離術捐血服務。 ",
+            "url": "https://goo.gl/maps/CJ64PpC4uXQzqZFX6"
+        }
+    ],
+    "桃園市": [
+        {
+            "title": "中壢捐血室",
+            "url": "https://goo.gl/maps/qX9cknigK1fnR2YP7",
+            "description": "桃園市中壢區中央東路88號16樓  \n作業時間：09:00~17:30  \n備註：提供全血、分離術捐血服務。 "
+        },
+        {
+            "title": "長庚捐血室",
+            "url": "https://goo.gl/maps/D6cKuej2G7V6DtCt6",
+            "description": "桃園市龜山區公西村復興街5號  \n作業時間：09:00~17:00(週日及國定假日不作業)   \n備註：提供全血、分離術捐血服務。 "
+        },
+        {
+            "title": "桃園捐血站",
+            "url": "https://goo.gl/maps/X8RHhTFMejmfxLWj9",
+            "description": "桃園市桃園區文康街61號  \n作業時間：08:00~17:00  \n備註：提供全血、分離術捐血服務。 "
+        },
+        {
+            "title": "龍岡捐血室",
+            "url": "https://goo.gl/maps/GeGtUeNLuCwHjmW59",
+            "description": "桃園市中壢區後寮一路188號  \n作業時間：09：00~17：00 (週三不作業)  \n備註：提供全血捐血服務。 "
+        }
+    ],
+    "苗栗縣": [
+        {
+            "title": "竹南捐血室",
+            "url": "https://goo.gl/maps/qX9cknigK1fnR2YP7",
+            "description": "苗栗縣竹南鎮光復路372號  \n作業時間：09:00~17:30  \n備註：提供全血、分離術捐血服務。 "
+        },
+        {
+            "title": "苗栗捐血站",
+            "url": "https://goo.gl/maps/D6cKuej2G7V6DtCt6",
+            "description": "苗栗縣苗栗市為公路282號  \n作業時間：08:00-17:00 (週四至週日作業、週一至週三不作業)   \n備註：提供全血捐血服務。 "
+        },
+        {
+            "title": "頭份捐血室",
+            "url": "https://goo.gl/maps/X8RHhTFMejmfxLWj9",
+            "description": "苗栗縣頭份鎮仁愛路116號  \n作業時間：09:00-17:00(週一至週三作業、週四至週日不作業) \n備註：提供全血捐血服務。 "
+        }
+    ],
+    "臺中市": [
+        {
+            "title": "三民捐血室",
+            "url": "https://goo.gl/maps/dTMGLGJCGksUEcZm9",
+            "description": "臺中市西區三民路1段174號7樓  \n作業時間：08:00~17:00(每日)  \n備註：提供全血、分離術捐血服務。 "
+        },
+        {
+            "title": "大里捐血室",
+            "url": "https://goo.gl/maps/TTdWnonR6EExKcS8A",
+            "description": "臺中市大里區中興路二段438號5樓  \n作業時間：09:30~18:00(每日)   \n備註：提供全血、分離術捐血服務。 "
+        },
+        {
+            "title": "中正公園捐血室",
+            "url": "https://goo.gl/maps/kNA4kXkC5bCvubk8A",
+            "description": "臺中市北區學士路91號正對面  \n作業時間：09:00~17:00(每日) \n備註：提供全血捐血服務。 "
+        },
+        {
+            "title": "中港捐血室",
+            "url": "https://goo.gl/maps/1sptVoBvrok2iLiD7",
+            "description": "臺中市40764西屯區台灣大道4段1176號  \n作業時間：08:00~18:00(每日) \n備註：提供全血、分離術捐血服務。 "
+        },
+        {
+            "title": "新光三越捐血車",
+            "url": "https://goo.gl/maps/YNVSPGJuuZCtbf8j6",
+            "description": "臺中市西屯區惠來路二段市政北七路口(惠安停車場內)  \n作業時間：10:30~18:30(每日) \n備註：提供全血捐血服務。 "
+        },
+        {
+            "title": "臺中公園捐血車",
+            "url": "https://goo.gl/maps/Ztipazjhh4jDV6CA8",
+            "description": "臺中市北區精武路291之3號對面  \n作業時間：星期一~星期四 12:00~18:30 ,星期五~星期日 10:30~18:30 \n備註：提供全血捐血服務。 "
+        },
+        {
+            "title": "豐原捐血室",
+            "url": "https://goo.gl/maps/iGghWirPR9Gn5efB6",
+            "description": "臺中市豐原區北陽路2號  \n作業時間：09:00~18:00(每日) \n備註：提供全血、分離術捐血服務。 "
+        }
+    ],
+    "彰化縣": [
+        {
+            "title": "彰化捐血站",
+            "description": "彰化縣彰化市中山路一段348號",
+            "footer": "作業時間：08:00~17:00(星期一~星期五),08:00~18:00(星期六~星期日)  \n備註：提供全血、分離術捐血服務。  \n供血時間：  \n(1)08:00-17:00站內供血  \n(2)17:00-隔日08:00 領血請至斗六成大醫院檢驗科 ",
+            "url": "https://goo.gl/maps/KB2a7dZJiGKpnRmE6"
+        }
+    ],
+    "雲林縣": [
+        {
+            "title": "雲林捐血站",
+            "description": "雲林縣斗六市漢口路187號",
+            "footer": "作業時間：08:00~17:00  \n備註：提供全血、分離術捐血服務。 ",
+            "url": "https://goo.gl/maps/3etx1FnxhRh1sXQa9"
+        }
+    ],
+    "南投縣": [
+        {
+            "title": "南投捐血室",
+            "url": "https://goo.gl/maps/6HS9zYyXACjjU34X9",
+            "description": "南投縣南投市中興路616號1樓  \n作業時間：09:00~17:00(每日)  \n備註：提供全血、分離術捐血服務。 "
+        },
+        {
+            "title": "埔里捐血站",
+            "url": "https://goo.gl/maps/2dpo1JLBKmg4CcAH6",
+            "description": "南投縣埔里鎮北環路222號  \n作業時間：8:30~17:00  \n備註：提供全血捐血服務。 "
+        }
+    ],
+    "臺南市": [
+        {
+            "title": "小東捐血室",
+            "url": "https://goo.gl/maps/4NoDsxcukoYHb3ne6",
+            "description": "臺南市北區小東路423巷1-2號  \n作業時間：每日08:00~17:00  \n備註：提供全血、分離術捐血服務。 "
+        },
+        {
+            "title": "中山捐血車",
+            "url": "https://goo.gl/maps/SUSFr3Ui2FTHYiSh7",
+            "description": "臺南市台南市北區公園路上(台南轉運站對面)  \n作業時間：平日09:30~17:30、假日09:00~17:00(週三休息日)   \n備註：提供全血捐血服務。 "
+        },
+        {
+            "title": "台南捐血中心",
+            "url": "https://goo.gl/maps/XqSyKg1DCzoQutXa8",
+            "description": "臺南市中西區永福路一段85號  \n作業時間：每日08:00~18:00  \n備註：提供全血、分離術捐血服務。 "
+        },
+        {
+            "title": "和緯捐血室",
+            "url": "https://goo.gl/maps/LLd5VAav2zxFTCCb8",
+            "description": "臺南市和緯路三段330號  \n作業時間：週三~週日10:00-18:00  \n備註：提供全血捐血服務。 "
+        },
+        {
+            "title": "新營捐血室",
+            "url": "https://goo.gl/maps/2zE6Gc6u5fRgFXSRA",
+            "description": "臺南市新營區中正路23之1號(新營民治議事廳對面玻璃屋)  \n作業時間：08:00~17:00  \n備註：提供全血、分離術捐血服務。 "
+        }
+    ],
+    "嘉義市": [
+        {
+            "title": "嘉義公園捐血車",
+            "url": "https://goo.gl/maps/YNbA39YMt3Uc9RCbA",
+            "description": "嘉義市立棒球場大巴士停車場（近棒球場外野區）  \n作業時間：週三~週日09:00~17:00  \n備註：提供全血捐血服務。 "
+        },
+        {
+            "title": "嘉義捐血站",
+            "url": "https://goo.gl/maps/11DijeWQMvZJibbH9",
+            "description": "嘉義市博愛路一段488號(近北興陸橋、自由路  \n作業時間：每日08:00-17:00  \n備註：提供全血、分離術捐血服務。 "
+        }
+    ],
+    "高雄市": [
+        {
+            "title": "左營捐血室",
+            "url": "https://goo.gl/maps/viwrsaLhvKvRFVpV7",
+            "description": "高雄市左營區博愛三路635號  \n作業時間：09:30-18:00  \n備註：提供全血、分離術捐血服務。 "
+        },
+        {
+            "title": "岡山捐血室",
+            "url": "https://goo.gl/maps/TDvBocabz4vbmxQW8",
+            "description": "高雄市岡山區壽華路58號  \n作業時間：09:00-17:00逢週一、五暫停作業   \n備註：提供全血、分離術捐血服務。 "
+        },
+        {
+            "title": "前金捐血室",
+            "url": "https://goo.gl/maps/JB34e7LvRW5HuMfr6",
+            "description": "高雄市前金區中華三路7號6樓  \n作業時間：09:00-17:30  \n備註：提供全血捐血服務。 "
+        },
+        {
+            "title": "苓雅捐血室",
+            "url": "https://goo.gl/maps/JY6eyrFPYtE8akL18",
+            "description": "高雄市苓雅區復興二路206號  \n作業時間：平日10:00-18:00 假日09:30-18:00(逢週一、週二暫停) \n備註：提供全血捐血服務。 "
+        },
+        {
+            "title": "捷運三民捐血室",
+            "url": "https://goo.gl/maps/QBcNH28ytg3FPke3A",
+            "description": "高雄市三民區博愛一路220號(捷運後驛站地下一層2號出口)  \n作業時間：平日10:00-18:00 假日09:30-18:00(逢週一暫停) \n備註：提供全血捐血服務。 "
+        },
+        {
+            "title": "捷運前鎮捐血室",
+            "url": "https://goo.gl/maps/tkMB25B2vABRtt6JA",
+            "description": "高雄市前鎮區平等里6鄰翠亨北路225號  \n作業時間：平日10:00-17:30 假日09:30-17:30(逢週一、週五暫停) \n備註：提供全血捐血服務。 "
+        },
+        {
+            "title": "捷運鳳山捐血室",
+            "url": "https://goo.gl/maps/JHg4hMR9tb4TS85q9",
+            "description": "高雄市鳳山區光遠路226號  \n作業時間：平日09:30-17:30 假日09:00-17:30 \n備註：提供全血捐血服務。 "
+        },
+        {
+            "title": "楠梓捐血室",
+            "url": "https://goo.gl/maps/vofJJi8hQsAKTkKbA",
+            "description": "高雄市楠梓區高楠公路1837號  \n作業時間：08:00-17:00 \n備註：提供全血、分離術捐血服務。 "
+        }
+    ],
+    "屏東縣": [
+        {
+            "title": "屏東捐血站",
+            "description": "屏東縣屏東市忠孝路295號",
+            "footer": "作業時間：08:00-17:00  \n備註：提供全血、分離術捐血服務。 ",
+            "url": "https://goo.gl/maps/zksZU8U1favyMNGq9"
+        }
+    ],
+    "臺東縣": [
+        {
+            "title": "台東捐血站",
+            "description": "臺東縣台東市四維路三段198號",
+            "footer": "作業時間：08:00-17:00  \n備註：提供全血、分離術捐血服務。\n逢週一、二、三暫停捐血作業 ",
+            "url": "https://goo.gl/maps/QEsZmeyibm5g9uho6"
+        }
+    ],
+    "澎湖縣": [
+        {
+            "title": "馬公捐血站",
+            "description": "澎湖縣馬公市中山路62號",
+            "footer": "作業時間：08:30-17:00  \n備註：提供全血、分離術捐血服務。\n109年2月起逢週日、一、二、三暫停捐血服務/供血作業服務24小時 ",
+            "url": "https://goo.gl/maps/jkrd5NT99aPecFBS7"
+        }
+    ],
+    "金門縣": [],
+    "連江縣": [],
+    "嘉義縣": []
+}

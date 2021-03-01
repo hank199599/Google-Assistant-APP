@@ -1,40 +1,38 @@
 {
-  "name": "game",
-  "messageType": "google.actions.v2.game.Game",
-  "externalType": "org.schema.type.Game",
-  "initializedValue": {
-    "@type": "Game",
-    "@context": "https://schema.org"
-  },
-  "version": "0.0.1",
-  "private": true,
-  "license": "Apache Version 2.0",
-  "author": "Atesx Team",
-  "engines": {
-    "node": "8"
-  },
-  "scripts": {
-    "start": "firebase serve --only functions:dialogflowFirebaseFulfillment",
-    "deploy": "firebase deploy --only functions:dialogflowFirebaseFulfillment"
-  },
-  "dependencies": {
-    "@google-cloud/firestore": "^0.16.1",
-    "actions-on-google": "^2.9.0",
-    "dialogflow": "^0.6.0",
-    "dialogflow-fulfillment": "^0.5.0",
-    "firebase-admin": "^5.13.1",
-    "firebase-functions": "^3.1.0",
-    "i18n": "^0.8.3",
-    "nzh": "^1.0.4",
-    "replace-string": "^3.0.0"
-  },
-  "exampleValues": [
-    {
-      "@type": "Game",
-      "@context": "https://schema.org",
-      "name": "數字精靈",
-      "genre": "益智",
-      "description": "這是經典的猜數字遊戲，"
-    }
-  ]
+    "name": "game",
+    "messageType": "google.actions.v2.game.Game",
+    "externalType": "org.schema.type.Game",
+    "initializedValue": {
+        "@type": "Game",
+        "@context": "https://schema.org"
+    },
+    "version": "0.0.1",
+    "private": true,
+    "license": "Apache Version 2.0",
+    "author": "Atesx Team",
+    "engines": {
+        "node": "10"
+    },
+    "scripts": {
+        "start": "firebase serve --only functions:dialogflowFirebaseFulfillment",
+        "deploy": "firebase deploy --only functions:dialogflowFirebaseFulfillment"
+    },
+    "dependencies": {
+        "@google-cloud/firestore": "^0.16.1",
+        "actions-on-google": "^2.9.0",
+        "dialogflow": "^0.6.0",
+        "dialogflow-fulfillment": "^0.5.0",
+        "firebase-admin": "^5.13.1",
+        "firebase-functions": "^3.1.0",
+        "i18n": "^0.8.3",
+        "nzh": "^1.0.4",
+        "replace-string": "^3.0.0"
+    },
+    "exampleValues": [{
+        "@type": "Game",
+        "@context": "https://schema.org",
+        "name": "數字精靈",
+        "genre": "益智",
+        "description": "這是經典的猜數字遊戲，"
+    }]
 }

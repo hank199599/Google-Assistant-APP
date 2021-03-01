@@ -4,7 +4,7 @@
    "Locationprompt":"请问你可以授予权限吗?",
   "LocationOutput":"所在时区已更动为%s，时间是%s点%s分。我将会使用此时区的时间来判定建议", "Locationshow":"设定已成功!",
 
-   "LocationSubTitle":"所在时区已更新为 UTC ","Localtime":" \n当地时间是",
+   "LocationSubTitle":"所在时区已更新为 UTC%s","Localtime":" \n当地时间是 ",
    "LocationText":"[!]快速建议将使用此时区的时间",
    "LocationMiss":"很抱歉，我无法修改你的时区设定。",
    "LocationDeny":"很抱歉，你拒绝授予权限因而更动失败。",
@@ -33,10 +33,9 @@
    "think":"我觉得「%s」还不错","Help_with":"帮我想","Help_with_hint":"让我想几个有关%s的点子!",
    "Help_suggest":"帮我想要吃什么%s",
    "Hintsubtitle":"除了在饭与面之间抉择，\n你也能直接提问来取得建议。\n\n◎范例：\n'吃什么饭','吃什么面好','你觉得要吃什么面'\n'帮我想要吃什么饭'",
-   "Hinttext":"[!]注意事项：语音辨识错误问题在于Google助理。本程式只能串接输入内容并给予相对应回应。",
    
    
-   "DefaultTalk":"请输入相对应指令让我为你服务!</s><s>例如，你可以问我%s%s吃什么ㄋ?","DefaultText":"说出指令或点选建议卡片来进行操作。",
+   "DefaultTalk":"尝试询问来获取建议!</s><s>例如，你可以问我%s%s吃什么ㄋ?","DefaultText":"说出指令或点选建议卡片来进行操作。",
    
    "Menu":"回到选单",
    "Maptalk1":"下面带来的是%s", "Maptalk2":"%s的搜寻结果",

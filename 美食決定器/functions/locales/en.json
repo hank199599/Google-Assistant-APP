@@ -4,7 +4,7 @@
    "Locationprompt":"Would you grant permission?",
    "LocationOutput":"Your Timezone has changed to %s,your instant suggestion will base on this timezone",  "Locationshow":"Setup is done!",
 
-   "LocationSubTitle":"Your Timezone has change to UTC ","Localtime":"  \nLocal time is ",
+   "LocationSubTitle":"Your Timezone has change to UTC%s","Localtime":"  \nLocal time is ",
    "LocationText":"[!]Instant sugestion will base on this timezone",
    "YES":"OK","NO":"NO",
    "LocationMiss":"Sorry, I could not figure out where you are.",
@@ -34,7 +34,6 @@
    "think":"I think %s is nice","Help_with":"Give me some idea","Help_with_hint":"Let me think some idea of %s!",
    "Help_suggest":"Think some %s",
    "Hintsubtitle":"You can get suggestion by asking like:\n 'Give me some fast food idea.'  \n'What restaurant do you think is good?'",
-   "Hinttext":"[!] Note: This program can only serialize the input and give a corresponding response.",
    
    "DefaultTalk":"Say something to get advice.</s><s>For example,you can ask %s What do you think for %s?","DefaultText":"Say something to let me help you.",
 

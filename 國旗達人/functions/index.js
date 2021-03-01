@@ -20,7 +20,7 @@ var flag_list = require('./country_detail.json'); //引用外部函數來輸入�
 var county_list = Object.keys(flag_list);
 var Q_Total = county_list.length; //題目總數
 
-var Pic_array = ["https://i.imgur.com/un6XIqo.jpg", "https://i.imgur.com/6rwJihe.jpg", "https://i.imgur.com/xyJ6S6W.png", "https://i.imgur.com/3ti28xQ.jpg", "https://i.imgur.com/NdVna3T.jpg"];
+var Pic_array = ["https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%9C%8B%E6%97%97%E9%81%94%E4%BA%BA/assets/un6XIqo.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%9C%8B%E6%97%97%E9%81%94%E4%BA%BA/assets/6rwJihe.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%9C%8B%E6%97%97%E9%81%94%E4%BA%BA/assets/xyJ6S6W.png", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%9C%8B%E6%97%97%E9%81%94%E4%BA%BA/assets/3ti28xQ.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%9C%8B%E6%97%97%E9%81%94%E4%BA%BA/assets/NdVna3T.jpg"];
 var Currect_list = ["A", "B", "C", "D"];
 
 var Answer_list = [];
@@ -36,7 +36,7 @@ var Wrong_Count = 0; //統計答題錯誤個數
 var Outputtext = '';
 
 var Correct_sound = 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/audio/%E7%AD%94%E5%B0%8D%E9%9F%B3%E6%95%88.mp3';
-var Wrong_sound = 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/audio/%E7%AD%94%E5%B0%8D%E9%9F%B3%E6%95%88.mp3';
+var Wrong_sound = 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/audio/%E7%AD%94%E9%8C%AF%E9%9F%B3%E6%95%88.mp3';
 var Appaused_sound = 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/audio/Applause%20sound%20effect%20clapping%20sounds.mp3';
 var fail_sound = 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/audio/%E5%A4%B1%E6%95%97%E9%9F%B3%E6%95%88.mp3';
 var welcome_sound = "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/audio/1990s-filtered_127bpm_A_major.wav";
@@ -97,7 +97,8 @@ app.intent('預設歡迎語句', (conv) => {
 app.intent('開始遊戲', (conv, { start }) => {
 
     Q_list = [];
-
+    Total_Count = 0;
+    heart_count = 3;
 
     if (start === '快速') {
         quickmode = true;
@@ -203,6 +204,12 @@ app.intent('進行猜測', (conv, { input }) => {
         }
     }
 
+    var word_list = ["一", "二", "三", "四"];
+    for (var i = 0; i < word_list.length; i++) {
+        if (input.indexOf(word_list[i]) !== -1) {
+            input = Currect_list[i];
+        }
+    }
     if (Currect_list.indexOf(input) !== -1) {
 
         //若輸入正確 則判定答案是否正確(answer_input=T)
@@ -348,11 +355,6 @@ app.intent('下一題題目', (conv, ) => {
 
     Total_Count++;
 
-    if (quickmode === true) {
-        quickmode_count = 10 - Total_Count;
-        conv.ask(new SimpleResponse({ speech: '於此模式下，總共有十題題目。失敗三次一樣會直接結束,祝你好運!', text: '⚡快速模式說明  \n共十題題目，失敗三次一樣會直接結束!', }));
-    }
-
     conv.speechBiasing = Answer_list;
 
     conv.ask(new SimpleResponse({ speech: `<speak><p><s>第${Total_Count}題</s><break time="0.2s"/><s>這是下列何者的旗幟?</s><break time="0.15s"/><s>A、${Answer_list[0]}</s><break time="0.1s"/><s> B、${Answer_list[1]}</s><break time="0.1s"/><s>西、${Answer_list[2]}</s><break time="0.1s"/><s>D、${Answer_list[3]}</s><break time="0.1s"/></p></speak>`, text: '熱騰騰的題目來啦!' }));
@@ -399,7 +401,7 @@ app.intent('結算成績', (conv, ) => {
 
     conv.ask(new SimpleResponse({ speech: `<speak><audio src="${calculate_sound}"/><prosody volume="loud"><p><s>根據Google神通廣大的雲端計算!</s><s>你在這回合一共進行<break time="0.05s"/>${Total_Count}<break time="0.03s"/>題題目。</s><s>你要再試一次嗎?</s></p></prosody></speak>`, text: '驗收成果' }));
     conv.ask(new BasicCard({
-        image: new Image({ url: 'https://i.imgur.com/ncuUmbe.jpg', alt: 'Pictures', }),
+        image: new Image({ url: 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%9C%8B%E6%97%97%E9%81%94%E4%BA%BA/assets/ncuUmbe.jpg', alt: 'Pictures', }),
         title: '本回合共進行' + Total_Count + '題題目',
         subtitle: '答對數：' + conv.user.storage.Correct_Count + '  \n錯誤數：' + conv.user.storage.Wrong_Count,
         display: 'CROPPED', //更改圖片顯示模式為自動擴展

@@ -1,0 +1,22 @@
+{
+    "台北": {
+        "name": "Taipei",
+        "url": "http://www.tp.blood.org.tw/Internet/taipei/index.aspx"
+    },
+    "新竹": {
+        "name": "Hsinchu",
+        "url": "http://www.tp.blood.org.tw/Internet/hsinchu/index.aspx"
+    },
+    "台中": {
+        "name": "Taichung",
+        "url": "http://www.tp.blood.org.tw/Internet/Taichung/index.aspx"
+    },
+    "台南": {
+        "name": "Tainan",
+        "url": "http://www.tp.blood.org.tw/Internet/Tainan/index.aspx"
+    },
+    "高雄": {
+        "name": "Kaohsiung",
+        "url": "http://www.tp.blood.org.tw/Internet/Kaohsiung/index.aspx"
+    }
+}

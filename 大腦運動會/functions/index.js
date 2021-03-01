@@ -27,7 +27,7 @@ var question_seperation = require('./option_seperate.json');
 //宣告陣列，隨機挑選開始畫面圖片
 
 var theArray = new Array;
-theArray = ["https://imgur.com/GpUs1EH.jpg", "https://imgur.com/cqL6GNP.jpg", "https://imgur.com/savk6bY.jpg", "https://imgur.com/vTY6hlh.jpg", "https://imgur.com/47zZGW0.jpg", "https://imgur.com/12wGdke.jpg", "https://imgur.com/7nNc48A.jpg", "https://imgur.com/LMgc0a9.jpg", "https://imgur.com/r1SsffU.jpg", "https://imgur.com/45owj76.jpg", "https://imgur.com/QzUcp41.jpg", "https://imgur.com/DaZiJF2.jpg", "https://imgur.com/GDp4Pbw.jpg", "https://imgur.com/T0VVh26.jpg", "https://imgur.com/WbMrbM1.jpg", ];
+theArray = ["https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A7%E8%85%A6%E9%81%8B%E5%8B%95%E6%9C%83/assets/GpUs1EH.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A7%E8%85%A6%E9%81%8B%E5%8B%95%E6%9C%83/assets/cqL6GNP.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A7%E8%85%A6%E9%81%8B%E5%8B%95%E6%9C%83/assets/savk6bY.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A7%E8%85%A6%E9%81%8B%E5%8B%95%E6%9C%83/assets/vTY6hlh.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A7%E8%85%A6%E9%81%8B%E5%8B%95%E6%9C%83/assets/47zZGW0.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A7%E8%85%A6%E9%81%8B%E5%8B%95%E6%9C%83/assets/12wGdke.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A7%E8%85%A6%E9%81%8B%E5%8B%95%E6%9C%83/assets/7nNc48A.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A7%E8%85%A6%E9%81%8B%E5%8B%95%E6%9C%83/assets/LMgc0a9.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A7%E8%85%A6%E9%81%8B%E5%8B%95%E6%9C%83/assets/r1SsffU.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A7%E8%85%A6%E9%81%8B%E5%8B%95%E6%9C%83/assets/45owj76.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A7%E8%85%A6%E9%81%8B%E5%8B%95%E6%9C%83/assets/QzUcp41.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A7%E8%85%A6%E9%81%8B%E5%8B%95%E6%9C%83/assets/DaZiJF2.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A7%E8%85%A6%E9%81%8B%E5%8B%95%E6%9C%83/assets/GDp4Pbw.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A7%E8%85%A6%E9%81%8B%E5%8B%95%E6%9C%83/assets/T0VVh26.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A7%E8%85%A6%E9%81%8B%E5%8B%95%E6%9C%83/assets/WbMrbM1.jpg", ];
 
 function ranFun() { return parseInt(Math.random() * 15); }
 
@@ -71,7 +71,7 @@ var question_output = false; //判別是否拿到出題目許可
 var answer_input = false; //判別是否輸入許可的答案
 var next_question = false; //判別是否輸入許可的答案
 var Correct_sound = 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/audio/%E7%AD%94%E5%B0%8D%E9%9F%B3%E6%95%88.mp3';
-var Wrong_sound = 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/audio/%E7%AD%94%E5%B0%8D%E9%9F%B3%E6%95%88.mp3';
+var Wrong_sound = 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/audio/%E7%AD%94%E9%8C%AF%E9%9F%B3%E6%95%88.mp3';
 var Appaused_sound = 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/audio/Applause%20sound%20effect%20clapping%20sounds.mp3';
 var fail_sound = 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/audio/%E5%A4%B1%E6%95%97%E9%9F%B3%E6%95%88.mp3';
 var welcome_sound = "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/audio/1990s-filtered_127bpm_A_major.wav";
@@ -231,11 +231,13 @@ app.intent('問題產生器', (conv, { input }) => {
     //進入結算頁面判斷
     if (menu === false && question_output === false && answer_input === true && end_game === true && next_question === false) {
         if (input !== '休息，是為了走更長遠的路') { input = '休息，是為了走更長遠的路'; }
-        if (input === '休息，是為了走更長遠的路') { menu = true;
+        if (input === '休息，是為了走更長遠的路') {
+            menu = true;
             question_output = false;
             answer_input = false;
             end_game = true;
-            next_question = false; }
+            next_question = false;
+        }
     }
 
     //結算畫面防呆判斷
@@ -266,12 +268,9 @@ app.intent('問題產生器', (conv, { input }) => {
         next_question = true;
 
         Q = parseInt(Math.random() * Q_Total);
-        if (Q_list.indexOf(Q) !== -1) { Q = parseInt(Math.random() * Q_Total); }
-        if (Q_list.indexOf(Q) !== -1) { Q = parseInt(Math.random() * Q_Total); }
-        if (Q_list.indexOf(Q) !== -1) { Q = parseInt(Math.random() * Q_Total); }
-        if (Q_list.indexOf(Q) !== -1) { Q = parseInt(Math.random() * Q_Total); }
-        if (Q_list.indexOf(Q) !== -1) { Q = parseInt(Math.random() * Q_Total); }
-        Q_list.push(Q); // 將現在選出的編號存入陣列
+
+        for (Q = parseInt(Math.random() * Q_Total); Q_list.indexOf(Q) !== -1; Q++)
+            Q_list.push(Q); // 將現在選出的編號存入陣列
 
         count = Object.keys(Q_list).length;
         output_array = question_list[Q];
@@ -358,7 +357,7 @@ app.intent('問題產生器', (conv, { input }) => {
         conv.ask(new SimpleResponse({ speech: `<speak><audio src="${calculate_sound}"/><prosody volume="loud"><p><s>根據Google神通廣大的雲端計算!</s><s>你在這回合一共進行<break time="0.05s"/>${Total_Count}<break time="0.03s"/>題題目。</s><s>你要再試一次嗎?</s></p></prosody></speak>`, text: '驗收成果' }));
 
         conv.ask(new BasicCard({
-            image: new Image({ url: 'https://imgur.com/JXFXlAD.jpg', alt: 'Pictures', }),
+            image: new Image({ url: 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A7%E8%85%A6%E9%81%8B%E5%8B%95%E6%9C%83/assets/JXFXlAD.jpg', alt: 'Pictures', }),
             title: '本回合共進行' + Total_Count + '個題目',
             subtitle: '答對數：' + Correct_Count + '  \n錯誤數：' + Wrong_Count,
             text: '約略為總題目的' + Prograss + '%',

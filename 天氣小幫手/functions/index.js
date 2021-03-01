@@ -120,7 +120,7 @@ app.intent('今日天氣概況', (conv) => {
             "text": '獲取全台預報發生錯誤，\n請試著查詢縣市的天氣。'
         }));
         conv.ask(new BasicCard({
-            "image": new Image({ "url": "https://i.imgur.com/Is5e4Ab.png", alt: 'Pictures', }),
+            "image": new Image({ "url": "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A9%E6%B0%A3%E5%B0%8F%E5%B9%AB%E6%89%8B/assets/Is5e4Ab.png", alt: 'Pictures', }),
             "title": '數據加載發生問題',
             "subtitle": '請過一段時間後再回來查看',
             display: 'CROPPED',
@@ -358,7 +358,7 @@ app.intent('快速查詢縣市資訊', (conv, { county }) => {
                 }
             } else {
                 var output = {
-                    "image": new Image({ "url": "https://i.imgur.com/Is5e4Ab.png", alt: 'Pictures', }),
+                    "image": new Image({ "url": "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A9%E6%B0%A3%E5%B0%8F%E5%B9%AB%E6%89%8B/assets/Is5e4Ab.png", alt: 'Pictures', }),
                     "title": '數據加載發生問題',
                     "subtitle": '請過一段時間後再回來查看',
                     display: 'CROPPED',
@@ -429,7 +429,7 @@ app.intent('全台天氣概要', (conv) => {
                 }
             } else {
                 var output = {
-                    "image": new Image({ "url": "https://i.imgur.com/Is5e4Ab.png", alt: 'Pictures', }),
+                    "image": new Image({ "url": "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A9%E6%B0%A3%E5%B0%8F%E5%B9%AB%E6%89%8B/assets/Is5e4Ab.png", alt: 'Pictures', }),
                     "title": '數據加載發生問題',
                     "subtitle": '請過一段時間後再回來查看',
                     "display": 'CROPPED'
@@ -526,7 +526,7 @@ app.intent('十日報資訊', (conv) => {
                 };
             } else {
                 var output = {
-                    "image": new Image({ "url": "https://i.imgur.com/Is5e4Ab.png", alt: 'Pictures', }),
+                    "image": new Image({ "url": "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A9%E6%B0%A3%E5%B0%8F%E5%B9%AB%E6%89%8B/assets/Is5e4Ab.png", alt: 'Pictures', }),
                     "title": '數據加載發生問題',
                     "subtitle": '請過一段時間後再回來查看',
                     display: 'CROPPED'

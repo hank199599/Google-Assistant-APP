@@ -101,7 +101,7 @@ app.intent('預設歡迎語句', (conv) => {
             }));
 
             conv.ask(new BasicCard({
-                image: new Image({ url: 'https://i.imgur.com/vwqZn8V.jpg', alt: 'Pictures', }),
+                image: new Image({ url: 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E8%AE%80%E9%9F%B3%E6%8E%A5%E9%BE%8D/assets/vwqZn8V.jpg', alt: 'Pictures', }),
                 title: '遊戲規則',
                 subtitle: '  • 前後詞彙的讀音須相同但不限音調。\n  • 在遊戲過程中，詞彙不能重複!\n  • 隨時都能跳過詞彙，共有三次機會。\n  • 你隨時都能退出結算成績。',
                 text: '**範例**：  \n' + example,
@@ -146,7 +146,7 @@ app.intent('預設歡迎語句', (conv) => {
             text: '請進行相關設定，才能進行遊戲!',
         }));
         conv.close(new BasicCard({
-            image: new Image({ url: 'https://www.gstatic.com/images/branding/product/2x/assistant_48dp.png', alt: 'Pictures', }),
+            image: new Image({ url: 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E8%AE%80%E9%9F%B3%E6%8E%A5%E9%BE%8D/assets/assistant_48dp.png', alt: 'Pictures', }),
             title: '錯誤：您需要進行設定',
             subtitle: 'Google 助理需要授權(請點擊畫面右下方的「開始使用」)。\n授權後我才能為你儲存個人對話狀態，\n藉此提升你的使用體驗!\n',
             display: 'CROPPED',
@@ -576,7 +576,7 @@ app.intent('問題產生器', (conv, { input }) => {
                 text: '請進行相關設定，才能進行遊戲!',
             }));
             conv.close(new BasicCard({
-                image: new Image({ url: 'https://i.imgur.com/P5FWCbe.png', alt: 'Pictures', }),
+                image: new Image({ url: 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E8%AE%80%E9%9F%B3%E6%8E%A5%E9%BE%8D/assets/P5FWCbe.png', alt: 'Pictures', }),
                 title: '錯誤：您需要進行設定',
                 subtitle: '為了給您個人化的遊戲體驗，請進行設定。\n\n1. 點擊下方按鈕前往Google帳戶設定\n2.	開啟「網路和應用程式活動」功能\n3.	開啟「包括 Chrome 瀏覽記錄以及採用 Google 服務的網站、應用程式和裝置中的活動記錄」\n',
                 buttons: new Button({ title: 'Google活動控制項', url: "https://myaccount.google.com/activitycontrols?pli=1", }),
@@ -589,7 +589,7 @@ app.intent('問題產生器', (conv, { input }) => {
             text: '請進行相關設定，才能進行遊戲!',
         }));
         conv.close(new BasicCard({
-            image: new Image({ url: 'https://www.gstatic.com/images/branding/product/2x/assistant_48dp.png', alt: 'Pictures', }),
+            image: new Image({ url: 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E8%AE%80%E9%9F%B3%E6%8E%A5%E9%BE%8D/assets/assistant_48dp.png', alt: 'Pictures', }),
             title: '錯誤：您需要進行設定',
             subtitle: 'Google 助理需要授權(請點擊「開始使用」)。\n授權後我才能為你儲存個人對話狀態，\n藉此提升你的使用體驗!\n',
             display: 'CROPPED',
@@ -703,7 +703,7 @@ app.intent('繼續進行', (conv) => {
             text: '請進行相關設定，才能進行遊戲!',
         }));
         conv.close(new BasicCard({
-            image: new Image({ url: 'https://i.imgur.com/P5FWCbe.png', alt: 'Pictures', }),
+            image: new Image({ url: 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E8%AE%80%E9%9F%B3%E6%8E%A5%E9%BE%8D/assets/P5FWCbe.png', alt: 'Pictures', }),
             title: '錯誤：您需要進行設定',
             subtitle: '為了給您個人化的遊戲體驗，請進行下述設定：\n\n1. 前往Google帳戶設定\n2.	開啟「網路和應用程式活動」功能\n3.	開啟「包括 Chrome 瀏覽記錄以及採用 Google 服務的網站、應用程式和裝置中的活動記錄」\n',
             buttons: new Button({ title: 'Google活動控制項', url: "https://myaccount.google.com/activitycontrols?pli=1", }),
@@ -754,7 +754,7 @@ app.intent('結束挑戰', (conv, { end_game }) => {
             conv.ask(new SimpleResponse({ speech: `<speak><p><s>你在這回合一共進行${Total_Count}次接龍。</s><s>你要再試一次嗎?</s></p></speak>`, text: '驗收成果' }));
 
             conv.ask(new BasicCard({
-                image: new Image({ url: 'https://i.imgur.com/eOAyfqS.jpg', alt: 'Pictures', }),
+                image: new Image({ url: 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E8%AE%80%E9%9F%B3%E6%8E%A5%E9%BE%8D/assets/eOAyfqS.jpg', alt: 'Pictures', }),
                 title: '本回合共進行' + Total_Count + '次接龍',
                 subtitle: '不計入跳過的詞彙',
                 text: '✮增強功力：  \n以「' + last_word + '」開頭的詞彙' + subtitle_suggest,
@@ -950,7 +950,7 @@ app.intent('跳過題目', (conv) => {
             conv.ask(new SimpleResponse({ speech: `<speak><p><s>你在這回合一共進行${Total_Count}次接龍。</s><s>你要再試一次嗎?</s></p></speak>`, text: '驗收成果' }));
 
             conv.ask(new BasicCard({
-                image: new Image({ url: 'https://i.imgur.com/eOAyfqS.jpg', alt: 'Pictures', }),
+                image: new Image({ url: 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E8%AE%80%E9%9F%B3%E6%8E%A5%E9%BE%8D/assets/eOAyfqS.jpg', alt: 'Pictures', }),
                 title: '本回合共進行' + Total_Count + '次接龍',
                 subtitle: '不計入跳過的詞彙',
                 text: '✮增強功力：  \n以「' + last_word + '」開頭的詞彙' + subtitle_suggest,

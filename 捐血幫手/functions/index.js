@@ -26,6 +26,7 @@ var county_list = require('./county_list.json');
 var site_list = require('./donation_site.json');
 var blood_detail = require('./blood_store.json');
 var status_generator = require('./status_generator.json');
+var bloodtypes = ["A", "B", "O", "AB"];
 
 let serviceAccount = require("./config/b1a2b-krmfch-firebase-adminsdk-1tgdm-afa63e6a50.json");
 
@@ -99,7 +100,7 @@ app.intent('預設歡迎語句', (conv) => {
                 conv.ask(new SimpleResponse({ speech: `<speak><p><s>歡迎使用，您可以查詢全台各處的捐血站與血庫庫存情形。</s></p></speak>`, text: "歡迎使用" }));
             } else { conv.ask(new SimpleResponse({ speech: `<speak><p><s>歡迎回來，您可以查詢全台各處的捐血站與血庫庫存情形。</s></p></speak>`, text: "歡迎回來!" })); }
             conv.ask(new BasicCard({
-                image: new Image({ url: 'https://i.imgur.com/CZ2R8WB.jpg', alt: 'Pictures', }),
+                image: new Image({ url: 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E6%8D%90%E8%A1%80%E5%B9%AB%E6%89%8B/assets/CZ2R8WB.jpg', alt: 'Pictures', }),
                 title: "請選擇要使用的查詢方式!",
                 subtitle: '✱免責聲明：\n這是非官方服務，\n如欲取得官方發布之最新訊息請參照官方網站!',
                 text: "血庫庫存資訊更新於" + PublishTime,
@@ -123,7 +124,7 @@ app.intent('預設歡迎語句', (conv) => {
             conv.ask(new SimpleResponse({ speech: `<speak><p><s>歡迎使用，您可以查詢全台各處的捐血站與血庫庫存情形。</s></p></speak>`, text: "歡迎使用" }));
         } else { conv.ask(new SimpleResponse({ speech: `<speak><p><s>歡迎回來，您可以查詢全台各處的捐血站與血庫庫存情形。</s></p></speak>`, text: "歡迎回來!" })); }
         conv.ask(new BasicCard({
-            image: new Image({ url: 'https://i.imgur.com/CZ2R8WB.jpg', alt: 'Pictures', }),
+            image: new Image({ url: 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E6%8D%90%E8%A1%80%E5%B9%AB%E6%89%8B/assets/CZ2R8WB.jpg', alt: 'Pictures', }),
             title: "請選擇要使用的查詢方式!",
             subtitle: '✱免責聲明：\n這是非官方服務，\n如欲取得官方發布之最新訊息請參照官方網站!',
             buttons: new Button({ title: '台灣血液基金會', url: 'http://www.blood.org.tw/Internet/main/index.aspx', }),
@@ -264,6 +265,7 @@ app.intent('血庫資訊查詢', (conv) => {
 
 app.intent('依區域查詢', (conv) => {
 
+    conv.user.storage.bloodtype = undefined;
     conv.contexts.set(SelectContexts.parameter, 1);
     conv.noInputs = ["請試著問我要查看的捐血中心", "請試著問我要查看的捐血中心，例如、" + index_array[parseInt(Math.random() * 4)] + "的" + type_array[parseInt(Math.random() * 3)] + "型寫庫存是多少?", "很抱歉，我幫不上忙"];
 
@@ -320,20 +322,25 @@ app.intent('區域查詢結果', (conv, input, option) => {
 
             var temp = final_data[blood_detail[option].name];
 
+            console.log(temp)
+
             conv.ask(new SimpleResponse({
                 speech: `<speak><p><s>以下是${option}捐血中心的血庫情形!</s><s>${status_outputer(temp)}</s></p></speak>`,
                 text: '以下是「' + option + '捐血中心」的血庫情形'
             }));
+
+            var blood_table = [];
+
+            for (var i = 0; i < temp.length; i++) {
+                var status_list = status_generator[temp[i]];
+                blood_table.push({ cells: [bloodtypes[i], status_list.light + ' ' + status_list.status, status_list.stock] })
+            }
+
             conv.ask(new Table({
                 title: option + '捐血中心',
                 subtitle: '更新時間 • ' + final_data.PublishTime,
                 columns: [{ header: '血型', align: 'CENTER', }, { header: '庫存量', align: 'CENTER', }, { header: '狀態', align: 'CENTER', }],
-                rows: [
-                    { cells: ['A', status_generator[temp[0]].status, status_generator[temp[0]].stock], },
-                    { cells: ['B', status_generator[temp[1]].status, status_generator[temp[1]].stock], },
-                    { cells: ['O', status_generator[temp[2]].status, status_generator[temp[2]].stock], },
-                    { cells: ['AB', status_generator[temp[3]].status, status_generator[temp[3]].stock], },
-                ],
+                rows: blood_table,
                 buttons: new Button({
                     title: option + '捐血中心官方頁面',
                     url: blood_detail[option].url,
@@ -343,6 +350,7 @@ app.intent('區域查詢結果', (conv, input, option) => {
             conv.ask(new Suggestions('🌎 最近的捐血站', '查詢其他位置', '全台捐血地點', '👋 掰掰'));
             conv.user.storage.location = option;
         }).catch(function(error) {
+            console.log(error)
             conv.ask(new SimpleResponse({
                 speech: `<speak><p><s>抱歉，獲取資料過程發生一點小狀況!</s><s>麻煩你重新點選要查看的捐血中心。</s></p></speak>`,
                 text: '發生一點小狀況，請重新選擇'
@@ -455,7 +463,12 @@ app.intent('區域查詢結果', (conv, input, option) => {
     } else if (county_array.indexOf(option) !== -1) {
 
         conv.contexts.set(SelectContexts.parameter, 1);
+
         var the_list = site_list[option];
+
+        if (the_list.length >= 1) {
+            conv.ask(new Suggestions("🩸 " + option.replace(/[\縣|\市]/gi, "") + '血庫庫存為何?'));
+        }
 
         if (the_list.length > 1) {
 
@@ -573,11 +586,12 @@ app.intent('快速查詢', (conv, { locate, blood_type }) => {
             var state_get = final_data[blood_detail[locate].name][type_array.indexOf(blood_type)];
             var stock_now = status_generator[state_get].stock;
             var status_now = status_generator[state_get].status;
+            var indicate = status_generator[state_get].light;
 
             conv.ask(new SimpleResponse({ speech: `<speak><p><s>根據最新資料顯示。</s><s>在${locate}捐血中心<break time="0.2s"/><say-as interpret-as="characters">${blood_type}</say-as>型寫為庫存量${status_now}</s></p></speak>`, text: '下方是您要求的資訊', }));
 
             conv.ask(new BasicCard({
-                title: locate + '捐血中心/' + blood_type + '型血\n\n庫存量' + stock_now + '(' + status_now + ')\n',
+                title: locate + '捐血中心/' + blood_type + '型血\n\n' + indicate + ' 庫存量' + stock_now + '(' + status_now + ')\n',
                 text: '資料更新時間：' + final_data.PublishTime,
             }));
 
@@ -600,16 +614,18 @@ app.intent('快速查詢', (conv, { locate, blood_type }) => {
                 text: '以下是「' + locate + '捐血中心」的血庫情形'
             }));
 
+            var blood_table = [];
+
+            for (var i = 0; i < temp.length; i++) {
+                var status_list = status_generator[temp[i]];
+                blood_table.push({ cells: [bloodtypes[i], status_list.light + ' ' + status_list.status, status_list.stock] })
+            }
+
             conv.ask(new Table({
                 title: locate + '捐血中心',
                 subtitle: '更新時間 • ' + final_data.PublishTime,
                 columns: [{ header: '血型', align: 'CENTER', }, { header: '庫存量', align: 'CENTER', }, { header: '狀態', align: 'CENTER', }],
-                rows: [
-                    { cells: ['A', status_generator[temp[0]].status, status_generator[temp[0]].stock], },
-                    { cells: ['B', status_generator[temp[1]].status, status_generator[temp[1]].stock], },
-                    { cells: ['O', status_generator[temp[2]].status, status_generator[temp[2]].stock], },
-                    { cells: ['AB', status_generator[temp[3]].status, status_generator[temp[3]].stock], },
-                ],
+                rows: blood_table,
                 buttons: new Button({
                     title: locate + '捐血中心官方頁面',
                     url: blood_detail[locate].url,

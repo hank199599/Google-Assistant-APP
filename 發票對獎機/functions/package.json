@@ -1,30 +1,31 @@
 {
-  "name": "functions",
-  "description": "Cloud Functions for Firebase",
-  "scripts": {
-    "serve": "firebase emulators:start --only functions",
-    "shell": "firebase functions:shell",
-    "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
-  },
-  "engines": {
-    "node": "8"
-  },
-  "dependencies": {
-    "actions-on-google": "^2.12.0",
-    "cheerio": "^1.0.0-rc.3",
-    "dialogflow": "^1.2.0",
-    "dialogflow-fulfillment": "^0.6.1",
-    "firebase-admin": "^8.12.1",
-    "firebase-functions": "^3.6.1",
-    "https": "^1.0.0",
-    "nzh": "^1.0.4",
-    "receipt-lottery-taiwan": "0.0.4",
-    "replace-string": "^3.1.0"
-  },
-  "devDependencies": {
-    "firebase-functions-test": "^0.2.0"
-  },
-  "private": true
+    "name": "functions",
+    "description": "Cloud Functions for Firebase",
+    "scripts": {
+        "serve": "firebase emulators:start --only functions",
+        "shell": "firebase functions:shell",
+        "start": "npm run shell",
+        "deploy": "firebase deploy --only functions",
+        "logs": "firebase functions:log"
+    },
+    "engines": {
+        "node": "10"
+    },
+    "dependencies": {
+        "actions-on-google": "^2.12.0",
+        "cheerio": "^1.0.0-rc.3",
+        "dialogflow": "^1.2.0",
+        "dialogflow-fulfillment": "^0.6.1",
+        "firebase-admin": "^8.12.1",
+        "firebase-functions": "^3.6.1",
+        "get-json": "^1.0.1",
+        "https": "^1.0.0",
+        "nzh": "^1.0.4",
+        "receipt-lottery-taiwan": "0.0.4",
+        "replace-string": "^3.1.0"
+    },
+    "devDependencies": {
+        "firebase-functions-test": "^0.2.0"
+    },
+    "private": true
 }

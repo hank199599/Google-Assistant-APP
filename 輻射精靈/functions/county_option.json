@@ -1,0 +1,110 @@
+{
+  "北部地區": {
+    "臺北市": {
+      "title": "臺北市",
+      "description": "Taipei City"
+    },
+    "基隆市": {
+      "title": "基隆市",
+      "description": "Kelling City"
+    },
+    "新北市(一)": {
+      "synonyms": [
+        "第一"
+      ],
+      "title": "新北市(一)",
+      "description": "New Taipei City  \nPart 1"
+    },
+    "新北市(二)": {
+      "synonyms": [
+        "第二"
+      ],
+      "title": "新北市(二)",
+      "description": "New Taipei City  \nPart 2"
+    },
+    "桃園市": {
+      "title": "桃園市",
+      "description": "Taoyuan City"
+    },
+    "竹北": {
+      "title": "新竹縣",
+      "description": "Hsinchu County"
+    },
+    "新竹市": {
+      "title": "新竹市",
+      "description": "Hsinchu City"
+    }
+  },
+  "中部地區": {
+    "苗栗": {
+      "title": "苗栗縣",
+      "description": "Miaoli County"
+    },
+    "台中": {
+      "title": "臺中市",
+      "description": "Taichung City"
+    },
+    "彰化": {
+      "title": "彰化縣",
+      "description": "Changhua County"
+    },
+    "南投縣": {
+      "title": "南投縣",
+      "description": "Nantou County"
+    },
+    "雲林": {
+      "title": "雲林縣",
+      "description": "Yunlin County"
+    }
+  },
+  "南部地區": {
+    "阿里山": {
+      "title": "嘉義縣",
+      "description": "Chiayi County"
+    },
+    "嘉義": {
+      "title": "嘉義市",
+      "description": "Chiayi City"
+    },
+    "台南": {
+      "title": "臺南市",
+      "description": "Tainan City"
+    },
+    "高雄": {
+      "title": "高雄市",
+      "description": "Kaohsiung City"
+    },
+    "屏東縣": {
+      "title": "屏東縣",
+      "description": "Pingtung County"
+    }
+  },
+  "東部地區": {
+    "宜蘭縣": {
+      "title": "宜蘭縣",
+      "description": "Yilan County"
+    },
+    "花蓮": {
+      "title": "花蓮縣",
+      "description": "Hualien County"
+    },
+    "臺東縣": {
+      "title": "臺東縣",
+      "description": "Taitung County"
+    }
+  },
+  "離島地區": {
+    "澎湖縣": {
+      "title": "澎湖縣",
+      "description": "Penghu County"
+    },
+    "金門縣": {
+      "title": "金門縣",
+      "description": "Kinmen County"
+    },
+    "連江縣": {
+      "title": "連江縣",
+      "description": "Lienchiang County"
+    }
+  }
+}

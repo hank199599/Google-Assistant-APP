@@ -1,11 +1,10 @@
 {
-{
    "Default_Location":"Default timezone is：","Defalt_Location_Hint":".\nYou can change it if you not in this timezone.",
    "Location":"To change your timezone",
    "Locationprompt":"Would you grant permission?",
    "LocationOutput":"Your Timezone has changed to %s,your instant suggestion will base on this timezone",  "Locationshow":"Setup is done!",
 
-   "LocationSubTitle":"Your Timezone has change to UTC ","Localtime":"  \nLocal time is ",
+   "LocationSubTitle":"Your Timezone has change to UTC%s","Localtime":"  \nLocal time is ",
    "LocationText":"[!]Instant sugestion will base on this timezone",
    "YES":"OK","NO":"NO",
    "LocationMiss":"Sorry, I could not figure out where you are.",
@@ -35,7 +34,6 @@
    "think":"I think %s is nice","Help_with":"Give me some idea","Help_with_hint":"Let me think some idea of %s!",
    "Help_suggest":"Think some %s",
    "Hintsubtitle":"You can get suggestion by asking like:\n 'Give me some fast food idea.'  \n'What restaurant do you think is good?'",
-   "Hinttext":"[!] Note: This program can only serialize the input and give a corresponding response.",
    
    "DefaultTalk":"Say something to get advice.</s><s>For example,you can ask %s What do you think for %s?","DefaultText":"Say something to let me help you.",
 
@@ -101,6 +99,4 @@
   "Q1":"How do you feel","Q2":"How about this one","Q3":"how does it feel","Q4":"How about this","Q5":"Feel good","Q6":"What do you think","Q7":"How about this","Q8":"Is it OK","Q9":"How is this",
   "A1":"It's good","A2":"OK","A3":"I Feel good","A4":"OK","A5":"Alright","A6":"Nice","A7":"Feel good","A8":"OK","A9":"Excellent"
 
-
-  
 }

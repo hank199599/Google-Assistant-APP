@@ -5,7 +5,7 @@
 
    "LocationOutput":"所在時區已更動為%s，時間是%s點%s分。",  "Locationshow":"設定已成功!",
 
-   "LocationSubTitle":"所在時區已更新為 UTC ","Localtime":"  \n當地時間是",
+   "LocationSubTitle":"所在時區已更新為 UTC%s","Localtime":"  \n當地時間是",
    "LocationText":"[!]除非你重新定位，未來我將使用此時區之時間來給予建議!",
    "LocationMiss":"很抱歉，我無法修改你的時區設定。",
    "LocationDeny":"很抱歉，你拒絕授予權限因而更動失敗。",
@@ -34,10 +34,9 @@
    "think":"我覺得「%s」還不錯","Help_with":"吃甚麼%s好呢","Help_with_hint":"讓我想幾個有關%s的點子!",
    "Help_suggest":"幫我想要吃什麼%s",
    "Hintsubtitle":"除了在飯與麵之間抉擇，\n你也能直接提問來取得建議。\n\n◎範例：\n'吃什麼飯','吃什麼麵好','你覺得要吃什麼麵'\n'幫我想要吃什麼飯'",
-   "Hinttext":"[!]注意事項：語音辨識錯誤問題在於Google助理。本程式只能串接輸入內容並給予相對應回應。",
    
    
-   "DefaultTalk":"請輸入相對應指令讓我為你服務!</s><s>例如，你可以問我%s%s吃甚麼ㄋ?","DefaultText":"說出指令或點選建議卡片來進行操作。",
+   "DefaultTalk":"試著詢問來獲取建議!</s><s>例如，你可以問我%s%s吃甚麼ㄋ?","DefaultText":"說出指令或點選建議卡片來進行操作。",
    
    "Menu":"回到選單",
    

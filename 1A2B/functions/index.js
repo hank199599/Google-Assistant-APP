@@ -79,34 +79,66 @@ function analysis(you_guess, sys_think) {
     var sys_split = sys_think.toString().split('');
 
     //千位數判斷
-    if (sys_split[0] === your_split[0]) { A_count++;
-        array[0] = 'A'; } else if (sys_split[0] === your_split[1]) { B_count++;
-        array[1] = 'B'; } else if (sys_split[0] === your_split[2]) { B_count++;
-        array[2] = 'B'; } else if (sys_split[0] === your_split[3]) { B_count++;
-        array[3] = 'B'; }
+    if (sys_split[0] === your_split[0]) {
+        A_count++;
+        array[0] = 'A';
+    } else if (sys_split[0] === your_split[1]) {
+        B_count++;
+        array[1] = 'B';
+    } else if (sys_split[0] === your_split[2]) {
+        B_count++;
+        array[2] = 'B';
+    } else if (sys_split[0] === your_split[3]) {
+        B_count++;
+        array[3] = 'B';
+    }
 
     //百位數判斷
 
-    if (sys_split[1] === your_split[0]) { B_count++;
-        array[0] = 'B'; } else if (sys_split[1] === your_split[1]) { A_count++;
-        array[1] = 'A'; } else if (sys_split[1] === your_split[2]) { B_count++;
-        array[2] = 'B'; } else if (sys_split[1] === your_split[3]) { B_count++;
-        array[3] = 'B'; }
+    if (sys_split[1] === your_split[0]) {
+        B_count++;
+        array[0] = 'B';
+    } else if (sys_split[1] === your_split[1]) {
+        A_count++;
+        array[1] = 'A';
+    } else if (sys_split[1] === your_split[2]) {
+        B_count++;
+        array[2] = 'B';
+    } else if (sys_split[1] === your_split[3]) {
+        B_count++;
+        array[3] = 'B';
+    }
 
     //十位數判斷
 
-    if (sys_split[2] === your_split[0]) { B_count++;
-        array[0] = 'B'; } else if (sys_split[2] === your_split[1]) { B_count++;
-        array[1] = 'B'; } else if (sys_split[2] === your_split[2]) { A_count++;
-        array[2] = 'A'; } else if (sys_split[2] === your_split[3]) { B_count++;
-        array[3] = 'B'; }
+    if (sys_split[2] === your_split[0]) {
+        B_count++;
+        array[0] = 'B';
+    } else if (sys_split[2] === your_split[1]) {
+        B_count++;
+        array[1] = 'B';
+    } else if (sys_split[2] === your_split[2]) {
+        A_count++;
+        array[2] = 'A';
+    } else if (sys_split[2] === your_split[3]) {
+        B_count++;
+        array[3] = 'B';
+    }
 
     //個位數判斷
-    if (sys_split[3] === your_split[0]) { B_count++;
-        array[0] = 'B'; } else if (sys_split[3] === your_split[1]) { B_count++;
-        array[1] = 'B'; } else if (sys_split[3] === your_split[2]) { B_count++;
-        array[2] = 'B'; } else if (sys_split[3] === your_split[3]) { A_count++;
-        array[3] = 'A'; }
+    if (sys_split[3] === your_split[0]) {
+        B_count++;
+        array[0] = 'B';
+    } else if (sys_split[3] === your_split[1]) {
+        B_count++;
+        array[1] = 'B';
+    } else if (sys_split[3] === your_split[2]) {
+        B_count++;
+        array[2] = 'B';
+    } else if (sys_split[3] === your_split[3]) {
+        A_count++;
+        array[3] = 'A';
+    }
 
     return [A_count, B_count, array]
 
@@ -208,7 +240,7 @@ app.intent('預設歡迎語句', (conv) => {
             }));
 
             conv.ask(new BasicCard({
-                image: new Image({ url: 'https://imgur.com/7ofgPtV.jpg', alt: 'Pictures', }),
+                image: new Image({ url: 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/1A2B/assets/7ofgPtV.jpg', alt: 'Pictures', }),
                 title: i18n.__('Welcome_Title'),
                 display: 'CROPPED',
                 subtitle: i18n.__('Welcome_Subtitle'),
@@ -260,9 +292,9 @@ app.intent('開始遊戲', (conv) => {
     conv.user.storage.record = new Array([], [], [], [], []);
     conv.user.storage.try_count = 0;
     conv.user.storage.teach_mode = false;
+    conv.user.storage.input = i18n.__('error_record');
     conv.contexts.set(Contexts.guess, 1);
     conv.contexts.set(Contexts.Hint, 1);
-
 });
 
 app.intent('輸入數字', (conv, { any }) => {
@@ -299,16 +331,15 @@ app.intent('輸入數字', (conv, { any }) => {
 
                 conv.ask(new SimpleResponse({ speech: `<speak><p><s>${i18n.__('Game_hint1','<say-as interpret-as="characters">'+you_guess+'</say-as>')}<break time="0.2s"/></s><s>${i18n.__('Game_hint2','<break time="0.2s"/>'+A_count+'A'+B_count+'B')}</s></p></speak>`, text: i18n.__('Game_text', A_count, B_count), }));
 
+                var output = {
+                    title: you_guess + '   (' + A_count + 'A' + B_count + 'B)',
+                    subtitle: i18n.__('card_subtitle'),
+                    columns: [{ header: "", align: 'CENTER', }, ],
+                    rows: [{ cells: ["\n" + i18n.__('Record') + "\n"], dividerAfter: false, }, ],
+                }
+
                 if (guess_count === 1) {
-                    conv.ask(new Table({
-                        title: you_guess + '   (' + A_count + 'A' + B_count + 'B)',
-                        subtitle: i18n.__('card_subtitle'),
-                        columns: [{ header: "", align: 'CENTER', }, ],
-                        rows: [{ cells: ["\n" + i18n.__('Record') + "\n"], dividerAfter: false, }, ],
-                    }));
-
                     conv.user.storage.record[0] = [number.toString(), A_count + "A" + B_count + "B"];
-
                 } else {
                     var temp_array = [];
 
@@ -316,16 +347,12 @@ app.intent('輸入數字', (conv, { any }) => {
                         if (record[i].length !== 0) { temp_array.push({ cells: record[i], dividerAfter: false, }) }
                     }
 
-                    conv.ask(new Table({
-                        title: you_guess + '   (' + A_count + 'A' + B_count + 'B)',
-                        subtitle: i18n.__('card_subtitle'),
-                        columns: [{ header: i18n.__('Input'), align: 'CENTER', }, { header: i18n.__('hint'), align: 'CENTER', }, ],
-                        rows: temp_array,
-                    }));
-
+                    output.columns = [{ header: i18n.__('Input'), align: 'CENTER', }, { header: i18n.__('hint'), align: 'CENTER', }, ]
+                    output.rows = temp_array
                     conv.user.storage.record = record_generator([number.toString(), A_count + "A" + B_count + "B"], record);
                 }
 
+                conv.ask(new Table(output));
                 conv.ask(new Suggestions(ranGuess(), ranGuess(), i18n.__('explain', A_count, B_count)));
 
                 conv.contexts.set(Contexts.Hint, 1);
@@ -335,7 +362,7 @@ app.intent('輸入數字', (conv, { any }) => {
             } else {
                 conv.ask(new SimpleResponse({ speech: `<speak><audio src="https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/audio/end_game.mp3"/><p><s>${i18n.__('Answer1','<say-as interpret-as="characters">'+sys_think+'</say-as>')}!</s><s>${i18n.__('Answer2', guess_count)}</s><break time="0.2s"/><s>${i18n.__('Answer3')}?</s></p></speak>`, text: i18n.__('Answertext'), }));
                 conv.ask(new BasicCard({
-                    image: new Image({ url: 'https://imgur.com/7qDUUEq.jpg', alt: 'Pictures', }),
+                    image: new Image({ url: 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/1A2B/assets/7qDUUEq.jpg', alt: 'Pictures', }),
                     display: 'CROPPED',
                     title: i18n.__('Answer') + sys_think,
                     subtitle: i18n.__('GuessCount', guess_count),
@@ -348,40 +375,32 @@ app.intent('輸入數字', (conv, { any }) => {
         } else {
 
             conv.ask(new SimpleResponse({ speech: i18n.__('Error_speech'), text: i18n.__('Error_text') }));
+            conv.user.storage.input = i18n.__('error_record');
 
-            if (guess_count === 0) {
+            var output = {
+                title: i18n.__('Error_Title'),
+                subtitle: i18n.__('card_subtitle'),
+                columns: [{ header: "", align: 'CENTER', }, ],
+                rows: [{ cells: ["\n" + i18n.__('Record') + "\n"], dividerAfter: false, }, ],
+            };
 
-                conv.ask(new Table({
-                    title: i18n.__('Error_Title'),
-                    subtitle: i18n.__('card_subtitle'),
-                    columns: [{ header: "", align: 'CENTER', }, ],
-                    rows: [{ cells: ["\n" + i18n.__('Record') + "\n"], dividerAfter: false, }, ],
-                }));
-
-                conv.ask(new Suggestions("123", ranGuess(), ranGuess(), ranGuess(), "9876"));
-                conv.user.storage.input = i18n.__('error_record')
-            } else {
+            if (guess_count !== 0) {
 
                 var temp_array = [];
-                conv.user.storage.input = "";
-
                 for (i = 0; i < record.length; i++) {
                     if (record[i].length !== 0) { temp_array.push({ cells: record[i], dividerAfter: false, }) }
                 }
 
-                conv.ask(new Table({
-                    title: i18n.__('Error_Title'),
-                    subtitle: i18n.__('card_subtitle'),
-                    columns: [{ header: i18n.__('Input'), align: 'CENTER', }, { header: i18n.__('hint'), align: 'CENTER', }, ],
-                    rows: temp_array,
-                }));
-
-                // conv.user.storage.record = record_generator([i18n.__('error_record'), "──"], record);
-                conv.ask(new Suggestions(ranGuess(), ranGuess(), ranGuess(), ranGuess(), ranGuess()));
+                output.columns = [{ header: i18n.__('Input'), align: 'CENTER', }, { header: i18n.__('hint'), align: 'CENTER', }, ]
+                output.rows = temp_array
             }
+
+            conv.ask(new Table(output));
+            conv.ask(new Suggestions("123", ranGuess(), ranGuess(), ranGuess(), "9876"));
 
             conv.contexts.set(Contexts.guess, 1);
             conv.contexts.set(Contexts.Answer, 1);
+            conv.contexts.set(Contexts.Hint, 1);
 
         }
 
@@ -410,19 +429,8 @@ app.intent('輸入數字', (conv, { any }) => {
 app.intent('解釋意思', (conv) => {
 
     var input = conv.user.storage.input;
-    //將參數上載到函式上
-    var origin = input.toString().split('');
-    var result = Array.from(new Set(origin));
-    var help_Total = result.length;
-    var A_count = conv.user.storage.help_data[0];
-    var B_count = conv.user.storage.help_data[1];
-    var location = conv.user.storage.help_data[2];
-    var else_count = help_Total - (A_count + B_count);
 
-    var explained = explain(A_count, B_count, else_count)
-
-
-    if (conv.user.storage.guess_count === 0) {
+    if (input === i18n.__('error_record')) {
 
         conv.ask(new SimpleResponse({ speech: `<speak><p><s>${i18n.__('hinterror')}</s></p></speak>`, text: i18n.__('hinttext1') }));
         conv.ask(new BasicCard({
@@ -434,21 +442,26 @@ app.intent('解釋意思', (conv) => {
         conv.contexts.set(Contexts.guess, 1);
     } else {
 
-        if (input === i18n.__('error_record')) {
-            conv.ask(new SimpleResponse({ speech: `<speak><p><s>${i18n.__('hinterror')}</s></p></speak>`, text: i18n.__('hinttext1') }));
-            conv.ask(new BasicCard({
-                title: i18n.__('Error_Start'),
-                text: i18n.__('Error_Start_hint'),
-            }));
-            conv.contexts.set(Contexts.guess, 1);
-        } else if (conv.user.storage.teach_mode === false) {
+        var origin = input.toString().split('');
+        var help_Total = Array.from(new Set(origin)).length;
+        var A_count = conv.user.storage.help_data[0];
+        var B_count = conv.user.storage.help_data[1];
+        var location = conv.user.storage.help_data[2];
+        var else_count = help_Total - (A_count + B_count);
+
+        var explained = explain(A_count, B_count, else_count)
+
+
+        if (conv.user.storage.teach_mode === false) {
             conv.ask(new SimpleResponse({ speech: `<speak><p><s>${i18n.__('hint1','<break time="0.15s"/><say-as interpret-as="characters">'+input+'</say-as><break time="0.15s"/>')}<break time="0.15s"/>${explained}</s></p></speak>`, text: i18n.__('hinttext1') }));
             conv.ask(new BasicCard({
                 title: input + '   (' + A_count + 'A' + B_count + 'B)',
                 subtitle: i18n.__('Hint_subtitle', A_count, A_count, B_count, B_count, else_count),
                 text: i18n.__('Hint_Text'),
             }));
+
         } else {
+
             conv.ask(new SimpleResponse({ speech: `<speak><p><s>${i18n.__('hint1','<break time="0.15s"/><say-as interpret-as="characters">'+input+'</say-as><break time="0.15s"/>')}<break time="0.15s"/>${explained}</s></p></speak>`, text: i18n.__('hinttext2') }));
             conv.ask(new Table({
                 title: input + '   (' + A_count + 'A' + B_count + 'B)',
@@ -460,6 +473,7 @@ app.intent('解釋意思', (conv) => {
                 ]
             }));
         }
+
         conv.ask(new Suggestions('📝' + i18n.__('Tutorial'), i18n.__('Giveup')));
         conv.ask(new Suggestions(ranGuess()));
 
@@ -553,8 +567,7 @@ app.intent('教學模式', (conv, { any }) => {
 
         var user_input = you_guess.split('');
 
-        var result = Array.from(new Set(user_input));
-        var help_Total = result.length;
+        var help_Total = Array.from(new Set(user_input)).length;
 
         var temp = analysis(you_guess, sys_think);
         var A_count = temp[0];
@@ -563,29 +576,38 @@ app.intent('教學模式', (conv, { any }) => {
         var explained = explain(A_count, B_count, else_count)
         var teach_title = "";
         var teach_subtitle = "";
+        var teach_speech = "";
+        var teach_text = "";
+
 
         if (try_count === 1) {
             teach_title = i18n.__('Teach_1_Title', A_count, B_count);
             teach_subtitle = i18n.__('Teach_1_Subtitle', you_guess);
-            conv.ask(new SimpleResponse({ speech: `<speak><p><s>${i18n.__('Teach_1_Speek_1')}${i18n.__('Teach_1_Speek_2',A_count+'A'+B_count+'B')}</s><break time="0.15s"/><s>${i18n.__('Teach_1_Speek_3','<say-as interpret-as="characters">'+you_guess+'</say-as>')}${explained}</s><break time="0.15s"/><s>${i18n.__('Teach_1_Speek_4')}</s><s>${i18n.__('Teach_Start_9')}!</s></p></speak>`, text: i18n.__('Teach_1_text') }));
+            teach_speech = `<speak><p><s>${i18n.__('Teach_1_Speek_1')}${i18n.__('Teach_1_Speek_2',A_count+'A'+B_count+'B')}</s><break time="0.15s"/><s>${i18n.__('Teach_1_Speek_3','<say-as interpret-as="characters">'+you_guess+'</say-as>')}${explained}</s><break time="0.15s"/><s>${i18n.__('Teach_1_Speek_4')}</s><s>${i18n.__('Teach_Start_9')}!</s></p></speak>`;
+            teach_text = i18n.__('Teach_1_text')
         } else if (try_count === 2) {
             teach_title = i18n.__('Teach_2_Title', A_count, B_count);
             teach_subtitle = i18n.__('Teach_2_Subtitle');
-            conv.ask(new SimpleResponse({ speech: `<speak><p><s>${i18n.__('Teach_2_Speek_1','<say-as interpret-as="characters">'+you_guess+'</say-as>')}</s><s>${explained}</s><break time="0.15s"/><s>${i18n.__('Teach_2_Speek_2')}</s><s>${i18n.__('Teach_Start_9')}!</s></p></speak>`, text: i18n.__('Teach_2_text') }));
-
+            teach_speech = `<speak><p><s>${i18n.__('Teach_2_Speek_1','<say-as interpret-as="characters">'+you_guess+'</say-as>')}</s><s>${explained}</s><break time="0.15s"/><s>${i18n.__('Teach_2_Speek_2')}</s><s>${i18n.__('Teach_Start_9')}!</s></p></speak>`
+            teach_text = i18n.__('Teach_2_text');
         } else if (try_count === 3) {
             teach_title = i18n.__('Teach_3_Title', A_count, B_count);
             teach_subtitle = i18n.__('Teach_3_Subtitle');
-            conv.ask(new SimpleResponse({ speech: `<speak><p><s>${i18n.__('Teach_3_Speek_1')}</s><s>${i18n.__('Teach_3_Speek_2','<say-as interpret-as="characters">'+you_guess+'</say-as>')}${explained}</s><break time="0.15s"/><s>${i18n.__('Teach_3_Speek_3')}</s><s>${i18n.__('Teach_Start_9')}!</s></p></speak>`, text: i18n.__('Teach_2_text') }));
+            teach_speech = `<speak><p><s>${i18n.__('Teach_3_Speek_1')}</s><s>${i18n.__('Teach_3_Speek_2','<say-as interpret-as="characters">'+you_guess+'</say-as>')}${explained}</s><break time="0.15s"/><s>${i18n.__('Teach_3_Speek_3')}</s><s>${i18n.__('Teach_Start_9')}!</s></p></speak>`
+            teach_text = i18n.__('Teach_2_text');
         } else if (try_count === 4) {
             teach_title = i18n.__('Teach_4_Title', A_count, B_count);
             teach_subtitle = i18n.__('Teach_4_Subtitle');
-            conv.ask(new SimpleResponse({ speech: `<speak><p><s>${i18n.__('Teach_4_Speek_1')}</s><break time="0.15s"/><s>${i18n.__('Teach_4_Speek_2','<say-as interpret-as="characters">'+you_guess+'</say-as>')}</s><break time="0.15s"/><s>${i18n.__('Teach_4_Speek_3')}</s><s>${i18n.__('Teach_4_Speek_4','<break time="0.15s"/>'+i18n.__('BackNormal')+'<break time="0.15s"/>')}${i18n.__('Teach_4_Speek_5')}</s></p></speak>`, text: i18n.__('Teach_4_text') }));
+            teach_speech = `<speak><p><s>${i18n.__('Teach_4_Speek_1')}</s><break time="0.15s"/><s>${i18n.__('Teach_4_Speek_2','<say-as interpret-as="characters">'+you_guess+'</say-as>')}</s><break time="0.15s"/><s>${i18n.__('Teach_4_Speek_3')}</s><s>${i18n.__('Teach_4_Speek_4','<break time="0.15s"/>'+i18n.__('BackNormal')+'<break time="0.15s"/>')}${i18n.__('Teach_4_Speek_5')}</s></p></speak>`;
+            teach_text = i18n.__('Teach_4_text');
         } else {
             teach_title = you_guess + '   (' + A_count + 'A' + B_count + 'B)';
             teach_subtitle = i18n.__('Hint_subtitle', A_count, A_count, B_count, B_count, else_count);
-            conv.ask(new SimpleResponse({ speech: `<speak><p><s>${i18n.__('hint1','<break time="0.15s"/><say-as interpret-as="characters">'+you_guess+'</say-as><break time="0.15s"/>')}${explained}</s></p></speak>`, text: i18n.__('hinttext1') }));
+            teach_speech = `<speak><p><s>${i18n.__('hint1','<break time="0.15s"/><say-as interpret-as="characters">'+you_guess+'</say-as><break time="0.15s"/>')}${explained}</s></p></speak>`;
+            teach_text = i18n.__('hinttext1');
         }
+
+        conv.ask(new SimpleResponse({ speech: teach_speech, text: teach_text }));
 
         conv.ask(new Table({
             title: teach_title,
@@ -677,6 +699,7 @@ app.intent('玩遊戲意圖', (conv) => {
     conv.user.storage.record = new Array([], [], [], [], []);
     conv.user.storage.try_count = 0;
     conv.user.storage.teach_mode = false;
+    conv.user.storage.input = i18n.__('error_record');
     conv.contexts.set(Contexts.guess, 1);
     conv.contexts.set(Contexts.Hint, 1);
 });

@@ -1,10 +1,11 @@
-{   
-    "Answer":"answer",
-    "guess":"input",
-    "Bye":"bye",
-    "Start":"start",
-    "Start_Teach":"entry_teach",
-    "Teach":"teach_mode",
-    "Hint":"hint",
-    "Return":"return"
+{
+    "Answer": "answer",
+    "guess": "input",
+    "Bye": "bye",
+    "Start": "start",
+    "Start_Teach": "entry_teach",
+    "Teach": "teach_mode",
+    "Hint": "hint",
+    "Return": "return",
+    "Repeat": "Repeat"
 }

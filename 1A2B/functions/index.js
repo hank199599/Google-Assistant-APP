@@ -25,6 +25,7 @@ i18n.configure({
     directory: __dirname + '/locales',
     defaultLocale: 'en',
 });
+
 app.middleware((conv) => {
     var language = conv.user.locale;
     if (language.indexOf('en') !== -1) { language = "en"; } else if (language.indexOf('fr') !== -1) { language = "fr"; } else if (language.indexOf('es') !== -1) { language = "es"; } else if (language.indexOf('th') !== -1) { language = "th"; } else if (language.indexOf('de') !== -1) { language = "de"; }
@@ -32,39 +33,17 @@ app.middleware((conv) => {
     i18n.setLocale(language);
 });
 
-var sys_think = 0; //生成系統猜測的數字
-var number = 0; //使用者剛剛輸入的數字
-var you_guess = 0; //將剛剛生成的數字儲存起來
-var sys_error1 = 0; //教學模式:系統隨機猜想的錯誤數字1
-var sys_error2 = 0; //教學模式:系統隨機猜想的錯誤數字2
-var guess_count = 0; //統計猜測次數
-var number = 0;
-var try_count = 0; //在教學模式中的對話次數
-var record = [];
-var i = 0;
-
-function take(i, array) {
-    var temp = [];
-    var countdown = 0;
-    var take_out = 0;
-
-    for (countdown = array.length - i; countdown > 1; countdown--) { temp.push(array.pop()); }
-    take_out = array.pop();
-    for (countdown = temp.length; countdown > 0; countdown--) { array.push(temp.pop()); }
-    return take_out;
-}
-
 function ranGuess() {
 
-    var array = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    var numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    var output = "";
 
-    var ran_think_1000 = take(parseInt(Math.random() * 9), array);
-    var ran_think_100 = take(parseInt(Math.random() * 8), array);
-    var ran_think_10 = take(parseInt(Math.random() * 7), array);
-    var ran_think_1 = take(parseInt(Math.random() * 6), array);
-    var output = String((ran_think_1000 * 1000) + (ran_think_100 * 100) + (ran_think_10 * 10) + ran_think_1); //系統生成的實際數字
-
-    if (output.length === 3) { output = "0" + output; } else if (output.length === 2) { output = "00" + output; } else if (output.length === 1) { output = "000" + output; }
+    for (var i = 0; i < 4; i++) {
+        var keys = Object.keys(numbers);
+        var num = keys[Math.floor(Math.random() * keys.length)]
+        output = output + num
+        delete numbers[num]
+    }
 
     return output
 }
@@ -149,50 +128,12 @@ function explain(A, B, else_count) {
 }
 
 function transfomer(input) {
-    input = replaceString(input, ' ', ''); //消除輸入字串中的空格
-    input = replaceString(input, '百', '00'); //消除輸入字串中的空格
-    input = replaceString(input, '佰', '00'); //消除輸入字串中的空格
-    input = replaceString(input, '千', '000'); //消除輸入字串中的空格
-    input = replaceString(input, '仟', '000'); //消除輸入字串中的空格
-    input = replaceString(input, '以前', ''); //消除輸入字串中的空格
-    input = replaceString(input, '萬', ''); //消除輸入字串中的空格
-    input = replaceString(input, '零', '0'); //消除輸入字串中的空格
-    input = replaceString(input, '一', '1'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '二', '2'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '兩', '2'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '三', '3'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '四', '4'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '是', '4'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '五', '5'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '伍', '5'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '六', '6'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '七', '7'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '八', '8'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '爸', '8'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '九', '9'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '酒', '9'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '十', '10'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '森林', '30'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '三菱', '30'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '士林', '40'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '二林', '20'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '麒麟', '70'); //更改輸入字串中的字元為數字
-    input = replaceString(input, '排氣', '87'); //更改輸入字串中的字元為數字
-    input = replaceString(input, 'zero', '0'); //更改輸入字串中的字元為數字
-    input = replaceString(input, 'to', '2'); //更改輸入字串中的字元為數字
-    input = replaceString(input, 'all', '0'); //更改輸入字串中的字元為數字
-    input = replaceString(input, 'O', '0'); //更改輸入字串中的字元為數字
-    input = replaceString(input, 'o', '0'); //更改輸入字串中的字元為數字
-    input = replaceString(input, 'one', '1'); //更改輸入字串中的字元為數字
-    input = replaceString(input, 'two', '2'); //更改輸入字串中的字元為數字
-    input = replaceString(input, 'three', '3'); //更改輸入字串中的字元為數字
-    input = replaceString(input, 'four', '4'); //更改輸入字串中的字元為數字
-    input = replaceString(input, 'five', '5'); //更改輸入字串中的字元為數字
-    input = replaceString(input, 'six', '6'); //更改輸入字串中的字元為數字
-    input = replaceString(input, 'seven', '7'); //更改輸入字串中的字元為數字
-    input = replaceString(input, 'eight', '8'); //更改輸入字串中的字元為數字
-    input = replaceString(input, 'nine', '9'); //更改輸入字串中的字元為數字
+    var replace_list = require('./replace.json');
+    var keys = Object.keys(replace_list);
 
+    for (var i = 0; i < keys.length; i++) {
+        input = replaceString(input, keys[i], replace_list[keys[i]]); //更改輸入字串中的字元為數字
+    }
     return input
 }
 
@@ -207,7 +148,6 @@ function record_generator(input, array) {
 }
 
 
-//歡迎畫面
 app.intent('預設歡迎語句', (conv) => {
     conv.user.storage = {};
 
@@ -300,16 +240,16 @@ app.intent('開始遊戲', (conv) => {
 app.intent('輸入數字', (conv, { any }) => {
 
     //將參數上載到函式上
-    sys_think = conv.user.storage.sys_think;
-    you_guess = conv.user.storage.you_guess;
-    guess_count = conv.user.storage.guess_count;
-    record = conv.user.storage.record;
+    var sys_think = conv.user.storage.sys_think;
+    var you_guess = conv.user.storage.you_guess;
+    var guess_count = conv.user.storage.guess_count;
+    var record = conv.user.storage.record;
 
     if (conv.user.storage.guess_count !== undefined) {
 
-        any = transfomer(any);
+        var temp = transfomer(any);
+        var number = parseInt(temp);
 
-        number = parseInt(any);
         if (number > 10000) { number = number % 10000; }
 
         if (isNaN(number) === false) {
@@ -343,7 +283,7 @@ app.intent('輸入數字', (conv, { any }) => {
                 } else {
                     var temp_array = [];
 
-                    for (i = 0; i < record.length; i++) {
+                    for (var i = 0; i < record.length; i++) {
                         if (record[i].length !== 0) { temp_array.push({ cells: record[i], dividerAfter: false, }) }
                     }
 
@@ -358,6 +298,7 @@ app.intent('輸入數字', (conv, { any }) => {
                 conv.contexts.set(Contexts.Hint, 1);
                 conv.contexts.set(Contexts.guess, 1);
                 conv.contexts.set(Contexts.Answer, 1);
+                conv.contexts.set(Contexts.Repeat, 1);
 
             } else {
                 conv.ask(new SimpleResponse({ speech: `<speak><audio src="https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/audio/end_game.mp3"/><p><s>${i18n.__('Answer1','<say-as interpret-as="characters">'+sys_think+'</say-as>')}!</s><s>${i18n.__('Answer2', guess_count)}</s><break time="0.2s"/><s>${i18n.__('Answer3')}?</s></p></speak>`, text: i18n.__('Answertext'), }));
@@ -387,7 +328,7 @@ app.intent('輸入數字', (conv, { any }) => {
             if (guess_count !== 0) {
 
                 var temp_array = [];
-                for (i = 0; i < record.length; i++) {
+                for (var i = 0; i < record.length; i++) {
                     if (record[i].length !== 0) { temp_array.push({ cells: record[i], dividerAfter: false, }) }
                 }
 
@@ -487,7 +428,8 @@ app.intent('解釋意思', (conv) => {
 
 app.intent('顯示答案', (conv) => {
     //將參數上載到函式上
-    sys_think = conv.user.storage.sys_think;
+    var sys_think = conv.user.storage.sys_think;
+    var guess_count = conv.user.storage.guess_count;
 
     conv.ask(new SimpleResponse({ speech: `<speak><p><s>${i18n.__('show1','<say-as interpret-as="characters">'+sys_think+'</say-as>')}!</s><s>${i18n.__('show2', guess_count)}</s><s>${i18n.__('show3')}</s></p></speak>`, text: i18n.__('GuessCount', guess_count) + i18n.__('showtext'), }));
     conv.ask(new Table({
@@ -507,18 +449,21 @@ app.intent('顯示答案', (conv) => {
 
 app.intent('進入教學模式', (conv) => {
 
-    var array = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-    var sys_think_1000 = take(parseInt(Math.random() * 9), array);
-    var sys_think_100 = take(parseInt(Math.random() * 8), array);
-    var sys_think_10 = take(parseInt(Math.random() * 7), array);
-    var sys_think_1 = take(parseInt(Math.random() * 6), array);
-    conv.user.storage.sys_error1 = take(parseInt(Math.random() * 5), array);
-    conv.user.storage.sys_error2 = take(parseInt(Math.random() * 4), array);
+    var numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    var sys_think = "";
 
-    try_count = 0;
-    sys_think = String((sys_think_1000 * 1000) + (sys_think_100 * 100) + (sys_think_10 * 10) + sys_think_1); //系統生成的實際數字
-
-    if (sys_think.length === 3) { sys_think = "0" + sys_think; }
+    for (var i = 0; i < 6; i++) {
+        var keys = Object.keys(numbers);
+        var num = keys[Math.floor(Math.random() * keys.length)]
+        if (i < 4) {
+            sys_think = sys_think + num;
+        } else if (i === 4) {
+            conv.user.storage.sys_error1 = num
+        } else {
+            conv.user.storage.sys_error2 = num
+        }
+        delete numbers[num]
+    }
 
     conv.ask(new SimpleResponse({ speech: `<speak><p><s>${i18n.__('Teach_Start_1')}</s><s>${i18n.__('Teach_Start_2')}</s><break time="0.6s"/><s>${i18n.__('Teach_Start_3')}</s><s>${i18n.__('Teach_Start_4')}<break time="0.3s"/>${i18n.__('Teach_Start_5')}<break time="0.3s"/><say-as interpret-as="characters">${sys_think}</say-as></s><break time="0.7s"/><s>${i18n.__('Teach_Start_6')}</s><break time="0.3s"/><s>${i18n.__('Teach_Start_7')}<break time="0.3s"/>${i18n.__('Teach_Start_8')}</s><s>${i18n.__('Teach_Start_9')}</s></p></speak>`, text: i18n.__('Teach_Start_text') }));
     conv.ask(new Table({
@@ -542,10 +487,10 @@ app.intent('進入教學模式', (conv) => {
 
 app.intent('教學模式', (conv, { any }) => {
 
-    sys_think = conv.user.storage.sys_think;
-    try_count = conv.user.storage.try_count;
-    sys_error1 = conv.user.storage.sys_error1;
-    sys_error2 = conv.user.storage.sys_error2;
+    var sys_think = conv.user.storage.sys_think;
+    var try_count = conv.user.storage.try_count;
+    var sys_error1 = conv.user.storage.sys_error1;
+    var sys_error2 = conv.user.storage.sys_error2;
 
     var sys_split = sys_think.split('');
 
@@ -554,14 +499,15 @@ app.intent('教學模式', (conv, { any }) => {
     try_count++;
     conv.user.storage.try_count = try_count;
 
-    any = transfomer(any);
-    number = parseInt(any);
+    var temp = transfomer(any);
+    var number = parseInt(temp);
+
     if (number > 10000) { number = number % 10000; }
 
     if (isNaN(number) === false) {
         conv.contexts.set(Contexts.Teach, 1);
 
-        you_guess = number.toString();
+        var you_guess = number.toString();
 
         if (you_guess.length === 3) { you_guess = "0" + you_guess; } else if (you_guess.length === 2) { you_guess = "00" + you_guess; } else if (you_guess.length === 1) { you_guess = "000" + you_guess; }
 
@@ -667,7 +613,7 @@ app.intent('重返遊戲', (conv) => {
 
 
     //將參數存入手機
-    conv.user.storage.sys_think = ranGuess();;
+    conv.user.storage.sys_think = ranGuess();
     conv.user.storage.guess_count = 0;
     conv.user.storage.record = new Array([], [], [], [], []);
     conv.user.storage.try_count = 0;
@@ -726,6 +672,47 @@ app.intent('結束對話', (conv) => {
 
 });
 
+app.intent('重複題目', (conv) => {
+
+    var input = conv.user.storage.input;
+    var A_count = conv.user.storage.help_data[0];
+    var B_count = conv.user.storage.help_data[1];
+    var guess_count = conv.user.storage.guess_count;
+    var replay_array = ["123", ranGuess(), ranGuess(), ranGuess(), "9876"];
+    var record = conv.user.storage.record;
+
+    conv.ask(new SimpleResponse({ speech: `<speak><p><s>${i18n.__('Repeat_output','<say-as interpret-as="characters">'+input+'</say-as>')}<break time="0.2s"/></s><s>${i18n.__('Game_hint2','<break time="0.2s"/>'+A_count+'A'+B_count+'B')}</s></p></speak>`, text: i18n.__('Game_text', A_count, B_count), }));
+
+    var output = {
+        title: input + '   (' + A_count + 'A' + B_count + 'B)',
+        subtitle: i18n.__('card_subtitle'),
+        columns: [{ header: "", align: 'CENTER', }, ],
+        rows: [{ cells: ["\n" + i18n.__('Record') + "\n"], dividerAfter: false, }, ],
+    };
+
+    if (guess_count !== 0) {
+
+        var temp_array = [];
+        for (var i = 0; i < record.length; i++) {
+            if (record[i].length !== 0) { temp_array.push({ cells: record[i], dividerAfter: false, }) }
+        }
+
+        output.columns = [{ header: i18n.__('Input'), align: 'CENTER', }, { header: i18n.__('hint'), align: 'CENTER', }, ]
+        output.rows = temp_array
+        replay_array = [ranGuess(), ranGuess(), i18n.__('explain', A_count, B_count)]
+    }
+
+
+    conv.ask(new Table(output));
+    conv.ask(new Suggestions(replay_array));
+
+    conv.contexts.set(Contexts.Hint, 1);
+    conv.contexts.set(Contexts.guess, 1);
+    conv.contexts.set(Contexts.Answer, 1);
+    conv.contexts.set(Contexts.Repeat, 1);
+
+
+});
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);

@@ -33,6 +33,9 @@ app.middleware((conv) => {
     i18n.setLocale(language);
 });
 
+/**
+ * 隨機產生4位數
+ */
 function ranGuess() {
 
     var numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -48,6 +51,11 @@ function ranGuess() {
     return output
 }
 
+/**
+ * 判定輸入數值與正確答案之正確性
+ * @param you_guess 輸入的數值
+ * @param sys_think 正確答案
+ */
 function analysis(you_guess, sys_think) {
 
     var A_count = 0;
@@ -57,66 +65,20 @@ function analysis(you_guess, sys_think) {
     var your_split = you_guess.toString().split('');
     var sys_split = sys_think.toString().split('');
 
-    //千位數判斷
-    if (sys_split[0] === your_split[0]) {
-        A_count++;
-        array[0] = 'A';
-    } else if (sys_split[0] === your_split[1]) {
-        B_count++;
-        array[1] = 'B';
-    } else if (sys_split[0] === your_split[2]) {
-        B_count++;
-        array[2] = 'B';
-    } else if (sys_split[0] === your_split[3]) {
-        B_count++;
-        array[3] = 'B';
-    }
-
-    //百位數判斷
-
-    if (sys_split[1] === your_split[0]) {
-        B_count++;
-        array[0] = 'B';
-    } else if (sys_split[1] === your_split[1]) {
-        A_count++;
-        array[1] = 'A';
-    } else if (sys_split[1] === your_split[2]) {
-        B_count++;
-        array[2] = 'B';
-    } else if (sys_split[1] === your_split[3]) {
-        B_count++;
-        array[3] = 'B';
-    }
-
-    //十位數判斷
-
-    if (sys_split[2] === your_split[0]) {
-        B_count++;
-        array[0] = 'B';
-    } else if (sys_split[2] === your_split[1]) {
-        B_count++;
-        array[1] = 'B';
-    } else if (sys_split[2] === your_split[2]) {
-        A_count++;
-        array[2] = 'A';
-    } else if (sys_split[2] === your_split[3]) {
-        B_count++;
-        array[3] = 'B';
-    }
-
-    //個位數判斷
-    if (sys_split[3] === your_split[0]) {
-        B_count++;
-        array[0] = 'B';
-    } else if (sys_split[3] === your_split[1]) {
-        B_count++;
-        array[1] = 'B';
-    } else if (sys_split[3] === your_split[2]) {
-        B_count++;
-        array[2] = 'B';
-    } else if (sys_split[3] === your_split[3]) {
-        A_count++;
-        array[3] = 'A';
+    for (var i = 0; i < sys_split.length; i++) {
+        for (var j = 0; j < your_split.length; j++) {
+            if (sys_split[i] === your_split[j]) {
+                if (i === j) {
+                    array[i] = 'A';
+                    A_count++
+                    break;
+                } else {
+                    array[j] = 'B';
+                    B_count++
+                    break;
+                }
+            }
+        }
     }
 
     return [A_count, B_count, array]

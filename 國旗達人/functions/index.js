@@ -23,18 +23,6 @@ var Q_Total = county_list.length; //題目總數
 var Pic_array = ["https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%9C%8B%E6%97%97%E9%81%94%E4%BA%BA/assets/un6XIqo.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%9C%8B%E6%97%97%E9%81%94%E4%BA%BA/assets/6rwJihe.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%9C%8B%E6%97%97%E9%81%94%E4%BA%BA/assets/xyJ6S6W.png", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%9C%8B%E6%97%97%E9%81%94%E4%BA%BA/assets/3ti28xQ.jpg", "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%9C%8B%E6%97%97%E9%81%94%E4%BA%BA/assets/NdVna3T.jpg"];
 var Currect_list = ["A", "B", "C", "D"];
 
-var Answer_list = [];
-var Currect = '';
-var Currect_Answer = '';
-var Q_list = new Array([]); //儲存題目編號
-var quickmode = false;
-var quickmode_count = 9;
-var heart_count = 3; //你的血量數
-var Total_Count = 0; //統計已答題的總個數
-var Correct_Count = 0; //統計答題正確個數
-var Wrong_Count = 0; //統計答題錯誤個數
-var Outputtext = '';
-
 var Correct_sound = 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/audio/%E7%AD%94%E5%B0%8D%E9%9F%B3%E6%95%88.mp3';
 var Wrong_sound = 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/audio/%E7%AD%94%E9%8C%AF%E9%9F%B3%E6%95%88.mp3';
 var Appaused_sound = 'https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/audio/Applause%20sound%20effect%20clapping%20sounds.mp3';
@@ -96,14 +84,14 @@ app.intent('預設歡迎語句', (conv) => {
 
 app.intent('開始遊戲', (conv, { start }) => {
 
-    Q_list = [];
-    Total_Count = 0;
-    heart_count = 3;
+    var Q_list = [];
+    var Total_Count = 0;
+    var heart_count = 3;
 
     if (start === '快速') {
-        quickmode = true;
+        var quickmode = true;
     } else {
-        quickmode = false;
+        var quickmode = false;
     }
 
     for (var Q = parseInt(Math.random() * Q_Total); Q_list.indexOf(Q) !== -1; Q++) {}
@@ -168,16 +156,16 @@ app.intent('開始遊戲', (conv, { start }) => {
 
 app.intent('進行猜測', (conv, { input }) => {
 
-    Answer_list = conv.user.storage.Answer_list;
-    Currect = conv.user.storage.Currect;
-    Currect_Answer = conv.user.storage.Currect_Answer;
-    Q_list = conv.user.storage.Q_list;
-    quickmode = conv.user.storage.quickmode;
-    quickmode_count = conv.user.storage.quickmode_count;
-    heart_count = conv.user.storage.heart_count;
-    Total_Count = conv.user.storage.Total_Count;
-    Correct_Count = conv.user.storage.Correct_Count;
-    Wrong_Count = conv.user.storage.Wrong_Count;
+    var Answer_list = conv.user.storage.Answer_list;
+    var Currect = conv.user.storage.Currect;
+    var Currect_Answer = conv.user.storage.Currect_Answer;
+    var Q_list = conv.user.storage.Q_list;
+    var quickmode = conv.user.storage.quickmode;
+    var quickmode_count = conv.user.storage.quickmode_count;
+    var heart_count = conv.user.storage.heart_count;
+    var Total_Count = conv.user.storage.Total_Count;
+    var Correct_Count = conv.user.storage.Correct_Count;
+    var Wrong_Count = conv.user.storage.Wrong_Count;
 
     var output_charactor_list = {
         "A": "ㄟ",
@@ -185,7 +173,6 @@ app.intent('進行猜測', (conv, { input }) => {
         "C": "溪",
         "D": "低"
     };
-    var suggestion = '';
 
     var replace_dict = {
         "a": "A",
@@ -210,86 +197,72 @@ app.intent('進行猜測', (conv, { input }) => {
             input = Currect_list[i];
         }
     }
+
+
     if (Currect_list.indexOf(input) !== -1) {
 
-        //若輸入正確 則判定答案是否正確(answer_input=T)
-        if (input === Currect) {
-            Correct_Count++;
-            var Output = '這是正確答案';
-            var blood_show = heart_display[heart_count];
-        } else {
-            Wrong_Count++;
-            heart_count--;
-            var Output = '這是錯誤答案';
-            var blood_show = lost_heart_display[heart_count];
-
-        }
-
+        var Your_choice = Answer_list[Currect_list.indexOf(input)]
         var output_charactor = output_charactor_list[Currect];
 
-        if (quickmode === false) {
-
-            Outputtext = '第' + Total_Count + '題 • 血量條 ' + blood_show;
-
-            if (heart_count >= 1) {
-                suggestion = '    下一題    ';
-                conv.contexts.set(Contexts.NEXT, 1);
-
-                if (input === Currect) {
-                    conv.ask(new SimpleResponse({ speech: `<speak><audio src="${Correct_sound}"/>恭喜你答對拉!</speak>`, text: '恭喜答對拉 🎉' }));
-                } else {
-                    conv.ask(new SimpleResponse({ speech: `<speak><audio src="${Wrong_sound}"/>答錯啦!正確答案為${output_charactor}、${Currect_Answer}</speak>`, text: '再接再厲 💪' }));
-                }
-            } else {
-                conv.ask(new SimpleResponse({ speech: `<speak><audio src="${fail_sound}"/>回合結束!這題正確答案為${output_charactor}、${Currect_Answer}</speak>`, text: '別氣餒，下次再加油 🥊' }));
-                suggestion = '休息，是為了走更長遠的路';
-                conv.contexts.set(Contexts.Quit, 1);
-            }
-        } else {
-
-            Outputtext = '第' + Total_Count + '題 • 快速模式 • ' + '血量條 ' + blood_show;
-
-            if (heart_count >= 1 && quickmode_count >= 1) {
-                suggestion = '    下一題    ';
-                conv.contexts.set(Contexts.NEXT, 1);
-                if (input === Currect) {
-                    conv.ask(new SimpleResponse({ speech: `<speak><audio src="${Correct_sound}"/>恭喜你答對拉!</speak>`, text: '恭喜答對拉 🎉' }));
-                } else {
-                    conv.ask(new SimpleResponse({ speech: `<speak><audio src="${Wrong_sound}"/>答錯啦!正確答案為${output_charactor}、${Currect_Answer}</speak>`, text: '再接再厲 💪' }));
-                }
-
-            } else if (quickmode_count === 0) {
-                conv.contexts.set(Contexts.Quit, 1);
-                conv.ask(new SimpleResponse({ speech: `<speak><audio src="${Appaused_sound}"/>恭喜你破關拉!這題正確答案為${output_charactor}、${Currect_Answer}</speak>`, text: '恭喜你完成啦 👏' }));
-                suggestion = '休息，是為了走更長遠的路';
-            } else {
-                conv.contexts.set(Contexts.Quit, 1);
-                conv.ask(new SimpleResponse({ speech: `<speak><audio src="${fail_sound}"/>回合結束!這題正確答案為${output_charactor}、${Currect_Answer}</speak>`, text: '別氣餒，下次再加油 🥊' }));
-                suggestion = '休息，是為了走更長遠的路';
-            }
-        }
-
-        var Your_choice = Answer_list[Currect_list.indexOf(input)]
-
-        conv.ask(new Table({
+        var table_content = {
             title: ' (' + input + ') ' + Your_choice,
-            subtitle: Output,
             image: new Image({
                 url: "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%9C%8B%E6%97%97%E9%81%94%E4%BA%BA/flags/" + Currect_Answer + ".png",
                 alt: 'Question Flag'
             }),
             columns: [{ header: "🌐「" + Currect_Answer + "」簡介", align: 'LEADING', }, ],
-            rows: [{
-                cells: [flag_list[Currect_Answer] + '  \n  \n' + Outputtext],
-                dividerAfter: false,
-            }, ],
             buttons: new Button({
                 title: '維基百科:' + Currect_Answer,
                 url: 'https://zh.wikipedia.org/zh-tw/' + Currect_Answer,
             }),
-        }));
+        }
 
-        conv.ask(new Suggestions(suggestion));
+        var bubble_list = {
+            "Currect": { speech: `<speak><audio src="${Correct_sound}"/>恭喜你答對拉!</speak>`, text: '恭喜答對拉 🎉' },
+            "Wrong": { speech: `<speak><audio src="${Wrong_sound}"/>答錯啦!正確答案為${output_charactor}、${Currect_Answer}<break time="0.5s"/>${flag_list[Currect_Answer]}</speak>`, text: '再接再厲 💪' },
+            "End": { speech: `<speak><audio src="${fail_sound}"/>回合結束!這題正確答案為${output_charactor}、${Currect_Answer}<break time="0.5s"/>${flag_list[Currect_Answer]}</speak>`, text: '別氣餒，下次再加油 🥊' },
+            "Applause": { speech: `<speak><audio src="${Appaused_sound}"/>恭喜你破關拉!這題正確答案為${output_charactor}、${Currect_Answer}</speak>`, text: '恭喜你完成啦 👏' }
+        }
+
+        var suggest_list = {
+            "Currect": '    下一題    ',
+            "Wrong": '    下一題    ',
+            "End": '休息，是為了走更長遠的路',
+            "Applause": '休息，是為了走更長遠的路'
+        }
+
+        //若輸入正確 則判定答案是否正確(answer_input=T)
+        if (input === Currect) {
+            Correct_Count++;
+            table_content.subtitle = '這是正確答案';
+            var blood_show = heart_display[heart_count];
+            var state = "Currect"
+        } else {
+            Wrong_Count++;
+            heart_count--;
+            table_content.subtitle = '這是錯誤答案';
+            var blood_show = lost_heart_display[heart_count];
+            var state = "Wrong"
+        }
+
+
+        if (quickmode === false) { var Outputtext = '第' + Total_Count + '題 • 血量條 ' + blood_show; } else { var Outputtext = '第' + Total_Count + '題 • 快速模式 • ' + '血量條 ' + blood_show; }
+
+        if (heart_count >= 1 && quickmode_count >= 1) {
+            conv.contexts.set(Contexts.NEXT, 1);
+        } else if (quickmode_count === 0) {
+            conv.contexts.set(Contexts.Quit, 1);
+            var state = "Applause"
+        } else {
+            conv.contexts.set(Contexts.Quit, 1);
+            var state = "End"
+        }
+
+        table_content.rows = [{ cells: [flag_list[Currect_Answer] + '  \n  \n' + Outputtext], dividerAfter: false, }, ]
+
+        conv.ask(new SimpleResponse(bubble_list[state]));
+        conv.ask(new Table(table_content));
+        conv.ask(new Suggestions(suggest_list[state]));
 
     } else {
         conv.ask(new SimpleResponse({ speech: '請點選建議卡片或輸入國家名稱，來回答問題!', text: '請點選建議卡片或說出國家名稱!' }));
@@ -328,12 +301,11 @@ app.intent('進行猜測', (conv, { input }) => {
 
 app.intent('下一題題目', (conv, ) => {
 
-    quickmode = conv.user.storage.quickmode;
-    quickmode_count = conv.user.storage.quickmode_count;
-    heart_count = conv.user.storage.heart_count;
-    Q_list = conv.user.storage.Q_list;
-    quickmode = conv.user.storage.quickmode;
-    Total_Count = conv.user.storage.Total_Count;
+    var quickmode = conv.user.storage.quickmode;
+    var quickmode_count = conv.user.storage.quickmode_count;
+    var heart_count = conv.user.storage.heart_count;
+    var Q_list = conv.user.storage.Q_list;
+    var Total_Count = conv.user.storage.Total_Count;
 
     for (var Q = parseInt(Math.random() * Q_Total); Q_list.indexOf(Q) !== -1; Q++) {}
     Q_list.push(Q); // 將現在選出的編號存入陣列
@@ -392,6 +364,7 @@ app.intent('下一題題目', (conv, ) => {
 app.intent('結算成績', (conv, ) => {
 
     var Total_Count = conv.user.storage.Total_Count;
+    var quickmode = conv.user.storage.quickmode;
 
     if (quickmode === true) {
         conv.ask(new Suggestions('⚡ 重新快速模式', '🎮 試試一般模式'));

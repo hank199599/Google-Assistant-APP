@@ -31,15 +31,9 @@ app.middleware((conv) => {
     i18n.setLocale(language);
 });
 
-// Instantiate the Dialogflow client.
-var sys_number = 0; //系統生成的數字
-var sys_guess = ''; //系統隨機生成的數字
-var yourchoice = 0; //你選擇要生成的最大值
-var sys_complete = false; //判別是否已經生成數字
-var U_limit = 0; //上限
-var D_limit = 0; //下限
-var guess_count = 0; //計算猜測次數
-var i = 0;
+function sys_guess(min, max) {
+    return String(min + parseInt(Math.random() * (max - min - 1)) + 1)
+}
 
 //歡迎畫面
 app.intent('預設歡迎語句', (conv) => {
@@ -86,7 +80,7 @@ app.intent('預設歡迎語句', (conv) => {
 
     //將數據同步回手機
     conv.user.storage.sys_number = 0;
-    conv.user.storage.yourchoice = yourchoice;
+    conv.user.storage.yourchoice = 0;
     conv.user.storage.sys_complete = false;
     conv.user.storage.U_limit = 0;
     conv.user.storage.D_limit = 0;
@@ -97,13 +91,11 @@ app.intent('預設歡迎語句', (conv) => {
 
 app.intent('輸入數字', (conv, { any }) => {
 
-    //將數據上載到函式
-    sys_number = conv.user.storage.sys_number;
-    yourchoice = conv.user.storage.yourchoice;
-    sys_complete = conv.user.storage.sys_complete;
-    U_limit = conv.user.storage.U_limit;
-    D_limit = conv.user.storage.D_limit;
-    guess_count = conv.user.storage.guess_count;
+    var sys_number = conv.user.storage.sys_number;
+    var sys_complete = conv.user.storage.sys_complete;
+    var U_limit = conv.user.storage.U_limit;
+    var D_limit = conv.user.storage.D_limit;
+    var guess_count = conv.user.storage.guess_count;
 
 
     if (conv.user.storage.sys_number !== undefined) {
@@ -154,11 +146,7 @@ app.intent('輸入數字', (conv, { any }) => {
                     text: i18n.__('SelectText')
                 }));
 
-                sys_guess = D_limit + parseInt(Math.random() * (U_limit - D_limit));
-
-                if (sys_guess === D_limit) { sys_guess++; } else if (sys_guess === D_limit) { sys_guess--; }
-                sys_guess = String(sys_guess);
-                conv.ask(new Suggestions(i18n.__('Quit'), sys_guess));
+                conv.ask(new Suggestions(i18n.__('Quit'), sys_guess(D_limit, U_limit)));
                 conv.contexts.set(Contexts.guess, 1);
                 conv.contexts.set(Contexts.Answer, 1);
 
@@ -193,11 +181,7 @@ app.intent('輸入數字', (conv, { any }) => {
                         text: i18n.__('SelectText')
                     }));
 
-                    sys_guess = D_limit + parseInt(Math.random() * (U_limit - D_limit)); //協助使用者的隨機猜測數字
-
-                    if (sys_guess === D_limit) { sys_guess++; } else if (sys_guess === U_limit) { sys_guess--; }
-
-                    conv.ask(new Suggestions(i18n.__('Quit'), String(sys_guess)));
+                    conv.ask(new Suggestions(i18n.__('Quit'), sys_guess(D_limit, U_limit)));
                     conv.contexts.set(Contexts.guess, 1);
                     conv.contexts.set(Contexts.Answer, 1);
 
@@ -244,16 +228,7 @@ app.intent('輸入數字', (conv, { any }) => {
                     text: i18n.__('ErrorExplain')
                 }));
 
-                sys_guess = String(D_limit + parseInt(Math.random() * (U_limit - D_limit)));
-
-                sys_guess = D_limit + parseInt(Math.random() * (U_limit - D_limit));
-
-                if (sys_guess === D_limit) { sys_guess++; } else if (sys_guess === D_limit) { sys_guess--; }
-
-                sys_guess = String(sys_guess);
-
-                conv.ask(new Suggestions(i18n.__('Quit'), sys_guess));
-
+                conv.ask(new Suggestions(i18n.__('Quit'), sys_guess(D_limit, U_limit)));
                 conv.contexts.set(Contexts.guess, 1);
                 conv.contexts.set(Contexts.Answer, 1);
             }
@@ -319,11 +294,11 @@ app.intent('玩遊戲意圖', (conv) => {
 
     //將數據同步回手機
     conv.user.storage.sys_number = 0;
-    conv.user.storage.yourchoice = yourchoice;
+    conv.user.storage.yourchoice = 0;
     conv.user.storage.sys_complete = false;
     conv.user.storage.U_limit = 0;
     conv.user.storage.D_limit = 0;
-    conv.user.storage.guess_count = guess_count;
+    conv.user.storage.guess_count = 0;
 
 
 });

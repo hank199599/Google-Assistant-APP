@@ -15,8 +15,6 @@ const {
 // Import the firebase-functions package for deployment.
 const functions = require('firebase-functions');
 var getJSON = require('get-json')
-const replaceString = require('replace-string');
-const parseJson = require('parse-json');
 const findNearestLocation = require('map-nearest-location');
 const app = dialogflow({ debug: true });
 const admin = require('firebase-admin');
@@ -36,122 +34,78 @@ var station_array = ["斗六", "日月潭", "玉山", "成功", "朴子", "沙�
 var county_array = ["南投縣", "連江縣", "馬祖", "南投", "雲林縣", "雲林", "金門縣", "金門", "苗栗縣", "苗栗", "高雄市", "高雄", "嘉義市", "花蓮縣", "花蓮", "嘉義縣", "台東縣", "臺東縣", "台東", "臺東", "嘉義", "基隆市", "台北市", "台南市", "臺南市", "台南", "臺南", "臺北市", "台北", "臺北", "基隆", "宜蘭縣", "台中市", "臺中市", "台中", "澎湖縣", "澎湖", "桃園市", "桃園", "新竹縣", "新竹市", "新竹", "新北市", "新北", "宜蘭", "屏東縣", "屏東", "彰化縣", "彰化"];
 var option_array = ["北部地區", "中部地區", "南部地區", "東部地區", "離島地區"];
 
-
-function getDay() {
-    var today = new Date();
-    var nowTime = today.getTime() + 8 * 3600 * 1000;
-    today.setTime(parseInt(nowTime));
-    var oYear = today.getFullYear().toString();
-    var oMoth = (today.getMonth() + 1).toString();
-    var oDay = today.getDate().toString();
-    var oHour = today.getHours().toString();
-    if (oMoth.length <= 1) { oMoth = '0' + oMoth; }
-    if (oDay.length <= 1) { oDay = '0' + oDay; }
-    if (oHour.length <= 1) { oHour = '0' + oHour; }
-
-    return oYear + "/" + oMoth + "/" + oDay + " " + oHour + ":00";
-}
-
 const SelectContexts = {
     parameter: 'select ',
 }
 
-function uvi_report_set() {
-
-    //取得概況報告
-    var Minutes = new Date().getMinutes();
-
-    //取得測站更新時間
-    var uvi = {};
-    var locations = {};
-
-    if (Minutes < 15) {
-        new Promise(function(resolve, reject) {
-            getJSON('https://data.epa.gov.tw/api/v1/uv_s_01?format=json&limit=34&api_key=e44e7dd6-8d7a-433d-9fe6-8327b8dcfcad').then(
-                function(response, reject) {
-                    resolve(response.records)
-                }).catch(function(error) { reject(new Error('資料獲取失敗')) });
-        }).then(function(origin_data) {
-
-            for (var i = 0; i < origin_data.length; i++) {
-
-                uvi[origin_data[i].SiteName] = parseFloat(origin_data[i].UVI);
-
-                var temp_lon = origin_data[i].WGS84Lon.split(',');
-                var temp_lat = origin_data[i].WGS84Lat.split(',');
-                var output_lon = parseInt(temp_lon[0]) + temp_lon[1] / 60 + temp_lon[2] / 3600;
-                var output_lat = parseInt(temp_lat[0]) + temp_lat[1] / 60 + temp_lat[2] / 3600;
-
-                locations[i] = {
-                    lng: parseFloat(output_lon.toFixed(5)),
-                    lat: parseFloat(output_lat.toFixed(5)),
-                    Sitename: origin_data[i].SiteName
-                }
-            }
-
-            database.ref('/TWuvi').update({ data: uvi });
-            database.ref('/TWuvi').update({ locations: locations });
-
-        }).catch(function(error) {
-            console.log(error)
-        });
-    }
-}
-
-
 app.intent('預設歡迎語句', (conv) => {
 
-    var today = new Date();
-    var nowTime = today.getTime() + 8 * 3600 * 1000;
-    today.setTime(parseInt(nowTime));
-    var hour_now = today.getHours();
+    return new Promise(
+        function(resolve, reject) {
+            database.ref('/TWuvi').on('value', e => { resolve(e.val()) }); 
+        }).then(function(origin_data) {
 
-    if (conv.screen) {
-        if (conv.user.last.seen) {
-            conv.ask(new SimpleResponse({
-                speech: `<speak><p><s>歡迎回來，請問你要查詢哪一個站點呢?</s></p></speak>`,
-                text: '歡迎回來!'
-            }));
+        var PublishTime = origin_data.PublishTime
+        
+        var speech_content = {
+            speech: `<speak><p><s>歡迎回來，請問你要查詢哪一個站點呢?</s></p></speak>`,
+            text: '歡迎使用!'
+        };
+
+        if (conv.screen) {
+            if (conv.user.last.seen === undefined) {
+                speech_content.speech = `<speak><p><s>歡迎使用紫外線精靈!</s><s>我能提供各縣市的紫外線查詢服務，此外，你能將我加入日常安排快速查詢所需站點。</s></p></speak>`;
+            }
+
+            var card_display = {
+                image: new Image({ url: "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E7%B4%AB%E5%A4%96%E7%B7%9A%E7%B2%BE%E9%9D%88/assets/0Is452b.jpg", alt: 'Pictures', }),
+                title: "嘆息西窗過隙駒，微陽初至日光舒",
+                display: 'CROPPED',
+                subtitle: "請試著說要查詢的縣市，\n或點擊建議卡片來進行操作。",
+                text: "測站資訊發布時間 • " + PublishTime,
+                buttons: new Button({ title: '中央氣象局', url: 'https://www.cwb.gov.tw/V8/C/W/MFC_UVI_Map.html', }),
+            }
+
+            if (hour_now < 6 || hour_now > 17) {
+                card_display.image = new Image({ url: "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E7%B4%AB%E5%A4%96%E7%B7%9A%E7%B2%BE%E9%9D%88/assets/ejlSjF3.png", alt: 'Pictures', })
+                card_display.title = "明月，明月，胡笳一聲愁絕";
+            }
+
+            conv.ask(new SimpleResponse(speech_content));
+            conv.ask(new BasicCard(card_display));
+            conv.ask(new Suggestions('🌎 最近的測站', '🔎依區域查詢', '語音指令範例', '紫外線指數是什麼 ', '如何加入日常安排', '👋 掰掰'));
+
         } else {
-            conv.ask(new SimpleResponse({
-                speech: `<speak><p><s>歡迎使用紫外線精靈!</s><s>我能提供各縣市的紫外線查詢服務，此外，你能將我加入日常安排快速查詢所需站點。</s></p></speak>`,
-                text: '歡迎使用!'
-            }));
+
+            var word1 = county_array[parseFloat(Math.random() * 19)];
+            var word2 = county_array[20 + parseFloat(Math.random() * 28)];
+
+            conv.ask(`<speak><p><s>歡迎使用紫外線精靈</s></p></speak>`);
+            conv.ask(`<speak><p><s>請試著問我要查詢的縣市!</s><s>例如<break time="0.5s"/>幫我查${word1}<break time="0.2s"/>或<break time="0.2s"/>${word2}狀況怎樣?</s></p></speak>`);
+            conv.noInputs = ["請說出查詢的縣市!、例如、幫我查" + word1, "請說出你要查詢的縣市", "抱歉，我想我幫不上忙。"];
         }
 
-        var card_display = {
-            image: new Image({ url: "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E7%B4%AB%E5%A4%96%E7%B7%9A%E7%B2%BE%E9%9D%88/assets/0Is452b.jpg", alt: 'Pictures', }),
-            title: "嘆息西窗過隙駒，微陽初至日光舒",
+    }).catch(function(error) {
+        console.log(error)
+        conv.contexts.set(SelectContexts.parameter, 5);
+
+        if (!conv.screen) { conv.expectUserResponse = false; }
+
+        conv.ask(new SimpleResponse({
+            speech: `<speak><p><s>抱歉，查詢過程發生一點小狀況</s></p></speak>`,
+            text: '查詢過程發生一點小狀況，\n請輕觸下方卡片來重新查詢!'
+        }));
+
+        conv.ask(new BasicCard({
+            image: new Image({ url: "https://dummyimage.com/1037x539/ef2121/ffffff.png&text=錯誤", alt: 'Pictures', }),
+            title: '數據加載發生問題',
+            subtitle: '請過一段時間後再回來查看',
+            text: '錯誤訊息：' + String(error),
             display: 'CROPPED',
-            subtitle: "請試著說要查詢的縣市，\n或點擊建議卡片來進行操作。",
-            text: "測站資訊發布時間 • " + getDay(),
-            buttons: new Button({ title: '中央氣象局', url: 'https://www.cwb.gov.tw/V8/C/W/MFC_UVI_Map.html', }),
-        }
-
-        if (hour_now < 6 || hour_now > 17) {
-            card_display.image = new Image({ url: "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E7%B4%AB%E5%A4%96%E7%B7%9A%E7%B2%BE%E9%9D%88/assets/ejlSjF3.png", alt: 'Pictures', })
-            card_display.title = "明月，明月，胡笳一聲愁絕";
-        }
-
-        conv.ask(new BasicCard(card_display));
-        conv.ask(new Suggestions('🌎 最近的測站', '🔎依區域查詢', '語音指令範例', '紫外線指數是什麼 ', '如何加入日常安排', '👋 掰掰'));
-    } else {
-        var word1 = county_array[parseInt(Math.random() * 19)];
-        var word2 = county_array[20 + parseInt(Math.random() * 28)];
-
-        conv.ask(new SimpleResponse({
-            speech: `<speak><p><s>歡迎使用紫外線精靈</s></p></speak>`,
-            text: '歡迎使用'
-        }));
-        conv.ask(new SimpleResponse({
-            speech: `<speak><p><s>請試著問我要查詢的縣市!</s><s>例如<break time="0.5s"/>幫我查${word1}<break time="0.2s"/>或<break time="0.2s"/>${word2}狀況怎樣?</s></p></speak>`,
-            text: '請輕觸下方卡片來選擇查詢區域!'
         }));
 
-        conv.noInputs = ["請說出查詢的縣市!、例如、幫我查" + word1, "請說出你要查詢的縣市", "抱歉，我想我幫不上忙。"];
-    }
-
-    uvi_report_set()
+        conv.ask(new Suggestions('🌎 最近的測站', '語音指令範例'));
+    });
 });
 
 app.intent('依區域查詢', (conv) => {
@@ -198,8 +152,8 @@ app.intent('縣市查詢結果', (conv, input, option) => {
                 if (uvi_temp !== undefined) {
                     county_list[the_array[i]] = {
                         title: the_array[i],
-                        description: generator.status(parseInt(uvi_temp)),
-                        image: new Image({ url: generator.picture_small(parseInt(uvi_temp)), alt: 'Image alternate text', }),
+                        description: generator.status(parseFloat(uvi_temp)),
+                        image: new Image({ url: generator.picture_small(parseFloat(uvi_temp)), alt: 'Image alternate text', }),
                     }
                 }
             }
@@ -208,6 +162,8 @@ app.intent('縣市查詢結果', (conv, input, option) => {
                 title: 'Carousel Title',
                 items: county_list,
             }));
+
+            conv.ask(new Suggestions('回主頁面'));
 
         } else if (station_array.indexOf(option) !== -1) {
 
@@ -226,9 +182,10 @@ app.intent('縣市查詢結果', (conv, input, option) => {
                         image: new Image({ url: generator.picture(UVI), alt: 'Pictures', }),
                         display: 'CROPPED',
                         title: option,
-                        text: generator.info_output(UVI) + '  \n  \n**測站資訊發布時間** • ' + getDay(),
+                        subtitle: Status,
+                        text: generator.info_output(UVI) + '  \n  \n**測站資訊發布時間** • ' + origin_data.PublishTime,
                     }));
-                    conv.ask(new Suggestions('把它加入日常安排'));
+                    conv.ask(new Suggestions('把它加入日常安排', '回主頁面'));
                 } else { conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`); }
 
             } else {
@@ -241,10 +198,10 @@ app.intent('縣市查詢結果', (conv, input, option) => {
                         image: new Image({ url: "https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN", alt: 'Pictures', }),
                         title: option,
                         subtitle: '儀器故障或校驗',
-                        text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • ' + getDay(),
+                        text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • ' + origin_data.PublishTime,
                         display: 'CROPPED',
                     }));
-                    conv.ask(new Suggestions('把它加入日常安排'));
+                    conv.ask(new Suggestions('把它加入日常安排', '回主頁面'));
                 } else { conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`); }
 
             }
@@ -290,11 +247,10 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 
 });
 
-
 app.intent('Default Fallback Intent', (conv) => {
 
-    var word1 = county_array[parseInt(Math.random() * 19)];
-    var word2 = county_array[20 + parseInt(Math.random() * 28)];
+    var word1 = county_array[parseFloat(Math.random() * 19)];
+    var word2 = county_array[20 + parseFloat(Math.random() * 28)];
 
     if (conv.input.type === "VOICE") { //如果輸入是語音，則顯示錯誤處理方法
         conv.ask(new SimpleResponse({
@@ -305,7 +261,7 @@ app.intent('Default Fallback Intent', (conv) => {
             conv.ask(new BasicCard({
                 title: "語音查詢範例",
                 subtitle: "以下是你可以嘗試的指令",
-                text: " • *「" + word1 + "紫外線指數為何?」*  \n • *「幫我查詢" + word2 + "」*  \n • *「我想知道" + county_array[parseInt(Math.random() * 48)] + "狀況怎樣」*  \n • *「幫我找" + county_array[parseInt(Math.random() * 48)] + "」*  \n • *「我想看" + county_array[parseInt(Math.random() * 48)] + "」*  \n • *「" + county_array[parseInt(Math.random() * 48)] + "狀況好嗎?」*  \n • *「我要查" + county_array[parseInt(Math.random() * 48)] + "」*",
+                text: " • *「" + word1 + "紫外線指數為何?」*  \n • *「幫我查詢" + word2 + "」*  \n • *「我想知道" + county_array[parseFloat(Math.random() * 48)] + "狀況怎樣」*  \n • *「幫我找" + county_array[parseFloat(Math.random() * 48)] + "」*  \n • *「我想看" + county_array[parseFloat(Math.random() * 48)] + "」*  \n • *「" + county_array[parseFloat(Math.random() * 48)] + "狀況好嗎?」*  \n • *「我要查" + county_array[parseFloat(Math.random() * 48)] + "」*",
             }));
             conv.ask(new Suggestions(word1 + '紫外線指數為何?', '幫我查詢' + word2));
         } else {
@@ -320,9 +276,9 @@ app.intent('Default Fallback Intent', (conv) => {
 });
 
 app.intent('語音指令範例', (conv) => {
-    var word1 = county_array[parseInt(Math.random() * 19)];
-    var word2 = county_array[20 + parseInt(Math.random() * 28)];
-    var word3 = county_array[parseInt(Math.random() * 48)];
+    var word1 = county_array[parseFloat(Math.random() * 19)];
+    var word2 = county_array[20 + parseFloat(Math.random() * 28)];
+    var word3 = county_array[parseFloat(Math.random() * 48)];
 
     conv.ask(new SimpleResponse({
         speech: `<speak><p><s>在任意畫面中，你隨時都能快速查詢縣市列表</s><s>你可以試著問<break time="0.2s"/>${word1}紫外線指數為何?<break time="0.2s"/>或<break time="0.2s"/>幫我查詢${word2}</s></p></speak>`,
@@ -331,18 +287,17 @@ app.intent('語音指令範例', (conv) => {
     conv.ask(new BasicCard({
         title: "語音查詢範例",
         subtitle: "以下是你可以嘗試的指令",
-        text: " • *「" + word1 + "紫外線指數為何?」*  \n • *「幫我查詢" + word2 + "」*  \n • *「我想知道" + word3 + "狀況怎樣」*  \n • *「幫我找" + county_array[parseInt(Math.random() * 48)] + "」*  \n • *「我想看" + county_array[parseInt(Math.random() * 48)] + "」*  \n • *「" + county_array[parseInt(Math.random() * 48)] + "狀況好嗎?」*  \n • *「我要查" + county_array[parseInt(Math.random() * 48)] + "」*",
+        text: " • *「" + word1 + "紫外線指數為何?」*  \n • *「幫我查詢" + word2 + "」*  \n • *「我想知道" + word3 + "狀況怎樣」*  \n • *「幫我找" + county_array[parseFloat(Math.random() * 48)] + "」*  \n • *「我想看" + county_array[parseFloat(Math.random() * 48)] + "」*  \n • *「" + county_array[parseFloat(Math.random() * 48)] + "狀況好嗎?」*  \n • *「我要查" + county_array[parseFloat(Math.random() * 48)] + "」*",
     }));
     conv.ask(new Suggestions(word1 + '紫外線指數為何?', '幫我查詢' + word2, '我想知道' + word3 + '狀況怎樣', '🌎 最近的測站', '🔎依區域查詢', '👋 掰掰'));
 
 });
 
-
 app.intent('直接查詢', (conv, { station }) => {
 
     return new Promise(
         function(resolve, reject) {
-            database.ref('/TWuvi').on('value', e => { resolve(e.val().data[station]) });
+            database.ref('/TWuvi').on('value', e => { resolve(e.val()) });
         }).then(function(origin_data) {
 
         var UVI_list = origin_data.data;
@@ -376,7 +331,7 @@ app.intent('直接查詢', (conv, { station }) => {
                     display: 'CROPPED',
                     title: station,
                     subtitle: Status,
-                    text: generator.info_output(UVI) + '  \n  \n**測站資訊發布時間** • ' + getDay(),
+                    text: generator.info_output(UVI) + '  \n  \n**測站資訊發布時間** • ' + origin_data.PublishTime,
                 }));
             } else {
                 conv.ask(new SimpleResponse({
@@ -388,7 +343,7 @@ app.intent('直接查詢', (conv, { station }) => {
                     title: '儀器故障或校驗',
                     title: station,
                     subtitle: '儀器故障或校驗',
-                    text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • ' + getDay(),
+                    text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • ' + origin_data.PublishTime,
                     display: 'CROPPED',
                 }));
             }
@@ -415,12 +370,11 @@ app.intent('直接查詢', (conv, { station }) => {
 
 });
 
-
 app.intent('日常安排教學', (conv) => {
 
     var choose_station = conv.user.storage.choose_station;
 
-    if (station_array.indexOf(choose_station) === -1) { choose_station = station_array[parseInt(Math.random() * 34)]; }
+    if (station_array.indexOf(choose_station) === -1) { choose_station = station_array[parseFloat(Math.random() * 34)]; }
     conv.ask(new SimpleResponse({
         speech: `<speak><p><s>透過加入日常安排，你可以快速存取要查詢的站點。</s><s>舉例來說，如果你把${choose_station}加入日常安排。你即可隨時呼叫我查詢該站點的最新紫外線指數!</s><s>以下為詳細說明</s></p></speak>`,
         text: '以下為詳細說明。'
@@ -436,7 +390,6 @@ app.intent('日常安排教學', (conv) => {
     conv.ask(new Suggestions('🌎 最近的測站', '🔎依區域查詢', '👋 掰掰'));
 
 });
-
 
 app.intent('紫外線是甚麼', (conv) => {
 
@@ -501,12 +454,6 @@ app.intent('回傳資訊', (conv, params, permissionGranted) => {
 
                     if (Status !== "儀器故障或校驗") {
 
-                        if (UVI === 0) { picture = "https://dummyimage.com/1037x539/1e9165/ffffff.png&text=%200%20"; } else if (UVI > 0 && UVI < 3) { picture = "https://dummyimage.com/1037x539/1e9165/ffffff.png&text=" + UVI; } else if (UVI >= 3 && UVI < 6) { picture = "https://dummyimage.com/1037x539/fc920b/ffffff.png&text=" + UVI; } else if (UVI >= 6 && UVI < 8) { picture = "https://dummyimage.com/1037x539/ef4621/ffffff.png&text=" + UVI; } else if (UVI >= 8 && UVI < 11) { picture = "https://dummyimage.com/1037x539/b71411/ffffff.png&text=" + UVI; } else { picture = "https://dummyimage.com/1037x539/4f1770/ffffff.png&text=" + UVI; }
-
-                        if (UVI >= 0 && UVI < 3) { info = "基本上不需要保護措施，可以安心外出，但請留意瞬間的紫外線。"; } else if (UVI >= 3 && UVI < 6) { info = "外出時，盡量待在陰涼處。並卓長袖上衣、帽子、陽傘、防護霜、太陽眼鏡作為保護。"; } else if (UVI >= 6 && UVI < 8) { info = "暴露在陽光下30分鐘會造成曬傷。外出時，盡量待在陰涼處。並卓長袖上衣、帽子、陽傘、防護霜、太陽眼鏡作為保護。"; } else if (UVI >= 8 && UVI < 11) { info = "暴露在陽光下20分鐘會造成曬傷，早上十點至下午兩點最好不要在烈日下活動。並使用帽子、陽傘、防護霜、太陽眼鏡作為保護。" } else { info = "健康威脅達到緊急，暴露在陽光下15分鐘會造成曬傷，早上十點至下午兩點最好不要在烈日下活動。並使用帽子、陽傘、防護霜、太陽眼鏡作為保護。"; }
-
-                        if (UVI >= 0 && UVI < 3) { info_output = "可以安心外出，但請留意瞬間的紫外線。"; } else if (UVI >= 3 && UVI < 6) { info_output = "1.防護措施：帽子/陽傘+防曬液+太陽眼鏡。  \n2.儘量待在陰涼處"; } else if (UVI >= 6 && UVI < 8) { info_output = "1.曬傷時間：30分鐘內  \n2.防護措施：帽子/陽傘+防曬液+太陽眼鏡。  \n3.儘量待在陰涼處。"; } else if (UVI >= 8 && UVI < 11) { info_output = "1.曬傷時間：20分鐘內  \n2.防護措施：	帽子/陽傘+防曬液+太陽眼鏡+長袖衣物。  \n3.儘量待在陰涼處  \n4.10至14時最好不在烈日下活動" } else { info_output = "1.曬傷時間：15分鐘內  \n2.防護措施：帽子/陽傘+防曬液+太陽眼鏡+長袖衣物。  \n3.儘量待在陰涼處  \n4.10至14時最好不在烈日下活動"; }
-
                         conv.ask(new SimpleResponse({
                             speech: `<speak><p><s>根據最新資料顯示，${sitename}監測站的紫外線指數為${UVI}</s><s>${generator.info(UVI)}</s></p></speak>`,
                             text: '以下為該監測站的詳細資訊'
@@ -516,10 +463,10 @@ app.intent('回傳資訊', (conv, params, permissionGranted) => {
                             display: 'CROPPED',
                             title: sitename,
                             subtitle: Status,
-                            text: generator.info_output(UVI) + '  \n  \n**測站資訊發布時間** • ' + getDay(),
+                            text: generator.info_output(UVI) + '  \n  \n**測站資訊發布時間** • ' + origin_data.PublishTime,
                         }));
 
-                        conv.ask(new Suggestions('把它加入日常安排'));
+                        conv.ask(new Suggestions('把它加入日常安排', '回主頁面'));
                     } else {
                         conv.ask(new SimpleResponse({
                             speech: `<speak><p><s>由於${sitename}監測站數據不足或處於維修狀態，我無法提供你最新資訊。</s></p></speak>`,
@@ -530,7 +477,7 @@ app.intent('回傳資訊', (conv, params, permissionGranted) => {
                             title: '儀器故障或校驗',
                             title: sitename,
                             subtitle: '儀器故障或校驗',
-                            text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • ' + getDay(),
+                            text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • ' + origin_data.PublishTime,
                             display: 'CROPPED',
                         }));
                     }
@@ -601,13 +548,13 @@ app.intent('直接查詢縣市選單', (conv, { County }) => {
 
                 var uvi_temp = UVI_list[the_array[i]];
 
-                if (uvi_temp !== undefined) {
-                    county_list[the_array[i]] = {
+                //if (uvi_temp !== undefined) {
+                county_list[the_array[i]] = {
                         title: the_array[i],
-                        description: generator.status(parseInt(uvi_temp)),
-                        image: new Image({ url: generator.picture_small(parseInt(uvi_temp)), alt: 'Image alternate text', }),
+                        description: generator.status(parseFloat(uvi_temp)),
+                        image: new Image({ url: generator.picture_small(parseFloat(uvi_temp)), alt: 'Image alternate text', }),
                     }
-                }
+                    //}
 
             }
             conv.ask(new Carousel({
@@ -622,12 +569,6 @@ app.intent('直接查詢縣市選單', (conv, { County }) => {
 
             if (Status !== "儀器故障或校驗") {
 
-                if (UVI === 0) { picture = "https://dummyimage.com/1037x539/1e9165/ffffff.png&text=%200%20"; } else if (UVI > 0 && UVI < 3) { picture = "https://dummyimage.com/1037x539/1e9165/ffffff.png&text=" + UVI; } else if (UVI >= 3 && UVI < 6) { picture = "https://dummyimage.com/1037x539/fc920b/ffffff.png&text=" + UVI; } else if (UVI >= 6 && UVI < 8) { picture = "https://dummyimage.com/1037x539/ef4621/ffffff.png&text=" + UVI; } else if (UVI >= 8 && UVI < 11) { picture = "https://dummyimage.com/1037x539/b71411/ffffff.png&text=" + UVI; } else { picture = "https://dummyimage.com/1037x539/4f1770/ffffff.png&text=" + UVI; }
-
-                if (UVI >= 0 && UVI < 3) { info = "基本上不需要保護措施，可以安心外出，但請留意瞬間的紫外線。"; } else if (UVI >= 3 && UVI < 6) { info = "外出時，盡量待在陰涼處。並卓長袖上衣、帽子、陽傘、防護霜、太陽眼鏡作為保護。"; } else if (UVI >= 6 && UVI < 8) { info = "暴露在陽光下30分鐘會造成曬傷。外出時，盡量待在陰涼處。並卓長袖上衣、帽子、陽傘、防護霜、太陽眼鏡作為保護。"; } else if (UVI >= 8 && UVI < 11) { info = "暴露在陽光下20分鐘會造成曬傷，早上十點至下午兩點最好不要在烈日下活動。並使用帽子、陽傘、防護霜、太陽眼鏡作為保護。" } else { info = "健康威脅達到緊急，暴露在陽光下15分鐘會造成曬傷，早上十點至下午兩點最好不要在烈日下活動。並使用帽子、陽傘、防護霜、太陽眼鏡作為保護。"; }
-
-                if (UVI >= 0 && UVI < 3) { info_output = "可以安心外出，但請留意瞬間的紫外線。"; } else if (UVI >= 3 && UVI < 6) { info_output = "1.防護措施：帽子/陽傘+防曬液+太陽眼鏡。  \n2.儘量待在陰涼處"; } else if (UVI >= 6 && UVI < 8) { info_output = "1.曬傷時間：30分鐘內  \n2.防護措施：帽子/陽傘+防曬液+太陽眼鏡。  \n3.儘量待在陰涼處。"; } else if (UVI >= 8 && UVI < 11) { info_output = "1.曬傷時間：20分鐘內  \n2.防護措施：	帽子/陽傘+防曬液+太陽眼鏡+長袖衣物。  \n3.儘量待在陰涼處  \n4.10至14時最好不在烈日下活動" } else { info_output = "1.曬傷時間：15分鐘內  \n2.防護措施：帽子/陽傘+防曬液+太陽眼鏡+長袖衣物。  \n3.儘量待在陰涼處  \n4.10至14時最好不在烈日下活動"; }
-
                 conv.ask(new SimpleResponse({
                     speech: `<speak><p><s>根據最新資料顯示，${County}監測站的紫外線指數為${UVI}</s><s>${generator.info(UVI)}</s></p></speak>`,
                     text: '以下為該監測站的詳細資訊'
@@ -640,9 +581,9 @@ app.intent('直接查詢縣市選單', (conv, { County }) => {
                         display: 'CROPPED',
                         title: County,
                         subtitle: Status,
-                        text: generator.info_output(UVI) + '  \n  \n**測站資訊發布時間** • ' + getDay(),
+                        text: generator.info_output(UVI) + '  \n  \n**測站資訊發布時間** • ' + origin_data.PublishTime,
                     }));
-                    conv.ask(new Suggestions('把它加入日常安排'));
+                    conv.ask(new Suggestions('把它加入日常安排', '回主頁面'));
                 } else { conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`); }
 
             } else {
@@ -655,10 +596,10 @@ app.intent('直接查詢縣市選單', (conv, { County }) => {
                         image: new Image({ url: "https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN", alt: 'Pictures', }),
                         title: County,
                         subtitle: '儀器故障或校驗',
-                        text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • ' + getDay(),
+                        text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或儀器故障或校驗等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • ' + origin_data.PublishTime,
                         display: 'CROPPED',
                     }));
-                    conv.ask(new Suggestions('把它加入日常安排'));
+                    conv.ask(new Suggestions('把它加入日常安排', '回主頁面'));
                 } else { conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`); }
 
             }
@@ -707,7 +648,6 @@ app.intent('直接查詢縣市選單', (conv, { County }) => {
     });
 
 });
-
 
 app.intent('結束對話', (conv) => {
     conv.user.storage = {}; //離開同時清除暫存資料

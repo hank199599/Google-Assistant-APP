@@ -40,6 +40,8 @@ Google Assistant APP
   - 將來自DialogFlow的資訊進行分析再回應給使用者
   - 實作上是將Fulfillment部署到Firebase上，作為處理與回傳客製化回應的中介
 
+# GCP架構
+![GCP Structure](https://hank199599.github.io/assets/img/GCP/System_structure.png)
 
 官方說明頁面
 -------

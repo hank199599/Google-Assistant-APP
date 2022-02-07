@@ -20,8 +20,7 @@ const replaceString = require('replace-string');
 const findNearestLocation = require('map-nearest-location');
 const app = dialogflow({ debug: true });
 const admin = require('firebase-admin');
-var request = require('request'),
-    cheerio = require('cheerio');
+
 var option_list = require("./option.json");
 var keyword_list = require("./keywords.json");
 var suggest_list = require("./suggest.json");
@@ -29,10 +28,10 @@ var explain_list = require("./explain.json");
 var county_options = require("./county_list.json");
 let serviceAccount = require("./config/b1a2b-krmfch-firebase-adminsdk-1tgdm-7347f3fed7.json");
 var functions_fetch = require("./fetch.js");
+var brief_report = require("./brief_report.js");
 var options_county = require("./options_county.json");
 var arranger = require('./mobile_arrangement');
 var pollutant_dict = require('./Pollutant.json')
-''
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -41,14 +40,14 @@ admin.initializeApp({
 
 const database = admin.database();
 
-var station_array = ['冬山', '宜蘭', '花蓮', '臺東', '關山', '金門', '馬祖', '馬公', '士林', '大同', '中山', '古亭', '松山', '陽明', '萬華', '三重', '土城', '永和', '汐止', '板橋', '林口', '淡水', '富貴角', '菜寮', '新店', '新莊', '萬里', '大園', '中壢', '平鎮', '桃園', '龍潭', '觀音', '新竹', '竹東', '湖口', '三義', '苗栗', '頭份', '大里', '西屯', '沙鹿', '忠明', '豐原', '二林', '彰化', '線西', '竹山', '南投', '埔里', '斗六', '崙背', '麥寮', '臺西', '嘉義', '朴子', '新港', '安南', '善化', '新營', '臺南', '美濃', '橋頭', '楠梓', '仁武', '左營', '前金', '鳳山', '復興', '前鎮', '小港', '大寮', '林園', '屏東', '恆春', '潮州', '冬山', '宜蘭', '臺東', '關山'];
-var request_array = ["宜蘭縣", "臺東縣", "臺北市", "新北市第一部分", "新北市第二部分", "桃園市", "新竹縣市", "苗栗縣", "臺中市", "彰化縣", "南投縣", "雲林縣", "嘉義縣市", "臺南市", "北高雄", "南高雄", "屏東縣"];
+var request_array = ["宜蘭縣", "臺東縣", "臺北市", "新北市第一部分", "新北市第二部分", "桃園市", "新竹縣市", "苗栗縣", "臺中市", "彰化縣", "南投縣", "雲林縣", "嘉義縣市", "臺南市", "北高雄", "南高雄", "屏東縣","東部地區", "離島地區"];
 var county_array = ["南投縣", "連江縣", "馬祖", "南投", "雲林縣", "雲林", "金門縣", "金門", "苗栗縣", "苗栗", "高雄市", "高雄", "嘉義市", "花蓮縣", "花蓮", "嘉義縣", "台東縣", "臺東縣", "台東", "臺東", "嘉義", "基隆市", "台北市", "台南市", "臺南市", "台南", "臺南", "臺北市", "台北", "臺北", "基隆", "宜蘭縣", "台中市", "臺中市", "台中", "澎湖縣", "澎湖", "桃園市", "桃園", "新竹縣", "新竹市", "新竹", "新北市", "新北", "宜蘭", "屏東縣", "屏東", "彰化縣", "彰化"];
 
 var day_array = ["今天", "明天", "後天"];
 var key_array = Object.keys(keyword_list);
 var area_array = ["北部", "竹苗", "中部", "雲嘉南", "高屏", "宜蘭", "花東", "馬祖", "金門", "澎湖"];
 var eicon = ["🌍 ", "🌎 ", "🌏 "];
+var question_array=["你想知道哪個測站的詳細資訊ㄋ","請告訴我欲查詢的測站名稱","你想獲取哪個測站的詳細資訊ㄋ","你對哪個測站的詳細資訊有興趣ㄋ","請試著說你想查詢的測站名稱"];
 
 const SelectContexts = { parameter: 'select' };
 const AppContexts = { LOCATION: 'sendback_premission' };
@@ -58,11 +57,15 @@ app.intent('預設歡迎語句', (conv) => {
     return new Promise(
         function(resolve, reject) {
             database.ref('/TWair').on('value', e => {
-                resolve(e.val().report)
+                resolve(e.val())
             });
-        }).then(function(report_output) {
+        }).then(function(final_data) {
+        
+        var report_output= final_data.report;
+        var site_example = county_array[parseInt(Math.random() * county_array.length)];
+        const hasWebBrowser = conv.surface.capabilities.has('actions.capability.WEB_BROWSER');
 
-        conv.ask(new Suggestions(eicon[parseInt(Math.random() * 2)] + '最近的測站', '🔎依區域查詢'));
+        conv.ask(new Suggestions(eicon[parseInt(Math.random() * 2)] + '最近的測站', '🔎依區域查詢',site_example+'空氣品質如何?'));
 
         for (var i = 0; i < key_array.length; i++) {
             if (report_output.indexOf(key_array[i]) !== -1) { conv.ask(new Suggestions(keyword_list[key_array[i]])); }
@@ -70,21 +73,18 @@ app.intent('預設歡迎語句', (conv) => {
 
         if (conv.screen) {
 
-            if (conv.user.last.seen) {
-                conv.ask(new SimpleResponse({
-                    speech: `<speak><p><s>現在的空氣品質概要如下<break time="0.2s"/>，${report_output.replace(/[(]+[\d]+[)]/gm, "")}</s></p></speak>`,
-                    text: '以下是現在的空氣品質摘要'
-                }));
-            } else {
-                conv.ask(new SimpleResponse({
-                    speech: `<speak><p><s>歡迎使用空汙查詢精靈!</s><s>我能提供環保署的監測站查詢服務，此外，你能將我加入日常安排快速查詢所需站點。</s><s>接下來，是目前的空氣概況<break time="0.5s"/>${report_output.replace(/[(]+[\d]+[)]/gm, "")}</s></p></speak>`,
-                    text: '歡迎使用!'
-                }));
+            conv.ask(new SimpleResponse({
+                speech: `<speak><p><s>現在的空氣品質概要如下<break time="0.2s"/>，${report_output.replace(/[\(|\（]+[\d]+[\)|\）]/gm, "")}</s></p></speak>`,
+                text: '以下是現在的空氣品質摘要'
+            }));
+            if(!hasWebBrowser){
+                conv.ask(`<speak><p><s>接著，試著問我要查看的縣市!</s><s>例如<break time="0.2s"/>${site_example}空氣品質如何?</s></p></speak>`);
             }
+                
             conv.ask(new BasicCard({
                 title: "全台空氣品質概要 \n",
                 subtitle: report_output,
-                text: "測站資訊發布時間 • " + functions_fetch.FormatTime(),
+                text: "測站資訊發布時間 • " + final_data.PublishTime,
                 buttons: new Button({ title: '行政院環境保護署', url: 'https://airtw.epa.gov.tw/CHT/default.aspx', display: 'CROPPED', }),
             }));
 
@@ -93,8 +93,8 @@ app.intent('預設歡迎語句', (conv) => {
         } else {
             var word1 = county_array[parseInt(Math.random() * 19)];
             var word2 = county_array[20 + parseInt(Math.random() * 28)];
-            conv.ask(`<speak><p><s>空氣品質概要如下</s><s>${report_output.replace(/[(]+[\d]+[)]/gm, "")}</s></p></speak>`);
-            conv.ask(`<speak><p><s>接著，試著問我要查看的縣市!</s><s>例如<break time="0.2s"/>${word1}空氣品質如何?<break time="0.2s"/>或<break time="0.2s"/>幫我找${word2}</s></p></speak>`);
+            conv.ask(`<speak><p><s>空氣品質概要如下</s><s>${report_output.replace(/[\(|\（]+[\d]+[\)|\）]/gm, "")}</s></p></speak>`);
+            conv.ask(`<speak><p><s>接著，試著問我要查看的縣市!</s><s>例如<break time="0.2s"/>${word1}空氣品質如何?或幫我找${word2}</s></p></speak>`);
             conv.noInputs = ["抱歉，我沒聽輕楚。請再問一次", "請試著問我要查詢的縣市列表，例如、" + word1 + "空氣品質如何?", "很抱歉，我幫不上忙"];
 
         }
@@ -120,7 +120,7 @@ app.intent('預設歡迎語句', (conv) => {
             conv.ask(new Suggestions(eicon[parseInt(Math.random() * 2)] + '最近的測站', '🔎依區域查詢', '如何加入日常安排', '👋 掰掰'));
 
         } else {
-            conv.ask(`<speak><p><s>試著問我要查看的縣市!</s><s>例如<break time="0.2s"/>${county_array[parseInt(Math.random() * 19)]}空氣品質如何?<break time="0.2s"/>或<break time="0.2s"/>幫我找${county_array[20 + parseInt(Math.random() * 28)]}</s></p></speak>`);
+            conv.ask(`<speak><p><s>試著問我要查看的縣市!</s><s>例如<break time="0.2s"/>${county_array[parseInt(Math.random() * 19)]}空氣品質如何?或幫我找${county_array[20 + parseInt(Math.random() * 28)]}</s></p></speak>`);
         }
     });
 
@@ -128,16 +128,18 @@ app.intent('預設歡迎語句', (conv) => {
 
 app.intent('依區域查詢', (conv) => {
 
-    if (conv.screen) {
-        conv.ask('請輕觸下方卡片來選擇查詢區域');
+    const hasWebBrowser = conv.surface.capabilities.has('actions.capability.WEB_BROWSER');
+    var county_options = require("./county_list.json");
+
+    if (hasWebBrowser) {
+        conv.ask('請試著說你要查詢的區域');
     } else {
-        conv.ask(`<speak><p><s>請選擇要查詢的區域!</s><s>選項有以下幾個<break time="0.5s"/>北部地區<break time="0.2s"/>中部地區<break time="0.2s"/>南部地區<break time="0.2s"/>東部地區<break time="0.2s"/>離島地區<break time="1s"/>請選擇。</s></p></speak>`);
+        conv.ask(`<speak><p><s>請選擇要查詢的區域!</s><s>選項有以下幾個<break time="0.5s"/>北部地區<break time="0.2s"/>中部地區<break time="0.2s"/>南部地區<break time="0.2s"/>東部地區<break time="0.2s"/>離島地區<break time="1s"/>請選擇</s></p></speak>`);
+        delete county_options["行動測站"]
     }
     conv.contexts.set(SelectContexts.parameter, 5);
-    conv.ask(new Carousel({
-        title: 'Carousel Title',
-        items: county_options,
-    }));
+    
+    conv.ask(new Carousel({items: county_options}));
     conv.ask(new Suggestions(eicon[parseInt(Math.random() * 2)] + '最近的測站', '語音查詢範例', '今天的數值預報', '風向對空污的影響', '污染物影響要素', '👋 掰掰'));
 
 });
@@ -151,86 +153,33 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 
         var download_data = final_data.data;
         var station_array = Object.keys(final_data.data);
+        const hasWebBrowser = conv.surface.capabilities.has('actions.capability.WEB_BROWSER');
 
-        if (conv.input.raw.indexOf('最近') !== -1 || conv.input.raw.indexOf('附近') !== -1) { option = "🌎 最近的測站"; } else if (conv.input.raw.indexOf('台東') !== -1 || conv.input.raw.indexOf('臺東') !== -1) { option = "臺東"; }
+       if (conv.input.raw.indexOf('台東') !== -1 || conv.input.raw.indexOf('臺東') !== -1) { option = "臺東"; }
 
-
-        if (["北部地區", "中部地區", "南部地區", "東部地區", "離島地區", "行動測站"].indexOf(option) !== -1) {
-
-            if (option !== "行動測站") {
-                if (conv.screen) {
-                    conv.ask(new SimpleResponse({
-                        speech: `<speak><p><s>以下是${option}的對應選項<break time="0.5s"/>請查看</s></p></speak>`,
-                        text: '以下是「' + option + '」對應的選項'
-                    }));
-                } else { conv.ask(new SimpleResponse(`<speak><p><s>請選擇${option}對應的選項!</s><s>選項有以下幾個<break time="0.5s"/>${option_list[option]}<break time="1s"/>請選擇。</s></p></speak>`)); }
-            }
+        if (["北部地區", "中部地區", "南部地區"].indexOf(option) !== -1) {
 
             conv.contexts.set(SelectContexts.parameter, 5);
 
-            if (["北部地區", "中部地區", "南部地區"].indexOf(option) !== -1) {
-                conv.ask(new Carousel({ items: options_county[option] }));
-            } else if (["東部地區", "離島地區"].indexOf(option) !== -1) {
-
-                var the_array = option_list[option].split('、');
-                var county_list = {};
-
-                for (var i = 0; i < the_array.length; i++) {
-                    var aqi_temp = download_data[the_array[i]].AQI;
-                    var pic_url = functions_fetch.picture_generator(parseInt(aqi_temp));
-                    var status_temp = functions_fetch.status_generator(parseInt(aqi_temp));
-
-                    county_list[the_array[i]] = {
-                        title: the_array[i],
-                        description: status_temp,
-                        image: new Image({ url: pic_url, alt: 'Image alternate text', }),
-                    }
-                }
-                conv.ask(new Carousel({
-                    title: 'Carousel Title',
-                    items: county_list,
-                }));
-            } else if (option === "行動測站") {
-                if (conv.screen) { conv.ask('以下是「行動測站」列表，\n實際資訊供應可能隨時間變化。'); } else { conv.ask(`<speak><p><s>抱歉，在目前對話的裝置上不支援搜尋「行動測站」</s><s>請試著提問來查詢縣市列表</s></p></speak>`); }
-
-                var mobile_list = {};
-
-                station_array = arranger.machine(station_array);
-
-                for (var i = 0; i < station_array.length; i++) {
-                    var aqi_temp = download_data[station_array[i]].AQI;
-                    var pic_url = functions_fetch.picture_generator(parseInt(aqi_temp));
-                    var status_temp = functions_fetch.status_generator(parseInt(aqi_temp));
-
-                    mobile_list[station_array[i]] = {
-                        title: station_array[i],
-                        description: status_temp,
-                        image: new Image({ url: pic_url, alt: 'Image alternate text', }),
-                    }
-                }
-                conv.ask(new Carousel({
-                    title: 'Carousel Title',
-                    items: mobile_list,
-                }));
-
-            }
-        } else if (request_array.indexOf(option) !== -1) {
-
-            if (conv.screen) {
+            if (hasWebBrowser) {
                 conv.ask(new SimpleResponse({
-                    speech: `<speak><p><s>以下是${option}的監測站列表!<break time="0.5s"/>請查看</s></p></speak>`,
-                    text: '以下是「' + option + '」的測站列表'
+                    speech: `<speak><p><s>以下是${option}的對應選項<break time="0.5s"/>請告訴我你想知道何者的詳細資訊</s></p></speak>`,
+                    text: '以下是「' + option + '」對應的選項'
                 }));
-            } else { conv.ask(new SimpleResponse(`<speak><p><s>以下是${option}的監測站列表</s><s>選項有以下幾個<break time="0.5s"/>${replaceString(option_list[option], ',', '<break time="0.25s"/>')}<break time="1s"/>請選擇。</s></p></speak>`)); }
+            } else { conv.ask(new SimpleResponse(`<speak><p><s>請選擇${option}對應的選項!</s><s>選項有以下幾個<break time="0.5s"/>${option_list[option]}<break time="1s"/>請選擇。</s></p></speak>`)); }
 
+            conv.ask(new Carousel({ items: options_county[option] }));
+
+        } else if (request_array.indexOf(option) !== -1) {
 
             var the_array = option_list[option].split('、');
             var county_list = {};
+            var site_dict={}; //儲存測站與AQI之字典
+
+            var key_word = option.replace(/[\縣|\市|\第|\一|\二|\部|\分]/gm, "");
+            if (key_word.length > 2) { key_word =key_word.replace(/[\南|\北]/gm, "") }
 
             for (var i = 0; i < station_array.length; i++) {
-                var key_word = option.replace(/[\縣|\市|\第|\一|\二|\部|\分]/gm, "");
-                if (key_word.length > 2) { key_word.replace(/[\南|\北]/gm, "") }
-
                 if (station_array[i].indexOf(key_word + "(") !== -1) {
                     the_array.push(station_array[i])
                 }
@@ -249,18 +198,26 @@ app.intent('縣市查詢結果', (conv, input, option) => {
                     description: status_temp,
                     image: new Image({ url: pic_url, alt: 'Image alternate text', }),
                 }
-
+                
                 if (the_array[i].indexOf(")") !== -1) {
                     var select_title = the_array[i].replace(/.+[(]/gm, "");
                     select_title = select_title.replace(/[)]/gm, "");
                     county_list[the_array[i]].title = select_title + " (行動站)";
+                    the_array[i] = select_title;
                 }
+                site_dict[the_array[i]]=parseInt(aqi_temp)
             }
 
-            conv.ask(new Carousel({
-                title: 'Carousel Title',
-                items: county_list,
+            conv.ask(new SimpleResponse({
+                speech: `<speak><p><s>在${option}，${brief_report.generator(site_dict)}。</s><s>${question_array[parseInt(Math.random() * (question_array.length))]}</s></p></speak>`,
+                text: '以下是「' + option + '」的測站列表'
             }));
+
+            if(!hasWebBrowser){
+                 conv.ask(new SimpleResponse(`<speak><p><s>選項有以下幾個<break time="0.5s"/>${replaceString(the_array.toString(), ',', '<break time="0.25s"/>')}<break time="1s"/>請選擇。</s></p></speak>`)); 
+            }
+
+            conv.ask(new Carousel({items: county_list}));
 
             if (suggest_list[option] !== undefined) { conv.ask(new Suggestions('查看' + suggest_list[option])); }
 
@@ -280,30 +237,27 @@ app.intent('縣市查詢結果', (conv, input, option) => {
                 var picture = functions_fetch.big_picture_generator(AQI);
                 var info = functions_fetch.info_generator(AQI);
                 var info_output = functions_fetch.info_output_generator(AQI);
+                var output_title = Status;
 
                 if (option.indexOf('(') !== -1) {
-                    option = option.split('(')[1];
-                    option = replaceString(option, ')', '');
+                    option = option.replace(/.+[(]/gm, "");
+                    option = option.replace(/[)]/gm, "");
                 } else {
                     conv.ask(new Suggestions('把它加入日常安排'));
                 }
 
-                if (AQI >= 0 && AQI <= 50) {
-                    conv.ask(new SimpleResponse({
-                        speech: `<speak><p><s>根據最新資料顯示，${option}監測站的AQI指數為${AQI}</s><s>您可放心出外活動!</s></p></speak>`,
-                        text: '以下為該監測站的詳細資訊，\n您可放心出外活動!'
-                    }));
-                } else if (AQI > 50) {
-                    conv.ask(new SimpleResponse({
-                        speech: `<speak><p><s>根據最新資料顯示，${option}監測站的AQI指數為${AQI}</s><s>主要汙染源來自${replaceString(Pollutant, '八小時', '')}</s><s>${info}</s></p></speak>`,
-                        text: '以下為該監測站的詳細資訊'
-                    }));
+                var Output_info = {
+                    speech: `<speak><p><s>根據最新資料顯示，${option}監測站的AQI指數為${AQI}</s><s>您可放心出外活動!</s></p></speak>`,
+                    text: '以下為該監測站的詳細資訊'
                 }
-
-                var output_title = Status;
+                
                 if (AQI > 50) {
-                    output_title = output_title + ' • ' + pollutant_dict[Pollutant];
+                    Output_info.speech= `<speak><p><s>根據最新資料顯示，${option}監測站的AQI指數為${AQI}</s><s>主要汙染源來自${replaceString(Pollutant, '八小時', '')}</s><s>${info}</s></p></speak>`,
+                    output_title += ' • ' + pollutant_dict[Pollutant];
                 }
+                
+                
+                conv.ask(new SimpleResponse(Output_info));
 
                 if (conv.screen) {
                     conv.ask(new BasicCard({
@@ -311,7 +265,7 @@ app.intent('縣市查詢結果', (conv, input, option) => {
                         display: 'CROPPED',
                         title: option,
                         subtitle: output_title,
-                        text: info_output + '  \n  \nPM₁₀ ' + PM10 + '(μg/m³) • PM₂.₅ ' + PM25 + '(μg/m³) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + functions_fetch.FormatTime(),
+                        text: info_output + '  \n  \nPM₁₀ ' + PM10 + '(㎍/㎥) • PM₂.₅ ' + PM25 + '(㎍/㎥) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + final_data.PublishTime,
                     }));
 
                 } else { conv.expectUserResponse = false } //告知Google助理結束對話
@@ -323,8 +277,9 @@ app.intent('縣市查詢結果', (conv, input, option) => {
                 if (conv.screen) {
                     conv.ask(new BasicCard({
                         image: new Image({ url: "https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN", alt: 'Pictures', }),
-                        title: '有效數據不足',
-                        text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或有效數據不足等需查修維護情形，以致資料暫時中斷服務。  \n  \nPM₁₀ ' + PM10 + '(μg/m³) • PM₂.₅ ' + PM25 + '(μg/m³) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + functions_fetch.FormatTime(),
+                        title: option,
+                        subtitle: '有效數據不足',
+                        text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或有效數據不足等需查修維護情形，以致資料暫時中斷服務。  \n  \nPM₁₀ ' + PM10 + '(㎍/㎥) • PM₂.₅ ' + PM25 + '(㎍/㎥) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + final_data.PublishTime,
                         display: 'CROPPED',
                     }));
                     conv.ask(new Suggestions('把它加入日常安排'));
@@ -340,21 +295,11 @@ app.intent('縣市查詢結果', (conv, input, option) => {
                 conv.ask(new BasicCard({
                     image: new Image({ url: "https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN", alt: 'Pictures', }),
                     title: '有效數據不足',
-                    text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或有效數據不足等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • ' + functions_fetch.FormatTime(),
+                    text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或有效數據不足等需查修維護情形，以致資料暫時中斷服務。  \n  \n**測站資訊發布時間** • ' + final_data.PublishTime,
                     display: 'CROPPED',
                 }));
                 conv.ask(new Suggestions('把它加入日常安排'));
             } else { conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`); }
-        } else if (option === "🌎 最近的測站") {
-            conv.contexts.set(AppContexts.LOCATION, 1);
-            conv.data.requestedPermission = 'DEVICE_PRECISE_LOCATION';
-            return conv.ask(new Permission({
-                context: "在繼續操作前，建議你開啟裝置上的GPS功能來取得精確結果。接著，為了找到最近的測站位置",
-                permissions: conv.data.requestedPermission,
-            }));
-
-            conv.ask(new Permission(options));
-
         } else {
             var word1 = county_array[parseInt(Math.random() * 19)];
             var word2 = county_array[20 + parseInt(Math.random() * 28)];
@@ -362,7 +307,7 @@ app.intent('縣市查詢結果', (conv, input, option) => {
 
             if (conv.input.type === "VOICE") { //如果輸入是語音，則顯示錯誤處理方法
                 conv.ask(new SimpleResponse({
-                    speech: `<speak><p><s>抱歉，我不懂你的意思</s><s>請試著問我<break time="0.2s"/>${word1}空氣品質如何?<break time="0.2s"/>或<break time="0.2s"/>幫我查詢${word2}</s></p></speak>`,
+                    speech: `<speak><p><s>抱歉，我不懂你的意思</s><s>請試著問我<break time="0.2s"/>${word1}空氣品質如何?或幫我查詢${word2}</s></p></speak>`,
                     text: '試著提問來快速存取縣市列表，\n或點選建議卡片來進行操作!'
                 }));
                 if (conv.screen) {
@@ -409,7 +354,7 @@ app.intent('Default Fallback Intent', (conv) => {
 
     if (conv.input.type === "VOICE") { //如果輸入是語音，則顯示錯誤處理方法
         conv.ask(new SimpleResponse({
-            speech: `<speak><p><s>抱歉，我不懂你的意思</s><s>請試著問我<break time="0.2s"/>${word1}空氣品質如何?<break time="0.2s"/>或<break time="0.2s"/>幫我查詢${word2}</s></p></speak>`,
+            speech: `<speak><p><s>抱歉，我不懂你的意思</s><s>請試著問我<break time="0.2s"/>${word1}空氣品質如何?或幫我查詢${word2}</s></p></speak>`,
             text: '試著提問來快速存取縣市列表，\n或點選建議卡片來進行操作!'
         }));
         if (conv.screen) {
@@ -436,7 +381,7 @@ app.intent('語音指令範例', (conv) => {
     var word3 = county_array[parseInt(Math.random() * 48)];
 
     conv.ask(new SimpleResponse({
-        speech: `<speak><p><s>在任意畫面中，你隨時都能快速查詢縣市列表</s><s>你可以試著問<break time="0.2s"/>${word1}空氣品質如何?<break time="0.2s"/>或<break time="0.2s"/>幫我查詢${word2}</s></p></speak>`,
+        speech: `<speak><p><s>在任意畫面中，你隨時都能快速查詢縣市列表</s><s>你可以試著問<break time="0.2s"/>${word1}空氣品質如何?或幫我查詢${word2}</s></p></speak>`,
         text: '試著提問來快速存取縣市列表，\n以下是你可以嘗試的詢問方式!'
     }));
     conv.ask(new BasicCard({
@@ -484,30 +429,27 @@ app.intent('直接查詢', (conv, { station }) => {
                 var picture = functions_fetch.big_picture_generator(AQI);
                 var info = functions_fetch.info_generator(AQI);
                 var info_output = functions_fetch.info_output_generator(AQI);
-
-                if (AQI >= 0 && AQI <= 50) {
-                    conv.ask(new SimpleResponse({
-                        speech: `<speak><p><s>根據最新資料顯示，${station}監測站的AQI指數為${AQI}</s><s>您可放心出外活動!</s></p></speak>`,
-                        text: '以下為該監測站的詳細資訊，\n您可放心出外活動!'
-                    }));
-                } else if (AQI > 50) {
-                    conv.ask(new SimpleResponse({
-                        speech: `<speak><p><s>根據最新資料顯示，${station}監測站的AQI指數為${AQI}</s><s>主要汙染源來自${replaceString(Pollutant, '八小時', '')}</s><s>${info}</s></p></speak>`,
-                        text: '以下為該監測站的詳細資訊'
-                    }));
-                }
-
                 var output_title = Status;
-                if (AQI > 50) {
-                    output_title = output_title + ' • ' + pollutant_dict[Pollutant];
+
+                var Output_info = {
+                    speech: `<speak><p><s>根據最新資料顯示，${station}站的AQI指數為${AQI}</s><s>您可放心出外活動!</s></p></speak>`,
+                    text: '以下為該監測站的詳細資訊'
                 }
+                
+                if (AQI > 50) {
+                    Output_info.speech= `<speak><p><s>根據最新資料顯示，${station}站的AQI指數為${AQI}</s><s>主要汙染源來自${replaceString(Pollutant, '八小時', '')}</s><s>${info}</s></p></speak>`,
+                    output_title += ' • ' + pollutant_dict[Pollutant];
+                }
+                
+                
+                conv.ask(new SimpleResponse(Output_info));
 
                 conv.close(new BasicCard({
                     image: new Image({ url: picture, alt: 'Pictures', }),
                     display: 'CROPPED',
                     title: station,
                     subtitle: output_title,
-                    text: info_output + '  \n  \nPM₁₀ ' + PM10 + '(μg/m³) • PM₂.₅ ' + PM25 + '(μg/m³) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + functions_fetch.FormatTime(),
+                    text: info_output + '  \n  \nPM₁₀ ' + PM10 + '(㎍/㎥) • PM₂.₅ ' + PM25 + '(㎍/㎥) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + final_data.PublishTime,
                 }));
 
             } else {
@@ -517,9 +459,9 @@ app.intent('直接查詢', (conv, { station }) => {
                 }));
                 conv.close(new BasicCard({
                     image: new Image({ url: "https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN", alt: 'Pictures', }),
-                    title: '有效數據不足',
-                    title: '有效數據不足',
-                    text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或有效數據不足等需查修維護情形，以致資料暫時中斷服務。  \n  \nPM₁₀ ' + PM10 + '(μg/m³) • PM₂.₅ ' + PM25 + '(μg/m³) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + functions_fetch.FormatTime(),
+                    title: station,
+                    subtitle: '有效數據不足',
+                    text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或有效數據不足等需查修維護情形，以致資料暫時中斷服務。  \n  \nPM₁₀ ' + PM10 + '(㎍/㎥) • PM₂.₅ ' + PM25 + '(㎍/㎥) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + final_data.PublishTime,
                     display: 'CROPPED',
                 }));
             }
@@ -543,9 +485,11 @@ app.intent('直接查詢', (conv, { station }) => {
 
 app.intent('日常安排教學', (conv, { station }) => {
 
-    var choose_station = "";
-    if (station !== "") { choose_station = station; } else { choose_station = conv.user.storage.choose_station; }
+    var choose_station = conv.user.storage.choose_station;
+    var station_array = ['冬山', '宜蘭', '花蓮', '臺東', '關山', '金門', '馬祖', '馬公', '士林', '大同', '中山', '古亭', '松山', '陽明', '萬華', '三重', '土城', '永和', '汐止', '板橋', '林口', '淡水', '富貴角', '菜寮', '新店', '新莊', '萬里', '大園', '中壢', '平鎮', '桃園', '龍潭', '觀音', '新竹', '竹東', '湖口', '三義', '苗栗', '頭份', '大里', '西屯', '沙鹿', '忠明', '豐原', '二林', '彰化', '線西', '竹山', '南投', '埔里', '斗六', '崙背', '麥寮', '臺西', '嘉義', '朴子', '新港', '安南', '善化', '新營', '臺南', '美濃', '橋頭', '楠梓', '仁武', '左營', '前金', '鳳山', '復興', '前鎮', '小港', '大寮', '林園', '屏東', '恆春', '潮州', '冬山', '宜蘭', '臺東', '關山'];
+
     if (station_array.indexOf(choose_station) === -1) { choose_station = station_array[parseInt(Math.random() * 81)]; }
+   
     conv.ask(new SimpleResponse({
         speech: `<speak><p><s>透過加入日常安排，你可以快速存取要查詢的站點。</s><s>舉例來說，如果你把${choose_station}加入日常安排。你即可隨時呼叫我查詢該站點的最新空氣品質!</s><s>以下為詳細說明</s></p></speak>`,
         text: '以下為詳細說明'
@@ -569,14 +513,14 @@ app.intent('從風向看空氣品質', (conv, { Wind_direction }) => {
     if (Object.keys(explain_list).indexOf(Wind_direction) !== -1) {
 
         conv.ask(new SimpleResponse({
-            speech: `<speak><p><s>以下是環保署對${Wind_direction}與空氣品質關聯性的說明</s><break time="1s"/><s>${replaceString(explain_list[Wind_direction][0], '\n', '')}</s></p></speak>`,
+            speech: `<speak><p><s>以下是環保署對${Wind_direction}與空氣品質關聯性的說明</s><break time="0.75s"/><s>${replaceString(explain_list[Wind_direction].content, '\n', '')}</s></p></speak>`,
             text: '以下是環保署的解說'
         }));
         conv.ask(new BasicCard({
-            image: new Image({ url: explain_list[Wind_direction][1], alt: 'Pictures', }),
+            image: new Image({ url: explain_list[Wind_direction].pic_url, alt: 'Pictures', }),
             title: Wind_direction,
             display: 'CROPPED',
-            subtitle: explain_list[Wind_direction][0],
+            subtitle: explain_list[Wind_direction].content,
             text: "Ⓒ 圖文資訊來自 行政院環境保護署 **《空品小百科》**"
         }));
 
@@ -603,14 +547,14 @@ app.intent('污染物特性及影響要素', (conv, { Pollutant_type }) => {
     if (Object.keys(explain_list).indexOf(Pollutant_type) !== -1) {
 
         conv.ask(new SimpleResponse({
-            speech: `<speak><p><s>以下是環保署對${Pollutant_type}與空氣品質關聯性的說明</s><break time="1s"/><s>${replaceString(explain_list[Pollutant_type][0], '\n', '')}</s></p></speak>`,
+            speech: `<speak><p><s>以下是環保署對${Pollutant_type}與空氣品質關聯性的說明</s><break time="0.75s"/><s>${replaceString(explain_list[Pollutant_type].content, '\n', '')}</s></p></speak>`,
             text: '以下是環保署的解說'
         }));
         conv.ask(new BasicCard({
-            image: new Image({ url: explain_list[Pollutant_type][1], alt: 'Pictures', }),
+            image: new Image({ url: explain_list[Pollutant_type].pic_url, alt: 'Pictures', }),
             title: Pollutant_type,
             display: 'CROPPED',
-            subtitle: explain_list[Pollutant_type][0],
+            subtitle: explain_list[Pollutant_type].content,
             text: "Ⓒ 圖文資訊來自 行政院環境保護署 **《空品小百科》**"
         }));
 
@@ -667,7 +611,7 @@ app.intent('回傳資訊', (conv, params, permissionGranted) => {
                     }).then(function(final_data) {
 
                     var sitename = (findNearestLocation(myLocation, final_data.locations)).location.Sitename; //透過模組找到最近的測站
-                    var final_data = final_data.data[sitename]
+                    var site_data = final_data.data[sitename];
 
                     var site_output = sitename;
                     if (sitename.indexOf('(') !== -1) {
@@ -677,37 +621,33 @@ app.intent('回傳資訊', (conv, params, permissionGranted) => {
 
                     conv.ask(new SimpleResponse({ speech: `<speak><p><s>查詢完成!</s><s>距離你最近的測站是<break time="0.2s"/>${site_output}。</s></p></speak>`, text: '最近的測站是「' + sitename + '」!' }));
 
-                    if (final_data !== undefined) {
-                        //indexnumber = station_array.indexOf(sitename); //取得監測站對應的編號
-                        //console.log(final_data)
-                        var AQI = final_data.AQI;
-                        var Pollutant = final_data.Pollutant;
-                        var PM10 = final_data.PM10;
-                        var PM25 = final_data.PM25;
-                        var O3 = final_data.O3;
+                    if (site_data !== undefined) {
+
+                        var AQI = site_data.AQI;
+                        var Pollutant = site_data.Pollutant;
+                        var PM10 = site_data.PM10;
+                        var PM25 = site_data.PM25;
+                        var O3 = site_data.O3;
                         var Status = functions_fetch.status_generator(parseInt(AQI));
 
                         if (Status !== "有效數據不足") {
                             var picture = functions_fetch.big_picture_generator(AQI);
                             var info = functions_fetch.info_generator(AQI);
                             var info_output = functions_fetch.info_output_generator(AQI);
-
-                            if (AQI >= 0 && AQI <= 50) {
-                                conv.ask(new SimpleResponse({
-                                    speech: `<speak><p><s>根據最新資料顯示，該監測站的AQI指數為${AQI}</s><s>您可放心出外活動!</s></p></speak>`,
-                                    text: '以下為該監測站的詳細資訊，\n您可放心出外活動!'
-                                }));
-                            } else if (AQI > 50) {
-                                conv.ask(new SimpleResponse({
-                                    speech: `<speak><p><s>根據最新資料顯示，該監測站的AQI指數為${AQI}</s><s>主要汙染源來自${replaceString(Pollutant, '八小時', '')}</s><s>${info}</s></p></speak>`,
-                                    text: '以下為該監測站的詳細資訊'
-                                }));
-                            }
-
                             var output_title = Status;
-                            if (AQI > 50) {
-                                output_title = output_title + ' • ' + pollutant_dict[Pollutant];
+
+                            var Output_info = {
+                                speech: `<speak><p><s>根據最新資料顯示，${sitename}監測站的AQI指數為${AQI}</s><s>您可放心出外活動!</s></p></speak>`,
+                                text: '以下為該監測站的詳細資訊'
                             }
+
+                            if (AQI > 50) {
+                                Output_info.speech= `<speak><p><s>根據最新資料顯示，${sitename}監測站的AQI指數為${AQI}</s><s>主要汙染源來自${replaceString(Pollutant, '八小時', '')}</s><s>${info}</s></p></speak>`,
+                                output_title += ' • ' + pollutant_dict[Pollutant];
+                            }
+
+                            
+                            conv.ask(new SimpleResponse(Output_info));
 
                             if (conv.screen) {
 
@@ -716,7 +656,7 @@ app.intent('回傳資訊', (conv, params, permissionGranted) => {
                                     display: 'CROPPED',
                                     title: sitename,
                                     subtitle: output_title,
-                                    text: info_output + '  \n  \nPM₁₀ ' + PM10 + '(μg/m³) • PM₂.₅ ' + PM25 + '(μg/m³) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + functions_fetch.FormatTime(),
+                                    text: info_output + '  \n  \nPM₁₀ ' + PM10 + '(㎍/㎥) • PM₂.₅ ' + PM25 + '(㎍/㎥) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + final_data.PublishTime,
                                 }));
 
                                 conv.ask(new Suggestions('把它加入日常安排'));
@@ -729,11 +669,12 @@ app.intent('回傳資訊', (conv, params, permissionGranted) => {
                             conv.ask(new BasicCard({
                                 image: new Image({ url: "https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN", alt: 'Pictures', }),
                                 title: '有效數據不足',
-                                text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或有效數據不足等需查修維護情形，以致資料暫時中斷服務。  \n  \nPM₁₀ ' + PM10 + '(μg/m³) • PM₂.₅ ' + PM25 + '(μg/m³) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + functions_fetch.FormatTime(),
+                                text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或有效數據不足等需查修維護情形，以致資料暫時中斷服務。  \n  \nPM₁₀ ' + PM10 + '(㎍/㎥) • PM₂.₅ ' + PM25 + '(㎍/㎥) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + final_data.PublishTime,
                                 display: 'CROPPED',
                             }));
                         }
                         if (conv.screen) { conv.ask(new Suggestions('回主頁面', '👋 掰掰')); } else { conv.expectUserResponse = false } //告知Google助理結束對話 
+                        conv.user.storage.choose_station = sitename;
 
                     } else {
                         conv.ask(new SimpleResponse({
@@ -774,7 +715,6 @@ app.intent('回傳資訊', (conv, params, permissionGranted) => {
         conv.ask(new SimpleResponse({ speech: `<speak><p><s>很抱歉，由於未取得你的授權因此查詢失敗。</s><s>不過你隨時可以回來再試一次。</s></p></speak>`, text: "發生錯誤，未取得你的授權。" }));
     }
     if (conv.screen) { conv.ask(new Suggestions('回主頁面', '👋 掰掰')); } else { conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`); }
-    conv.user.storage.choose_station = sitename;
 
 });
 
@@ -787,6 +727,7 @@ app.intent('直接查詢縣市選單', (conv, { County }) => {
 
         var download_data = final_data.data;
         var station_array = Object.keys(final_data.data);
+        const hasWebBrowser = conv.surface.capabilities.has('actions.capability.WEB_BROWSER');
 
         conv.noInputs = ["抱歉，我沒聽輕楚。請再問一次", "請試著問我要查詢的縣市列表，例如、" + county_array[parseInt(Math.random() * 48)] + "空氣品質如何?", "很抱歉，我幫不上忙"];
 
@@ -799,71 +740,28 @@ app.intent('直接查詢縣市選單', (conv, { County }) => {
         if (["新北市", "高雄市"].indexOf(County) !== -1) {
             conv.ask(new SimpleResponse({
                 speech: `<speak><p><s>由於${County}的測站數目較多，分為兩部份顯示，請選擇</s></p></speak>`,
-                text: '「' + County + '」監測站數量較多，\n分為兩部份顯示。'
+                text: '「' + County + '」監測站數量較多，\n請選擇要查詢的區域。'
             }));
+
             conv.contexts.set(SelectContexts.parameter, 5);
-
-            if (County === "新北市") {
-
-                conv.ask(new Carousel({
-                    title: 'Carousel Title',
-                    items: {
-                        '新北市第一部分': {
-                            title: '新北市(一)',
-                            synonyms: ['新北', '三重', '土城', '永和', '汐止', '板橋', '林口'],
-                            description: '三重、土城、永和  \n汐止、板橋、林口',
-                        },
-                        '新北市第二部分': {
-                            synonyms: ['新北', '淡水', '富貴角', '菜寮', '新店', '新莊', '萬里'],
-                            title: '新北市(二)',
-                            description: '淡水、富貴角、菜寮  \n新店、新莊、萬里',
-                        },
-                    },
-                }));
-            } else if (County === "高雄市") {
-                conv.ask(new Carousel({
-                    title: 'Carousel Title',
-                    items: {
-                        '北高雄': {
-                            synonyms: ['北高雄', '美濃', '橋頭', '楠梓', '仁武', '左營', '前金', ],
-                            title: '北高雄',
-                            description: '美濃、橋頭、楠梓  \n仁武、左營、前金',
-                        },
-                        '南高雄': {
-                            synonyms: ['南高雄', '鳳山', '復興', '前鎮', '小港', '大寮', '林園', ],
-                            title: '南高雄',
-                            description: '鳳山、復興、前鎮  \n小港、大寮、林園',
-                        },
-                    },
-                }));
-            }
-            if (County !== "undefined") { conv.ask(new Suggestions('回主頁面')); }
-            conv.ask(new Suggestions('👋 掰掰'));
+            conv.ask(new Carousel({items: options_county[County],}));
+            
+            conv.ask(new Suggestions('回主頁面','👋 掰掰'));
 
         } else if (request_array.indexOf(County) !== -1) {
 
-            conv.contexts.set(SelectContexts.parameter, 5);
-
-            if (conv.screen) {
-                conv.ask(new SimpleResponse({
-                    speech: `<speak><p><s>以下是${County}的監測站列表!<break time="0.5s"/>請查看</s></p></speak>`,
-                    text: '以下是「' + County + '」的測站列表'
-                }));
-            } else { conv.ask(new SimpleResponse(`<speak><p><s>以下是${County}的監測站列表</s><s>選項有以下幾個<break time="0.5s"/>${replaceString(option_list[County], '、', '<break time="0.25s"/>')}<break time="1s"/>請選擇。</s></p></speak>`)); }
-
             var the_array = option_list[County].split('、');
             var county_list = {};
+            var site_dict={}; //儲存測站與AQI之字典
 
+            var key_word = County.replace(/[\縣|\市|\第|\一|\二|\部|\分]/gm, "");
+            if (key_word.length > 2) { key_word =key_word.replace(/[\南|\北]/gm, "") }
 
             for (var i = 0; i < station_array.length; i++) {
-                var key_word = County.replace(/[\縣|\市|\第|\一|\二|\部|\分]/gm, "");
-                if (key_word.length > 2) { key_word.replace(/[\南|\北]/gm, "") }
-
                 if (station_array[i].indexOf(key_word + "(") !== -1) {
                     the_array.push(station_array[i])
                 }
             }
-
 
             for (var i = 0; i < the_array.length; i++) {
                 if (download_data[the_array[i]] === undefined) {
@@ -883,17 +781,28 @@ app.intent('直接查詢縣市選單', (conv, { County }) => {
                     var select_title = the_array[i].replace(/.+[(]/gm, "");
                     select_title = select_title.replace(/[)]/gm, "");
                     county_list[the_array[i]].title = select_title + " (行動站)";
+                    the_array[i] = select_title;
                 }
+
+                site_dict[the_array[i]]=parseInt(aqi_temp)
             }
 
-            conv.ask(new Carousel({
-                title: 'Carousel Title',
-                items: county_list,
+            conv.ask(new SimpleResponse({
+                speech: `<speak><p><s>在${County}，${brief_report.generator(site_dict)}。</s><s>${question_array[parseInt(Math.random() * (question_array.length))]}</s></p></speak>`,
+                text: '以下是「' + County + '」的測站列表'
             }));
+            
+            if(!hasWebBrowser){
+                 conv.ask(new SimpleResponse(`<speak><p><s>選項有以下幾個<break time="0.5s"/>${replaceString(the_array.toString(), ',', '<break time="0.25s"/>')}<break time="1s"/>請選擇。</s></p></speak>`)); 
+            }
+                        
+            conv.contexts.set(SelectContexts.parameter, 5);
+
+            conv.ask(new Carousel({items: county_list}));
 
             if (suggest_list[County] !== undefined) { conv.ask(new Suggestions('查看' + suggest_list[County])); }
-            if (County !== "undefined") { conv.ask(new Suggestions('回主頁面')); }
-            conv.ask(new Suggestions('👋 掰掰'));
+
+            conv.ask(new Suggestions('回主頁面','👋 掰掰'));
 
         } else if (station_array.indexOf(County) !== -1) {
 
@@ -909,24 +818,20 @@ app.intent('直接查詢縣市選單', (conv, { County }) => {
                 var picture = functions_fetch.big_picture_generator(AQI);
                 var info = functions_fetch.info_generator(AQI);
                 var info_output = functions_fetch.info_output_generator(AQI);
-
-
-                if (AQI >= 0 && AQI <= 50) {
-                    conv.ask(new SimpleResponse({
-                        speech: `<speak><p><s>根據最新資料顯示，${County}監測站的AQI指數為${AQI}</s><s>您可放心出外活動!</s></p></speak>`,
-                        text: '以下為該監測站的詳細資訊，\n您可放心出外活動!'
-                    }));
-                } else {
-                    conv.ask(new SimpleResponse({
-                        speech: `<speak><p><s>根據最新資料顯示，${County}監測站的AQI指數為${AQI}</s><s>主要汙染源來自${replaceString(Pollutant, '八小時', '')}</s><s>${info}</s></p></speak>`,
-                        text: '以下為該監測站的詳細資訊'
-                    }));
-                }
-
                 var output_title = Status;
-                if (AQI > 50) {
-                    output_title = output_title + ' • ' + pollutant_dict[Pollutant];
+
+                var Output_info = {
+                    speech: `<speak><p><s>根據最新資料顯示，${County}監測站的AQI指數為${AQI}</s><s>您可放心出外活動!</s></p></speak>`,
+                    text: '以下為該監測站的詳細資訊'
                 }
+
+                if (AQI > 50) {
+                    Output_info.speech= `<speak><p><s>根據最新資料顯示，${County}監測站的AQI指數為${AQI}</s><s>主要汙染源來自${replaceString(Pollutant, '八小時', '')}</s><s>${info}</s></p></speak>`,
+                    output_title += ' • ' + pollutant_dict[Pollutant];
+                }
+
+
+                conv.ask(new SimpleResponse(Output_info));
 
                 if (conv.screen) {
                     conv.ask(new BasicCard({
@@ -934,7 +839,7 @@ app.intent('直接查詢縣市選單', (conv, { County }) => {
                         display: 'CROPPED',
                         title: County,
                         subtitle: output_title,
-                        text: info_output + '  \n  \nPM₁₀ ' + PM10 + '(μg/m³) • PM₂.₅ ' + PM25 + '(μg/m³) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + functions_fetch.FormatTime(),
+                        text: info_output + '  \n  \nPM₁₀ ' + PM10 + '(㎍/㎥) • PM₂.₅ ' + PM25 + '(㎍/㎥) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + final_data.PublishTime,
                     }));
                     conv.ask(new Suggestions('把它加入日常安排'));
                 } else { conv.close(`<speak><p><s>歡迎你隨時回來查詢，下次見</s></p></speak>`); }
@@ -949,7 +854,7 @@ app.intent('直接查詢縣市選單', (conv, { County }) => {
                     conv.ask(new BasicCard({
                         image: new Image({ url: "https://dummyimage.com/1037x539/232830/ffffff.png&text=NaN", alt: 'Pictures', }),
                         title: '有效數據不足',
-                        text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或有效數據不足等需查修維護情形，以致資料暫時中斷服務。  \n  \nPM₁₀ ' + PM10 + '(μg/m³) • PM₂.₅ ' + PM25 + '(μg/m³) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + functions_fetch.FormatTime(),
+                        text: '設備維護、儀器校正、儀器異常、傳輸異常、電力異常 \n或有效數據不足等需查修維護情形，以致資料暫時中斷服務。  \n  \nPM₁₀ ' + PM10 + '(㎍/㎥) • PM₂.₅ ' + PM25 + '(㎍/㎥) • 臭氧 ' + O3 + '(ppb)  \n**測站資訊發布時間** • ' + final_data.PublishTime,
                         display: 'CROPPED',
                     }));
                     conv.ask(new Suggestions('把它加入日常安排'));
@@ -958,27 +863,24 @@ app.intent('直接查詢縣市選單', (conv, { County }) => {
 
             }
 
-            if (County !== "undefined") { conv.ask(new Suggestions('回主頁面')); }
-            conv.ask(new Suggestions('👋 掰掰'));
+            conv.ask(new Suggestions('回主頁面','👋 掰掰'));
 
         } else {
 
-            County = "undefined";
-            if (conv.screen) { conv.ask('我不懂你的意思，\n請輕觸下方卡片來進行區域查詢。'); } else {
-                conv.ask(new SimpleResponse({
-                    speech: `<speak><p><s>我不懂你的意思，請試著透過區域查詢!</s><s>選項有以下幾個<break time="0.5s"/>北部地區<break time="0.2s"/>中部地區<break time="0.2s"/>南部地區<break time="0.2s"/>東部地區<break time="0.2s"/>離島地區<break time="1s"/>請選擇。</s></p></speak>`,
-                    text: '請輕觸下方卡片來選擇查詢區域!'
-                }));
+            conv.ask(new SimpleResponse({
+                speech: `<speak><p><s>抱歉，我不懂你的意思，我們先從範圍較大的區域檢索開始好嗎?<break time="0.5s"/>請試著說要查看的區域</s></p></speak>`,
+                text: '我不懂你的意思，\n請選擇欲查詢的區域。'
+            }));
+            
+            if(!hasWebBrowser){
+                 conv.ask(new SimpleResponse(`<speak><p><s>選項有以下幾個<break time="0.5s"/>北部地區<break time="0.2s"/>中部地區<break time="0.2s"/>南部地區<break time="0.2s"/>東部地區<break time="0.2s"/>離島地區<break time="1s"/>請選擇。</s></p></speak></p></speak>`)); 
             }
 
-            conv.ask(new Carousel({
-                title: 'Carousel Title',
-                items: county_options,
-            }));
+            conv.ask(new Carousel({items: require("./county_list.json")}));
+
             if (conv.screen) {
                 conv.ask(new Suggestions(eicon[parseInt(Math.random() * 2)] + '最近的測站'));
-                if (County !== "undefined") { conv.ask(new Suggestions('回主頁面')); }
-                conv.ask(new Suggestions('👋 掰掰'));
+                conv.ask(new Suggestions('回主頁面','👋 掰掰'));
             }
         }
         conv.user.storage.choose_station = County;

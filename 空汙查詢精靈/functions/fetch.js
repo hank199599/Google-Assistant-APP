@@ -115,7 +115,7 @@ function predict(input) {
     if (array2.length !== 0) { temp = temp + array2 + "空品區為普通等級，"; }
     if (array3.length !== 0) { temp = temp + array3 + "空品區對敏感族群不健康，"; }
     if (array4.length !== 0) { temp = temp + array4 + "空品區對所有族群不健康，"; }
-    if (array5.length !== 0) { temp = temp + array5 + "空品區非常不健康，"; }
+    if (array5.length !== 0) { temp = temp + array5 + "空品區對所有族群非常不健康，"; }
     if (array6.length !== 0) { temp = temp + array6 + "空品區為危害等級，"; }
 
     return replaceString(temp, ',', '<break time="0.25s"/>');

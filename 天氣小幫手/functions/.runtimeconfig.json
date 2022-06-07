@@ -1,0 +1,8 @@
+{
+  "firebase": {
+    "projectId": "newagent-1-f657d",
+    "databaseURL": "https://newagent-1-f657d.firebaseio.com",
+    "storageBucket": "newagent-1-f657d.appspot.com",
+    "locationId": "us-central"
+  }
+}

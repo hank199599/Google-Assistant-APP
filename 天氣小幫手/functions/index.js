@@ -19,12 +19,14 @@ var FetchStream = require("fetch").FetchStream;
 const replaceString = require('replace-string');
 var getJSON = require('get-json');
 var request = require('request');
+var cheerio = require('cheerio');
 
 var converter = require('./report_convert.json');
 var links = require('./link_convert.json');
 var county_list = require('./county_list.json');
 var reports = require('./fetch.js');
 var main_reports = require('./main_fetch.js');
+var size_table = require("./reduce_size.json");
 
 var county_array = ["臺北市", "新北市", "基隆市", "桃園市", "新竹縣", "新竹市", "苗栗縣", "新竹市", "臺中市", "南投縣", "彰化縣", "雲林縣", "嘉義縣", "嘉義市", "臺南市", "高雄市", "屏東縣", "宜蘭縣", "花蓮縣", "臺東縣", "金門縣", "澎湖縣", "連江縣"];
 var vacation_array = ["阿里山", "日月潭", "明德水庫", "鯉魚潭水庫", "雪霸國家公園觀霧遊憩區", "參天國家風景區", "大雪山國家森林遊樂區", "台中港", "塔塔加", "奧萬大", "清境農場", "惠蓀林場"];
@@ -50,17 +52,10 @@ function getDay(num) {
 }
 
 function reduceSIZE(input) {
-    input = replaceString(input, '．', '.');
-    input = replaceString(input, '０', '0');
-    input = replaceString(input, '１', '1');
-    input = replaceString(input, '２', '2');
-    input = replaceString(input, '３', '3');
-    input = replaceString(input, '４', '4');
-    input = replaceString(input, '５', '5');
-    input = replaceString(input, '６', '6');
-    input = replaceString(input, '７', '7');
-    input = replaceString(input, '８', '8');
-    input = replaceString(input, '９', '9');
+    var temp = Object.keys(size_table);
+    for (var i = 0; i < temp.length; i++) {
+        input = replaceString(input, temp[i], size_table[temp[i]]);
+    }
     return input;
 }
 
@@ -70,34 +65,21 @@ const SelectContexts = {
 
 app.intent('今日天氣概況', (conv) => {
 
-    return new Promise(
+    return main_reports.generator().then(function(final_data) {
 
-        function(resolve, reject) {
-
-            if (conv.user.raw.profile === undefined) {
-                var fetch = new FetchStream("https://opendata.cwb.gov.tw/fileapi/opendata/MFC/F-C0032-031.FW50", { disableDecoding: true });
-
-                fetch.on("data", function(chunk) {
-                    resolve(iconv.decode(chunk, 'BIG5'));
-                });
-            } else { resolve("測試回傳成功") }
-        }).then(function(final_data) {
+        console.log("text report:",final_data[2])
 
         word1 = county_array[parseInt(Math.random() * 11)];
         word2 = county_array[11 + parseInt(Math.random() * 10)];
 
-        console.log(final_data)
-
-        var temp = main_reports.generator(final_data)
-
-        conv.ask(new SimpleResponse({ "speech": `<speak><p><s>以下是中央氣象局，在${temp[0]}所發布的天氣概況。<break time="0.5s"/>${temp[1]}</s></p></speak>`, "text": '下面是來自氣象局的最新消息' }));
+        conv.ask(new SimpleResponse({ "speech": `<speak><p><s>以下是來自中央氣象局，在${final_data[0]}所發布的天氣概況。<break time="0.5s"/>${final_data[1]}</s></p></speak>`, "text": '下面是來自氣象局的最新消息' }));
 
         if (conv.screen) {
 
             conv.ask(new BasicCard({
                 "title": '全台天氣概況',
-                "subtitle": temp[2],
-                "text": temp[3],
+                "subtitle": final_data[2],
+                "text": final_data[3],
                 "buttons": new Button({ "title": "前往中央氣象局看詳細報告", "url": "https://www.cwb.gov.tw/V8/C/W/index.html", }),
             }));
 
@@ -123,6 +105,7 @@ app.intent('今日天氣概況', (conv) => {
             "image": new Image({ "url": "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A9%E6%B0%A3%E5%B0%8F%E5%B9%AB%E6%89%8B/assets/Is5e4Ab.png", alt: 'Pictures', }),
             "title": '數據加載發生問題',
             "subtitle": '請過一段時間後再回來查看',
+            "text": String(error),
             display: 'CROPPED',
         }));
         conv.ask(new Suggestions('查看各個區域', '查看天氣十日報', '如何加入日常安排', '👋 掰掰'));
@@ -160,18 +143,21 @@ app.intent('縣市選擇結果', (conv, params, option) => {
 
             if (county_array.indexOf(option) !== -1) {
 
-                getJSON('https://opendata.cwb.gov.tw/fileapi/v1/opendataapi/F-C0032-' + converter[option] + '?Authorization=CWB-D48B64A0-8BCB-497F-96E3-BD5EB63CF502&downloadType=WEB&format=JSON')
-                    .then(function(response) {
-                        resolve([response.cwbopendata.dataset.parameterSet.parameter, response.cwbopendata.dataset.datasetInfo.issueTime])
-                    }).catch(function(error) {
-                        var reason = new Error('資料獲取失敗');
-                        reject(reason)
-                    });
+                request('https://www.cwb.gov.tw/Data/js/fcst/W50_Data.js?', function(err, response, body) {
+                var $ = cheerio.load(body, { decodeEntities: false });
+                var temp = $.text();
+                temp = temp.replace(/.+[=][{]/gm, "{");
+                temp = replaceString(temp, "'", '"');
+                // console.log(temp)
+                var FCJsonObj = JSON.parse(temp);
+                resolve(FCJsonObj[converter[option]])
+                });
+
             } else { reject("無法辨識使用者所要求的查詢") }
 
         }).then(function(final_data) {
 
-        var temp = reports.generator(final_data[0], option, conv.input.raw)
+        var temp = reports.generator(final_data.Content, option, conv.input.raw)
 
         conv.ask(new SimpleResponse({
             "speech": `<speak><p><s>以下是${option}的天氣報告<break time="1s"/>${temp[1]}</s></p></speak>`,
@@ -182,8 +168,8 @@ app.intent('縣市選擇結果', (conv, params, option) => {
 
             conv.ask(new BasicCard({
                 "title": option,
-                "subtitle": temp[2],
-                "text": temp[0] + "  \n  \n**發布時間** • " + ReportTime(final_data[1]),
+                "subtitle": final_data.Title,
+                "text": temp[0] + "  \n  \n**發布時間** • " + ReportTime(final_data.DataTime),
                 "buttons": new Button({ "title": "前往中央氣象局看詳細報告", "url": "https://www.cwb.gov.tw/V8/C/W/County/County.html?CID=" + links[option], }),
             }));
 
@@ -195,7 +181,7 @@ app.intent('縣市選擇結果', (conv, params, option) => {
         } else { conv.close(`<speak><p><s>下次有需要時，可以對我說<break time="0.5s"/>叫天氣小幫手查詢${option}的天氣<break time="0.5s"/>下次見</s></p></speak>`); }
 
     }).catch(function(error) {
-        console.log(error)
+        console.log("錯誤:"+error)
         word1 = county_array[parseInt(Math.random() * 11)];
         word2 = county_array[11 + parseInt(Math.random() * 10)];
 
@@ -272,26 +258,27 @@ app.intent('快速查詢縣市資訊', (conv, { county }) => {
 
         function(resolve, reject) {
 
-            if (county_array.indexOf(county) !== -1) {
-
-                getJSON('https://opendata.cwb.gov.tw/fileapi/v1/opendataapi/F-C0032-' + converter[county] + '?Authorization=CWB-D48B64A0-8BCB-497F-96E3-BD5EB63CF502&downloadType=WEB&format=JSON')
-                    .then(function(response) {
-                        resolve([response.cwbopendata.dataset.parameterSet.parameter, response.cwbopendata.dataset.datasetInfo.issueTime])
-                    }).catch(function(error) {
-                        var reason = new Error('資料獲取失敗');
-                        reject(reason)
-                    });
-            } else if (county === "全臺") {
-                var fetch = new FetchStream("https://opendata.cwb.gov.tw/fileapi/opendata/MFC/F-C0032-031.FW50", { disableDecoding: true });
-
-                fetch.on("data", function(chunk) { resolve(iconv.decode(chunk, 'BIG5')); });
-            } else { reject("無法辨識使用者所要求的查詢") }
+            request('https://www.cwb.gov.tw/Data/js/fcst/W50_Data.js?', function(err, response, body) {
+                var $ = cheerio.load(body, { decodeEntities: false });
+                var temp = $.text();
+                temp = temp.replace(/.+[=][{]/gm, "{");
+                temp = replaceString(temp, "'", '"');
+                // console.log(temp)
+                var FCJsonObj = JSON.parse(temp);
+                if (county_array.indexOf(county) !== -1) {
+                    resolve(FCJsonObj[converter[county_array[i]]])
+                }
+                else{
+                    resolve(FCJsonObj['W50'])
+                }
+            });
+             
 
         }).then(function(final_data) {
 
         if (county_array.indexOf(county) !== -1) {
 
-            var temp = reports.generator(final_data[0], county, conv.input.raw)
+            var temp = reports.generator(final_data.Content, county, conv.input.raw)
 
             conv.ask(new SimpleResponse({
                 "speech": `<speak><p><s>以下是${county}的天氣報告<break time="1s"/>${temp[1]}</s></p></speak>`,
@@ -302,8 +289,8 @@ app.intent('快速查詢縣市資訊', (conv, { county }) => {
 
                 conv.ask(new BasicCard({
                     "title": county,
-                    "subtitle": temp[2],
-                    "text": temp[0] + "  \n  \n**發布時間** • " + ReportTime(final_data[1]),
+                    "subtitle": final_data.Title,
+                    "text": temp[0] + "  \n  \n**發布時間** • " + ReportTime(final_data.DataTime),
                     "buttons": new Button({ "title": "前往中央氣象局看詳細報告", "url": "https://www.cwb.gov.tw/V8/C/W/County/County.html?CID=" + links[county], }),
                 }));
 
@@ -361,6 +348,7 @@ app.intent('快速查詢縣市資訊', (conv, { county }) => {
                     "image": new Image({ "url": "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A9%E6%B0%A3%E5%B0%8F%E5%B9%AB%E6%89%8B/assets/Is5e4Ab.png", alt: 'Pictures', }),
                     "title": '數據加載發生問題',
                     "subtitle": '請過一段時間後再回來查看',
+                    "text": String(error),
                     display: 'CROPPED',
                 }
             }
@@ -379,25 +367,16 @@ app.intent('快速查詢縣市資訊', (conv, { county }) => {
 
 app.intent('全台天氣概要', (conv) => {
 
-    return new Promise(
+    return main_reports.generator().then(function(final_data) {
 
-        function(resolve, reject) {
-
-            var fetch = new FetchStream("https://opendata.cwb.gov.tw/fileapi/opendata/MFC/F-C0032-031.FW50", { disableDecoding: true });
-
-            fetch.on("data", function(chunk) { resolve(iconv.decode(chunk, 'BIG5')); });
-
-        }).then(function(final_data) {
-        var temp = main_reports.generator(final_data)
-
-        conv.ask(new SimpleResponse({ "speech": `<speak><p><s>以下是中央氣象局，在${temp[0]}所發布的天氣概況。<break time="0.5s"/>${temp[1]}</s></p></speak>`, "text": '下面是來自氣象局的最新消息' }));
+        conv.ask(new SimpleResponse({ "speech": `<speak><p><s>以下是中央氣象局，在${final_data[0]}所發布的天氣概況。<break time="0.5s"/>${final_data[1]}</s></p></speak>`, "text": '下面是來自氣象局的最新消息' }));
 
         if (conv.screen) {
 
             conv.ask(new BasicCard({
                 "title": '全台天氣概況',
-                "subtitle": temp[2],
-                "text": temp[3],
+                "subtitle": final_data[2],
+                "text": final_data[3],
                 "buttons": new Button({ "title": "前往中央氣象局看詳細報告", "url": "https://www.cwb.gov.tw/V8/C/W/index.html", }),
             }));
 
@@ -408,17 +387,19 @@ app.intent('全台天氣概要', (conv) => {
         } else { conv.expectUserResponse = false }
     }).catch(function(error) {
         console.log(error)
+        
+        word1 = county_array[parseInt(Math.random() * 11)];
+        word2 = county_array[11 + parseInt(Math.random() * 10)];
+
+        conv.ask(new SimpleResponse({
+            "speech": `<speak><p><s>抱歉，發生一點小狀況</s><s>請試著問我<break time="0.2s"/>${word1}天氣如何?</s></p></speak>`,
+            "text": '發生一點小狀況，請再試一次!',
+        }));
 
         if (conv.screen) {
 
             if (conv.user.storage.direct === false) {
-                word1 = county_array[parseInt(Math.random() * 11)];
-                word2 = county_array[11 + parseInt(Math.random() * 10)];
 
-                conv.ask(new SimpleResponse({
-                    "speech": `<speak><p><s>抱歉，發生一點小狀況</s><s>請試著問我<break time="0.2s"/>${word1}天氣如何?</s></p></speak>`,
-                    "text": '發生一點小狀況，請再試一次!',
-                }));
                 conv.ask(new Suggestions(word1 + '天氣如何?', '幫我查詢' + word2));
                 conv.ask(new Suggestions('查看全台概況', '查看天氣十日報', '👋 掰掰'));
 
@@ -432,9 +413,11 @@ app.intent('全台天氣概要', (conv) => {
                     "image": new Image({ "url": "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A9%E6%B0%A3%E5%B0%8F%E5%B9%AB%E6%89%8B/assets/Is5e4Ab.png", alt: 'Pictures', }),
                     "title": '數據加載發生問題',
                     "subtitle": '請過一段時間後再回來查看',
+                    "text": String(error),
                     "display": 'CROPPED'
                 }
             }
+
             conv.ask(new BasicCard(output));
 
         } else {
@@ -486,13 +469,18 @@ app.intent('十日報資訊', (conv) => {
         output_content = output_content.replace(/[）]/mig, "\n");
         output_content = output_content.replace(/[（]\S+[\r\n]/g, "");
 
+        var date_interval = getDay(0) + " ~ " + getDay(9);
+
+        if (display_content.indexOf(getDay(0).split('月')[1]) === -1) {
+            date_interval = getDay(1) + " ~ " + getDay(10)
+        }
+
         conv.ask(new SimpleResponse({ "speech": `<speak><p><s>以下是中央氣象局，所發布的天氣10日報。<break time="0.5s"/>${output_content}</s></p></speak>`, "text": '下面是來自氣象局的最新消息' }));
 
         if (conv.screen) {
-
             conv.ask(new BasicCard({
                 "title": '天氣10日報',
-                "subtitle": getDay(1) + " ~ " + getDay(9),
+                "subtitle": date_interval,
                 "text": display_content,
                 "buttons": new Button({ "title": "前往中央氣象局看詳細報告", "url": "https://www.cwb.gov.tw/V8/C/W/index.html", }),
             }));
@@ -529,6 +517,7 @@ app.intent('十日報資訊', (conv) => {
                     "image": new Image({ "url": "https://raw.githubusercontent.com/hank199599/Google-Assistant-APP/master/%E5%A4%A9%E6%B0%A3%E5%B0%8F%E5%B9%AB%E6%89%8B/assets/Is5e4Ab.png", alt: 'Pictures', }),
                     "title": '數據加載發生問題',
                     "subtitle": '請過一段時間後再回來查看',
+                    "text": String(error),
                     display: 'CROPPED'
                 };
 

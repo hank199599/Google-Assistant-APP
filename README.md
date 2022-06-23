@@ -1,3 +1,6 @@
+
+*:warning: Warning: Conversational Actions will be deprecated on June 13, 2023. For more information, see [Conversational Actions Sunset](https://goo.gle/ca-sunset).*
+
 [<img src="https://upload.wikimedia.org/wikipedia/commons/c/cb/Google_Assistant_logo.svg" width=100 height=100 />](https://assistant.google.com/intl/zh_tw/)
 
 >✪本專案獲選進入「[《GitHub存檔計畫》](https://archiveprogram.github.com/)」  
